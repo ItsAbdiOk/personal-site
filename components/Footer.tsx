@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={`${styles.inner} page-container`}>
-        <span className={styles.meta}>Updated April 2025 · v1.0</span>
+        <span className={styles.meta}>Updated April 2026 · v1.0</span>
         <div className={styles.links}>
           <a href="mailto:hi@abdirahmanmohamed.dev" className={styles.link}>
             Email

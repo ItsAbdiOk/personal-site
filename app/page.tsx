@@ -128,7 +128,7 @@ export default function Home() {
         </section>
 
         {/* Now */}
-        <NowBlock date="April 2025">
+        <NowBlock date="April 2026">
           <p>
             Preparing for MSc AI at QMUL starting September, working through
             Jurafsky &amp; Martin and Stanford CS224N. Building out Arday's TTS
