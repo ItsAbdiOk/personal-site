@@ -1,0 +1,17 @@
+.header {
+  padding: 64px 0 40px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-tertiary);
+}
+
+.list {
+  padding-bottom: 64px;
+}

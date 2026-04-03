@@ -1,0 +1,63 @@
+.header {
+  padding: 64px 0 8px;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.updated {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.content {
+  padding: 32px 0 48px;
+}
+
+.block {
+  margin-bottom: 32px;
+}
+
+.block h2 {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.block p {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 560px;
+}
+
+.block a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--transition);
+}
+
+.block a:hover {
+  text-decoration-color: var(--text-primary);
+}
+
+.nownow {
+  padding: 24px 0 64px;
+  border-top: 0.5px solid var(--border);
+}
+
+.nownowLabel {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.nownowLabel a {
+  color: var(--text-tertiary);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 2px;
+}

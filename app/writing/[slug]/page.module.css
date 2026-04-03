@@ -1,0 +1,131 @@
+.article {
+  padding: 64px 0 80px;
+}
+
+.header {
+  margin-bottom: 40px;
+}
+
+.date {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 2rem;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+
+.description {
+  font-size: 0.9375rem;
+  color: var(--text-tertiary);
+  line-height: 1.6;
+}
+
+/* --- Prose (MDX content) --- */
+.prose {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+.prose h2 {
+  font-size: 1.375rem;
+  color: var(--text-primary);
+  margin-top: 40px;
+  margin-bottom: 16px;
+}
+
+.prose h3 {
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
+.prose p {
+  margin-bottom: 18px;
+}
+
+.prose a {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--transition);
+}
+
+.prose a:hover {
+  text-decoration-color: var(--text-primary);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 20px;
+  margin-bottom: 18px;
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li {
+  margin-bottom: 6px;
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--border);
+  padding-left: 16px;
+  margin: 24px 0;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.prose code {
+  font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, monospace;
+  font-size: 0.875em;
+  background: var(--bg-muted);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+.prose pre {
+  background: var(--bg-muted);
+  padding: 16px 20px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 24px 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+}
+
+.prose hr {
+  border: none;
+  border-top: 0.5px solid var(--border);
+  margin: 40px 0;
+}
+
+.prose img {
+  border-radius: 4px;
+  margin: 24px 0;
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 1.625rem;
+  }
+}
