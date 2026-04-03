@@ -12,7 +12,7 @@ const projects = [
     title: "Arday",
     description:
       "English learning app for Somali speakers. Lesson-based curriculum with TTS audio, spaced repetition, and gamification.",
-    stack: ["GPT-4o", "Next.js", "Whisper"],
+    stack: ["Next.js", "Supabase", "Kokoro TTS"],
     href: "https://arday-nine.vercel.app",
   },
   {
