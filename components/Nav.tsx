@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./Nav.module.css";
@@ -13,14 +14,17 @@ const links = [
 
 export default function Nav() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   return (
     <nav className={styles.nav}>
       <div className={`${styles.inner} page-container`}>
-        <Link href="/" className={styles.name}>
+        <Link href="/" className={styles.name} onClick={() => setOpen(false)}>
           Abdi
         </Link>
-        <div className={styles.links}>
+
+        {/* Desktop links */}
+        <div className={styles.desktopLinks}>
           {links.map((link) => (
             <Link
               key={link.href}
@@ -28,6 +32,38 @@ export default function Nav() {
               className={`${styles.link} ${
                 pathname === link.href ? styles.active : ""
               }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Hamburger button */}
+        <button
+          className={styles.hamburger}
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+          aria-expanded={open}
+        >
+          <span className={styles.bar} />
+          <span className={styles.bar} />
+          <span className={styles.bar} />
+        </button>
+      </div>
+
+      {/* Mobile dropdown */}
+      <div
+        className={`${styles.dropdown} ${open ? styles.dropdownOpen : ""}`}
+      >
+        <div className="page-container">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`${styles.dropdownLink} ${
+                pathname === link.href ? styles.active : ""
+              }`}
+              onClick={() => setOpen(false)}
             >
               {link.label}
             </Link>

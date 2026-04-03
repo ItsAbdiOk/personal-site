@@ -3,13 +3,14 @@
   top: 0;
   z-index: 100;
   background: var(--bg);
-  padding: 20px 0;
 }
 
 .inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .name {
@@ -21,7 +22,8 @@
   text-decoration: none;
 }
 
-.links {
+/* --- Desktop links --- */
+.desktopLinks {
   display: flex;
   align-items: center;
   gap: 28px;
@@ -41,20 +43,84 @@
   color: var(--text-primary);
 }
 
-@media (max-width: 640px) {
-  .nav {
-    padding: 16px 0;
+/* --- Hamburger (hidden on desktop) --- */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 0 10px 10px;
+  min-height: 44px;
+  min-width: 44px;
+  align-items: flex-end;
+}
+
+.bar {
+  display: block;
+  width: 20px;
+  height: 1.5px;
+  background: var(--text-primary);
+  border-radius: 1px;
+}
+
+/* --- Mobile dropdown (hidden on desktop) --- */
+.dropdown {
+  display: none;
+}
+
+.dropdownLink {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 14px 0;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 0.5px solid var(--border);
+  transition: color var(--transition);
+}
+
+.dropdownLink:first-child {
+  border-top: 0.5px solid var(--border);
+}
+
+.dropdownLink:hover,
+.dropdownLink.active {
+  color: var(--text-primary);
+}
+
+/* --- Mobile --- */
+@media (max-width: 768px) {
+  .inner {
+    padding-top: 16px;
+    padding-bottom: 16px;
   }
 
-  .links {
-    gap: 16px;
+  .desktopLinks {
+    display: none;
   }
 
-  .link {
-    font-size: 0.75rem;
+  .hamburger {
+    display: flex;
   }
 
-  .name {
-    font-size: 0.875rem;
+  .dropdown {
+    display: block;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.2s ease, opacity 0.15s ease;
+    background: var(--bg);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .dropdownOpen {
+    max-height: 280px;
+    opacity: 1;
   }
 }

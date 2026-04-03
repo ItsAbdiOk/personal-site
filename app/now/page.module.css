@@ -62,7 +62,7 @@
   text-underline-offset: 2px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .header {
     padding: 40px 0 8px;
   }

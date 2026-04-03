@@ -74,18 +74,22 @@
   color: var(--text-muted);
 }
 
-/* --- Responsive --- */
-@media (max-width: 640px) {
+/* --- Mobile --- */
+@media (max-width: 768px) {
+  .main {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+
   .hero {
     padding: 40px 0 32px;
   }
 
   .headline {
-    font-size: 1.75rem;
+    font-size: 2.125rem;
   }
 
   .subheading {
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
   }
 
   .section {

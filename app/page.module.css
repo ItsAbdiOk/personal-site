@@ -69,31 +69,27 @@
   flex-direction: column;
 }
 
-/* --- Responsive --- */
-@media (max-width: 640px) {
+/* --- Mobile --- */
+@media (max-width: 768px) {
   .hero {
-    padding: 40px 0 32px;
+    padding: 40px 0 48px;
   }
 
   .headline {
-    font-size: 1.75rem;
-    line-height: 1.2;
+    font-size: 2.125rem;
+    line-height: 1.1;
   }
 
   .bio {
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
   }
 
   .links {
-    gap: 6px;
-  }
-
-  .heroLink {
-    font-size: 0.75rem;
+    gap: 12px;
   }
 
   .projects {
-    padding: 32px 0;
+    padding: 36px 0;
   }
 
   .grid {
@@ -101,6 +97,6 @@
   }
 
   .writing {
-    padding: 32px 0;
+    padding: 36px 0;
   }
 }

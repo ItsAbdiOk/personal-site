@@ -155,39 +155,40 @@
   line-height: 1.5;
 }
 
-/* --- Responsive --- */
-@media (max-width: 640px) {
+/* --- Mobile --- */
+@media (max-width: 768px) {
   .statsRow {
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    flex: 1 1 calc(50% - 1px);
-    min-width: calc(50% - 1px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
   }
 
   .statFirst {
-    border-radius: 6px 0 0 0;
-  }
-
-  .statLast {
-    border-radius: 0 0 6px 0;
+    border-radius: 4px 0 0 0;
   }
 
   .stat:nth-child(2) {
-    border-radius: 0 6px 0 0;
+    border-radius: 0 4px 0 0;
   }
 
   .stat:nth-child(3) {
-    border-radius: 0 0 0 6px;
+    border-radius: 0 0 0 4px;
+  }
+
+  .statLast {
+    border-radius: 0 0 4px 0;
   }
 
   .cardTop {
     flex-direction: column;
-    padding: 16px;
+    padding: 18px;
   }
 
   .chart {
-    padding: 16px;
+    padding: 16px 18px;
+  }
+
+  .runName {
+    font-size: 0.875rem;
   }
 }

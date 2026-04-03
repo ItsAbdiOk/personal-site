@@ -17,7 +17,7 @@
   --font-sans: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   --transition: 0.15s ease;
   --max-width: 720px;
-  --page-padding: 24px;
+  --page-padding: 32px;
 }
 
 /* --- Reset --- */
@@ -27,12 +27,14 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -125,8 +127,8 @@ img {
   border-top: 0.5px solid var(--border);
 }
 
-/* --- Responsive --- */
-@media (max-width: 640px) {
+/* --- Mobile (768px and below) --- */
+@media (max-width: 768px) {
   :root {
     --page-padding: 24px;
   }
@@ -136,11 +138,15 @@ img {
   }
 
   h1 {
-    font-size: 1.75rem;
+    font-size: 2.125rem;
   }
 
   h2 {
-    font-size: 1.2rem;
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 0.875rem;
   }
 
   .section {

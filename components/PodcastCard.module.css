@@ -124,10 +124,24 @@
   border-radius: 1px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .card {
-    padding: 16px;
+    padding: 18px;
     gap: 14px;
+  }
+
+  .artwork {
+    width: 44px;
+    height: 44px;
+  }
+
+  .waveform {
+    width: 44px;
+    height: 44px;
+  }
+
+  .title {
+    font-size: 0.875rem;
   }
 
   .right {
