@@ -23,13 +23,6 @@ const projects = [
     href: "https://github.com/ItsAbdiOk/TimeBudget",
   },
   {
-    tag: "Automation",
-    title: "Quantified Self",
-    description:
-      "Apple Health and sleep data logged to Google Calendar automatically via Apple Shortcuts and GPX parsing.",
-    stack: ["Python", "Shortcuts", "GCal API"],
-  },
-  {
     tag: "Automation · Live",
     title: "WARARKA",
     description:
@@ -44,13 +37,6 @@ const projects = [
       "Daily Word of the Day content pipeline for Arday. Renders bilingual vocabulary cards and auto-posts 6 times daily across Instagram and Facebook.",
     stack: ["Remotion", "GitHub Actions", "Meta API"],
     href: "https://github.com/ItsAbdiOk/arday-remotion",
-  },
-  {
-    tag: "Research · Ongoing",
-    title: "AI Job Agent",
-    description:
-      "Autonomous system for job discovery, tailoring, and application. Post-MSc project exploring LLM-powered agents.",
-    stack: ["LLMs", "Agents"],
   },
 ];
 
