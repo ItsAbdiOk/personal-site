@@ -78,7 +78,8 @@ img {
 .page-container {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 var(--page-padding);
+  padding-left: max(var(--page-padding), env(safe-area-inset-left, 0px));
+  padding-right: max(var(--page-padding), env(safe-area-inset-right, 0px));
 }
 
 /* --- Utility --- */
@@ -127,7 +128,7 @@ img {
 /* --- Responsive --- */
 @media (max-width: 640px) {
   :root {
-    --page-padding: 20px;
+    --page-padding: 24px;
   }
 
   body {
