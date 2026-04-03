@@ -16,6 +16,9 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/favicon.svg",
+  },
   title: "Abdirahman Mohamed — ML Engineer",
   description:
     "MSc AI student at Queen Mary University of London, specialising in speech and language processing. Building products that make language accessible.",
