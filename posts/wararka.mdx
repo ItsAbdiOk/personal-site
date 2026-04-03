@@ -1,0 +1,78 @@
+---
+title: "WARARKA: an automated Somali news pipeline"
+date: "2026-03-28"
+description: "How I built a system that fetches Somali news from 6 RSS feeds, summarises it with Gemini, renders graphics with Remotion, and posts to Instagram and Facebook every 2 hours — for $0/month."
+---
+
+I wanted a Somali news page on Instagram that actually looked good. Most Somali news accounts are screenshots of articles or copy-pasted text on a plain background. I thought: what if the whole thing was automated? Fetch the news, summarise it, render a proper graphic, post it — no human in the loop.
+
+So I built WARARKA ("The News" in Somali). Every 2 hours, a GitHub Action fetches articles from 6 Somali news sources, deduplicates them, summarises them into Somali headlines using Gemini, renders social media cards with Remotion, and publishes to Instagram and Facebook. The entire pipeline costs $0/month.
+
+## What it produces
+
+![WARARKA post — VOA Somali news with article photo and Somali headline](/projects/wararka-1.png)
+
+![WARARKA post — Hiiraan Online with African Union coverage](/projects/wararka-2.png)
+
+![WARARKA post — Hiiraan Online with Kampala news](/projects/wararka-3.png)
+
+Each post has the article photo pulled from the source, the Somali headline in bold typography with the first word highlighted, bullet points summarising the story, source attribution, and the WARARKA branding. The background colour is extracted from the article image to create a cohesive look. Every post on [@wararka_24](https://instagram.com/wararka_24) was generated and published by the pipeline — I haven't manually posted anything.
+
+## How the pipeline works
+
+```
+RSS Feeds (6 sources)
+    ↓
+Deduplication — SHA-256 URL hashing + Jaccard similarity
+    ↓
+Gemini 2.5 Flash Lite — Somali headline + bullet points
+    ↓
+Photo extraction — OG image from article, Pexels fallback
+    ↓
+Remotion — render 1080×1080 PNG card
+    ↓
+Meta Graph API — post to Facebook + Instagram
+    ↓
+Cloudflare R2 — cleanup renders older than 7 days
+```
+
+The sources are BBC Somali, VOA Somali, Hiiraan Online, SONNA, and Somali Digest. Stories get corroborated across outlets using Jaccard similarity on normalised Somali text — if only one outlet covers something, the pipeline skips it.
+
+## The summarisation
+
+Gemini generates a Somali headline (4–12 words) and 2–3 bullet points in Maxaa Tiri format. Every output is validated: word count, bullet count, and a language check that rejects summaries with more than 3 English words. If the output fails validation, it re-prompts. If it fails three times, the story gets skipped.
+
+The tricky part was getting Gemini to produce natural Somali rather than translated-sounding Somali. The prompt tells it to write like a Somali journalist, not like someone translating from English. Sensitive stories get flagged and use a placeholder image instead of the article photo.
+
+## The deduplication
+
+Two layers. First: a SHA-256 hash of every article URL, stored in Cloudflare R2. If a URL has been seen before, skip it. Second: Jaccard similarity of the Gemini-generated headline against all posts from the last 24 hours. This catches RSS feeds that republish the same story under different URLs — surprisingly common with Somali news sites.
+
+## The cost
+
+| Service | Monthly |
+|:--------|:--------|
+| Gemini 2.5 Flash Lite | $0 (free tier) |
+| Cloudflare R2 | $0 (free tier) |
+| GitHub Actions | $0 (free tier) |
+| Meta Graph API | $0 |
+| **Total** | **$0** |
+
+The pipeline runs 12 times a day and uses about 12 Gemini calls per day against a 1,500/day free tier limit. R2 stores renders temporarily and cleans up anything older than 7 days. GitHub Actions runs the whole thing in under 30 seconds per execution.
+
+## The stack
+
+| | |
+|:--|:--|
+| Runtime | Node.js / TypeScript |
+| Rendering | Remotion 4 |
+| LLM | Gemini 2.5 Flash Lite |
+| Storage | Cloudflare R2 |
+| Distribution | Meta Graph API v21.0 |
+| Orchestration | GitHub Actions (cron) |
+
+---
+
+The full source is on GitHub: [github.com/ItsAbdiOk/News](https://github.com/ItsAbdiOk/News)
+
+The Instagram page: [@wararka_24](https://instagram.com/wararka_24)

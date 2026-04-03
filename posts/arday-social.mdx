@@ -1,0 +1,76 @@
+---
+title: "Arday Social: a daily content pipeline that runs itself"
+date: "2026-03-22"
+description: "How I built an automated system that renders bilingual English-Somali vocabulary cards and posts 6 times a day to Instagram and Facebook — with a word bank that won't repeat for 3.7 years."
+---
+
+When you're a solo developer building a language app, you don't have a social media team. You don't have a content calendar. You don't have someone making graphics in Canva every morning. What you can have is a pipeline that does all of it for you.
+
+Arday Social is the content engine for [Arday](https://arday-nine.vercel.app), my English learning app for Somali speakers. Every day at 8am UTC, a GitHub Action picks a word from a bank of 1,374 English-Somali vocabulary pairs, renders it as a card in three formats, and publishes 6 posts across Instagram and Facebook — feed image, story, and reel on both platforms. I don't touch it. It just runs.
+
+## What it produces
+
+![Arday Word of the Day — Coffee / Qahwo](/projects/arday-social-coffee.png)
+
+![Arday Word of the Day — Bread / Rooti](/projects/arday-social-bread.png)
+
+![Arday Word of the Day — Chicken / Digaag](/projects/arday-social-chicken.png)
+
+Each card shows the English word in large bold text, the Somali translation in emerald, the part of speech, and bilingual example sentences. Dark background, clean typography, Arday branding at the top and bottom. The same word gets rendered at 1080×1080 for feed posts, 1080×1920 for stories, and as a 10-second video for reels.
+
+## How it works
+
+```
+GitHub Actions (8am UTC daily)
+    ↓
+Word selection — deterministic rotation through 1,374 pairs
+    ↓
+Remotion render — 3 formats: still, story, video
+    ↓
+Cloudflare R2 — upload video (Reels need a public URL)
+    ↓
+Meta Graph API — post to Instagram + Facebook
+    ↓
+README update — commit status back to repo
+```
+
+The word bank comes from Arday's 120-lesson curriculum across 5 difficulty levels. Each entry has the English word, Somali translation, part of speech, an English example sentence, and the Somali equivalent. At one word per day, the rotation runs for **3.7 years** before a word repeats.
+
+## The rendering
+
+Remotion turns React components into images and video. The `WordStill` component renders a 1080×1080 feed card. `WordStory` renders a 1080×1920 vertical card. `WordVideo` renders a 10-second video at 30fps with the word elements animating in sequence.
+
+All three are rendered from the same data — same word, same translations, same sentences — just adapted to each format's dimensions and timing. The whole render step takes about 15 seconds on GitHub Actions.
+
+## A/B testing captions
+
+I built an experimentation framework into the pipeline. Five sequential tests, one week each:
+
+1. **Caption style** — Which caption format gets more engagement?
+2. **Posting time** — Is 8am UTC optimal or should I shift?
+3. **Hashtag set** — Which hashtag groups drive discovery?
+4. **Format preference** — Do feeds, stories, or reels perform best?
+5. **CTA vs. value** — Should captions push to the app or just teach?
+
+Every Sunday, `ab-report.ts` pulls engagement data from the Meta API and `ab-optimize.ts` automatically adjusts the posting config. The whole thing runs without me checking anything.
+
+## Why automate this
+
+The honest answer is that I can't maintain a daily posting schedule manually while also building the app, studying for my MSc, and doing everything else. But the better answer is that daily vocabulary content is the perfect candidate for automation: it's structured, repetitive, and the quality bar is consistent. Every card follows the same template. The only variable is the word.
+
+A human posting once a day would produce the same output. The pipeline produces it at exactly the same time, every day, without forgetting, without getting tired, and without taking weekends off. That consistency matters more on social media than creativity does.
+
+## The stack
+
+| | |
+|:--|:--|
+| Rendering | Remotion 4 |
+| Runtime | TypeScript / Node.js |
+| Video hosting | Cloudflare R2 |
+| Distribution | Meta Graph API |
+| Scheduling | GitHub Actions (daily cron) |
+| A/B testing | Custom framework with weekly auto-optimisation |
+
+---
+
+The full source is on GitHub: [github.com/ItsAbdiOk/arday-remotion](https://github.com/ItsAbdiOk/arday-remotion)
