@@ -1,3 +1,4 @@
+import RouteMap from "./RouteMap";
 import styles from "./RunStats.module.css";
 
 interface Run {
@@ -8,6 +9,7 @@ interface Run {
   startDate: string;
   averageSpeed: number;
   calories: number;
+  polyline?: string | null;
 }
 
 interface RunStatsProps {
@@ -93,6 +95,13 @@ export default function RunStats({ runs, stats }: RunStatsProps) {
               )}
             </div>
           </div>
+
+          {/* Route map */}
+          {lastRun.polyline && (
+            <div className={styles.routeSection}>
+              <RouteMap polyline={lastRun.polyline} variant="minimal" />
+            </div>
+          )}
 
           <div className={styles.divider} />
 

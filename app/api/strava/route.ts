@@ -52,6 +52,8 @@ export async function GET() {
       calories: a.calories ?? 0,
       sufferScore: a.suffer_score ?? null,
       totalElevationGain: a.total_elevation_gain ?? 0,
+      polyline: a.map?.summary_polyline ?? null,
+      startLatlng: a.start_latlng ?? null,
     }));
 
     // Compute aggregate stats
