@@ -109,7 +109,7 @@ export default function Home() {
 
         {/* Projects */}
         <section id="work" className={`${styles.projects} page-container`}>
-          <p className="section-label">Work</p>
+          <h2 className="section-label">Work</h2>
           <div className={styles.grid}>
             {projects.map((project) => (
               <ProjectCard key={project.title} {...project} />
@@ -119,7 +119,7 @@ export default function Home() {
 
         {/* Writing */}
         <section className={`${styles.writing} page-container`}>
-          <p className="section-label">Writing</p>
+          <h2 className="section-label">Writing</h2>
           <div className={styles.writingList}>
             {writing.map((post) => (
               <WritingItem key={post.slug} {...post} />
