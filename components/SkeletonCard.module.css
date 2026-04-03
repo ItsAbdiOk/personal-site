@@ -1,0 +1,6 @@
+.skeleton {
+  background: var(--bg-muted);
+  border-radius: 6px;
+  height: 140px;
+  width: 100%;
+}

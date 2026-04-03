@@ -8,7 +8,7 @@ const links = [
   { href: "/#work", label: "Work" },
   { href: "/writing", label: "Writing" },
   { href: "/now", label: "Now" },
-  { href: "/reading", label: "Reading" },
+  { href: "/life", label: "Life" },
 ];
 
 export default function Nav() {

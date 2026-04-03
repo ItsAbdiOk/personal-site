@@ -1,0 +1,98 @@
+import { NextResponse } from "next/server";
+
+const TOKEN_URL = "https://www.strava.com/oauth/token";
+const ACTIVITIES_URL = "https://www.strava.com/api/v3/athlete/activities";
+
+async function getAccessToken(): Promise<string> {
+  const clientId = process.env.STRAVA_CLIENT_ID;
+  const clientSecret = process.env.STRAVA_CLIENT_SECRET;
+  const refreshToken = process.env.STRAVA_REFRESH_TOKEN;
+
+  if (!clientId || !clientSecret || !refreshToken) {
+    throw new Error("Missing Strava credentials");
+  }
+
+  const res = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client_id: clientId,
+      client_secret: clientSecret,
+      refresh_token: refreshToken,
+      grant_type: "refresh_token",
+    }),
+  });
+
+  if (!res.ok) throw new Error(`Token refresh failed: ${res.status}`);
+
+  const data = await res.json();
+  return data.access_token;
+}
+
+export async function GET() {
+  try {
+    const token = await getAccessToken();
+
+    const res = await fetch(
+      `${ACTIVITIES_URL}?per_page=7&type=Run`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (!res.ok) throw new Error(`Activities fetch failed: ${res.status}`);
+
+    const activities = await res.json();
+
+    const runs = activities.map((a: any) => ({
+      name: a.name ?? "Run",
+      distance: a.distance ?? 0,
+      movingTime: a.moving_time ?? 0,
+      elapsedTime: a.elapsed_time ?? 0,
+      startDate: a.start_date_local ?? a.start_date ?? "",
+      averageSpeed: a.average_speed ?? 0,
+      calories: a.calories ?? 0,
+      sufferScore: a.suffer_score ?? null,
+      totalElevationGain: a.total_elevation_gain ?? 0,
+    }));
+
+    // Compute aggregate stats
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const weeklyRuns = runs.filter(
+      (r: any) => new Date(r.startDate) >= startOfWeek
+    );
+    const weeklyKm = weeklyRuns.reduce(
+      (sum: number, r: any) => sum + r.distance / 1000,
+      0
+    );
+
+    const lastRun = runs[0] ?? null;
+    const lastRunKm = lastRun ? (lastRun.distance / 1000).toFixed(1) : "0";
+
+    // Average pace in min/km (from average_speed in m/s)
+    let avgPace = "--:--";
+    if (lastRun && lastRun.averageSpeed > 0) {
+      const paceSeconds = 1000 / lastRun.averageSpeed;
+      const paceMin = Math.floor(paceSeconds / 60);
+      const paceSec = Math.round(paceSeconds % 60);
+      avgPace = `${paceMin}:${paceSec.toString().padStart(2, "0")}`;
+    }
+
+    return NextResponse.json({
+      runs,
+      stats: {
+        lastRunKm,
+        avgPace,
+        weeklyKm: weeklyKm.toFixed(1),
+        vo2max: null, // Not available from Strava API directly
+      },
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to fetch running data" },
+      { status: 500 }
+    );
+  }
+}

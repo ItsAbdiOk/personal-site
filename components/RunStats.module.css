@@ -1,0 +1,193 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* --- 4-stat row --- */
+.statsRow {
+  display: flex;
+  gap: 2px;
+}
+
+.stat {
+  flex: 1;
+  background: var(--bg-muted);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statFirst {
+  border-radius: 6px 0 0 6px;
+}
+
+.statLast {
+  border-radius: 0 6px 6px 0;
+}
+
+.statLabel {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.statValue {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* --- Last run card --- */
+.card {
+  background: var(--bg);
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.cardTop {
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.runInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.runTag {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.runName {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.runStats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.runStat {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+}
+
+.runStatDot {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.divider {
+  border-top: 0.5px solid var(--border);
+}
+
+/* --- Bar chart --- */
+.chart {
+  padding: 20px 24px 16px;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 48px;
+}
+
+.barWrapper {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.bar {
+  width: 100%;
+  background: var(--border);
+  border-radius: 2px 2px 0 0;
+  transition: background var(--transition);
+}
+
+.barCurrent {
+  background: var(--text-primary);
+}
+
+.chartLabel {
+  text-align: center;
+  font-size: 0.6875rem;
+  color: #CCCCCA;
+  margin-top: 10px;
+}
+
+/* --- Goal block --- */
+.goal {
+  background: var(--bg-muted);
+  border-radius: 4px;
+  padding: 16px 20px;
+}
+
+.goal p {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+  .statsRow {
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    flex: 1 1 calc(50% - 1px);
+    min-width: calc(50% - 1px);
+  }
+
+  .statFirst {
+    border-radius: 6px 0 0 0;
+  }
+
+  .statLast {
+    border-radius: 0 0 6px 0;
+  }
+
+  .stat:nth-child(2) {
+    border-radius: 0 6px 0 0;
+  }
+
+  .stat:nth-child(3) {
+    border-radius: 0 0 0 6px;
+  }
+
+  .cardTop {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .chart {
+    padding: 16px;
+  }
+}
