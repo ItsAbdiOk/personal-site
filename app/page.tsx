@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ProjectCard from "@/components/ProjectCard";
 import WritingItem from "@/components/WritingItem";
 import NowBlock from "@/components/NowBlock";
+import { getAllPosts } from "@/lib/posts";
 import styles from "./page.module.css";
 
 const projects = [
@@ -40,28 +41,16 @@ const projects = [
   },
 ];
 
-const writing = [
-  {
-    title: "Why I chose GPT-4o for Somali-English translation",
-    date: "Apr 2025",
-    slug: "gpt4o-somali-translation",
-  },
-  {
-    title: "What Duolingo\u2019s path to profit taught me about Arday",
-    date: "Mar 2025",
-    slug: "duolingo-arday-lessons",
-  },
-  {
-    title: "My QMUL MSc prep: 200 hours before September",
-    date: "Mar 2025",
-    slug: "qmul-msc-prep",
-  },
-  {
-    title: "Logging Apple Health walks to Google Calendar automatically",
-    date: "Feb 2025",
-    slug: "apple-health-gcal",
-  },
-];
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-GB", { month: "short", year: "numeric" });
+}
+
+const writing = getAllPosts().map((post) => ({
+  title: post.title,
+  date: formatDate(post.date),
+  slug: post.slug,
+}));
 
 export default function Home() {
   return (
