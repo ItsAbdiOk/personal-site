@@ -21,7 +21,7 @@ const projects = [
     description:
       "Personal dashboard aggregating HealthKit, AniList, LeetCode, Pocket Casts, and EventKit into one view.",
     stack: ["SwiftUI", "HealthKit", "EventKit"],
-    href: "https://github.com/ItsAbdiOk/TimeBudget",
+    href: "/writing/timebudget",
   },
   {
     tag: "Automation · Live",
@@ -29,7 +29,7 @@ const projects = [
     description:
       "Automated Somali news pipeline. Fetches RSS feeds, deduplicates stories with AI, renders graphics, and posts to Instagram and Facebook every 2 hours.",
     stack: ["Remotion", "Gemini", "Meta API"],
-    href: "https://github.com/ItsAbdiOk/News",
+    href: "/writing/wararka",
   },
   {
     tag: "Automation · Live",
@@ -37,7 +37,7 @@ const projects = [
     description:
       "Daily Word of the Day content pipeline for Arday. Renders bilingual vocabulary cards and auto-posts 6 times daily across Instagram and Facebook.",
     stack: ["Remotion", "GitHub Actions", "Meta API"],
-    href: "https://github.com/ItsAbdiOk/arday-remotion",
+    href: "/writing/arday-social",
   },
 ];
 
