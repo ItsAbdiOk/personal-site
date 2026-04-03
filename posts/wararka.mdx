@@ -50,26 +50,13 @@ Two layers. First: a SHA-256 hash of every article URL, stored in Cloudflare R2.
 
 ## The cost
 
-| Service | Monthly |
-|:--------|:--------|
-| Gemini 2.5 Flash Lite | $0 (free tier) |
-| Cloudflare R2 | $0 (free tier) |
-| GitHub Actions | $0 (free tier) |
-| Meta Graph API | $0 |
-| **Total** | **$0** |
+Gemini 2.5 Flash Lite: **$0** (free tier). Cloudflare R2: **$0** (free tier). GitHub Actions: **$0** (free tier). Meta Graph API: **$0**. **Total: $0/month.**
 
 The pipeline runs 12 times a day and uses about 12 Gemini calls per day against a 1,500/day free tier limit. R2 stores renders temporarily and cleans up anything older than 7 days. GitHub Actions runs the whole thing in under 30 seconds per execution.
 
 ## The stack
 
-| | |
-|:--|:--|
-| Runtime | Node.js / TypeScript |
-| Rendering | Remotion 4 |
-| LLM | Gemini 2.5 Flash Lite |
-| Storage | Cloudflare R2 |
-| Distribution | Meta Graph API v21.0 |
-| Orchestration | GitHub Actions (cron) |
+**Runtime:** Node.js / TypeScript · **Rendering:** Remotion 4 · **LLM:** Gemini 2.5 Flash Lite · **Storage:** Cloudflare R2 · **Distribution:** Meta Graph API v21.0 · **Orchestration:** GitHub Actions (cron)
 
 ---
 
