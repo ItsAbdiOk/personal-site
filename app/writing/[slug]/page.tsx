@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import ReadingProgress from "@/components/ReadingProgress";
 import { getPostBySlug, getAllPostSlugs } from "@/lib/posts";
 import styles from "./page.module.css";
 
@@ -37,6 +38,7 @@ export default function PostPage({ params }: Props) {
 
   return (
     <>
+      <ReadingProgress />
       <Nav />
       <main className="page-container">
         <article className={styles.article}>

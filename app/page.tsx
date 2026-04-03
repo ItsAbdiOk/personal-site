@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ProjectCard from "@/components/ProjectCard";
 import WritingItem from "@/components/WritingItem";
 import NowBlock from "@/components/NowBlock";
+import ScrollReveal from "@/components/ScrollReveal";
 import { getAllPosts } from "@/lib/posts";
 import styles from "./page.module.css";
 
@@ -57,23 +58,23 @@ export default function Home() {
     <>
       <Nav />
       <main>
-        {/* Hero */}
+        {/* Hero — entrance animations */}
         <section className={`${styles.hero} page-container`}>
-          <p className="eyebrow">ML Engineer · London</p>
-          <h1 className={styles.headline}>
+          <p className="eyebrow animate-in animate-in-1">ML Engineer · London</p>
+          <h1 className={`${styles.headline} animate-in animate-in-2`}>
             Building things
             <br />
             at the edge of <em className={styles.italic}>language</em>
             <br />
             and machine.
           </h1>
-          <p className={styles.bio}>
+          <p className={`${styles.bio} animate-in animate-in-3`}>
             MSc AI student at Queen Mary University of London, specialising in
             speech and language processing. I build products that make language
             accessible — currently Arday, an English learning app for Somali
             speakers.
           </p>
-          <div className={styles.links}>
+          <div className={`${styles.links} animate-in animate-in-4`}>
             <a
               href="https://arday-nine.vercel.app"
               target="_blank"
@@ -107,35 +108,41 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Projects */}
-        <section id="work" className={`${styles.projects} page-container`}>
-          <h2 className="section-label">Work</h2>
-          <div className={styles.grid}>
-            {projects.map((project) => (
-              <ProjectCard key={project.title} {...project} />
-            ))}
-          </div>
-        </section>
+        {/* Projects — scroll reveal */}
+        <ScrollReveal>
+          <section id="work" className={`${styles.projects} page-container`}>
+            <h2 className="section-label">Work</h2>
+            <div className={styles.grid}>
+              {projects.map((project) => (
+                <ProjectCard key={project.title} {...project} />
+              ))}
+            </div>
+          </section>
+        </ScrollReveal>
 
-        {/* Writing */}
-        <section className={`${styles.writing} page-container`}>
-          <h2 className="section-label">Writing</h2>
-          <div className={styles.writingList}>
-            {writing.map((post) => (
-              <WritingItem key={post.slug} {...post} />
-            ))}
-          </div>
-        </section>
+        {/* Writing — scroll reveal */}
+        <ScrollReveal delay={100}>
+          <section className={`${styles.writing} page-container`}>
+            <h2 className="section-label">Writing</h2>
+            <div className={styles.writingList}>
+              {writing.map((post) => (
+                <WritingItem key={post.slug} {...post} />
+              ))}
+            </div>
+          </section>
+        </ScrollReveal>
 
-        {/* Now */}
-        <NowBlock date="April 2026">
-          <p>
-            Preparing for MSc AI at QMUL starting September, working through
-            Jurafsky &amp; Martin and Stanford CS224N. Building out Arday's TTS
-            layer so every English sentence has audio. Tracking my 5K training
-            on Apple Watch, chasing a VO2 max improvement before summer.
-          </p>
-        </NowBlock>
+        {/* Now — scroll reveal */}
+        <ScrollReveal delay={100}>
+          <NowBlock date="April 2026">
+            <p>
+              Preparing for MSc AI at QMUL starting September, working through
+              Jurafsky &amp; Martin and Stanford CS224N. Building out Arday's TTS
+              layer so every English sentence has audio. Tracking my 5K training
+              on Apple Watch, chasing a VO2 max improvement before summer.
+            </p>
+          </NowBlock>
+        </ScrollReveal>
       </main>
       <Footer />
     </>

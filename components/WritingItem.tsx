@@ -10,7 +10,10 @@ interface WritingItemProps {
 export default function WritingItem({ title, date, slug }: WritingItemProps) {
   return (
     <Link href={`/writing/${slug}`} className={styles.item}>
-      <span className={styles.title}>{title}</span>
+      <span className={styles.titleWrap}>
+        <span className={styles.arrow}>→</span>
+        <span className={styles.title}>{title}</span>
+      </span>
       <span className={styles.date}>{date}</span>
     </Link>
   );

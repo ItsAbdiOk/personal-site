@@ -14,16 +14,40 @@
   border-bottom: 0.5px solid var(--border);
 }
 
+.titleWrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+}
+
+.arrow {
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: width 0.2s ease, opacity 0.2s ease;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.item:hover .arrow {
+  width: 20px;
+  opacity: 1;
+}
+
 .title {
   font-family: var(--font-sans);
   font-size: 0.9375rem;
   font-weight: 400;
   color: #444440;
-  transition: color var(--transition);
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .item:hover .title {
   color: var(--text-primary);
+  transform: translateX(4px);
 }
 
 .date {
