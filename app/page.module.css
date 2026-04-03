@@ -1,6 +1,7 @@
 /* --- Hero --- */
 .hero {
-  padding: 80px 0 64px;
+  padding-top: 80px;
+  padding-bottom: 64px;
 }
 
 .headline {
@@ -48,7 +49,8 @@
 
 /* --- Projects Grid --- */
 .projects {
-  padding: 48px 0;
+  padding-top: 48px;
+  padding-bottom: 48px;
 }
 
 .grid {
@@ -61,7 +63,8 @@
 
 /* --- Writing --- */
 .writing {
-  padding: 48px 0;
+  padding-top: 48px;
+  padding-bottom: 48px;
 }
 
 .writingList {
@@ -72,7 +75,8 @@
 /* --- Mobile --- */
 @media (max-width: 768px) {
   .hero {
-    padding: 40px 0 48px;
+    padding-top: 40px;
+    padding-bottom: 48px;
   }
 
   .headline {
@@ -89,7 +93,8 @@
   }
 
   .projects {
-    padding: 36px 0;
+    padding-top: 36px;
+    padding-bottom: 36px;
   }
 
   .grid {
@@ -97,6 +102,7 @@
   }
 
   .writing {
-    padding: 36px 0;
+    padding-top: 36px;
+    padding-bottom: 36px;
   }
 }

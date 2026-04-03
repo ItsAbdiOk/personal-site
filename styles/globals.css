@@ -115,7 +115,8 @@ img {
 
 /* --- Section spacing --- */
 .section {
-  padding: 64px 0;
+  padding-top: 64px;
+  padding-bottom: 64px;
 }
 
 .section-label {
@@ -157,7 +158,8 @@ img {
   }
 
   .section {
-    padding: 36px 0;
+    padding-top: 36px;
+    padding-bottom: 36px;
   }
 
   .section-label {
