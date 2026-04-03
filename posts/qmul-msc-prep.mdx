@@ -1,14 +1,73 @@
 ---
 title: "My QMUL MSc prep: 200 hours before September"
-date: "2025-03-10"
+date: "2026-04-03"
 description: "A structured plan for preparing for an MSc in AI, covering math foundations, NLP, and practical ML."
 ---
 
-This post is coming soon. It will document my structured approach to preparing for the MSc AI programme at Queen Mary, including the specific resources, timeline, and study strategy I'm following.
+I have five months before my MSc starts and I've never used PyTorch. Never trained a model. Never written an academic paper. I've shipped a full production app that uses GPT-4o, Whisper, and NLLB-200 — but if you asked me to explain how attention actually works under the hood, I'd give you the hand-wavy blog post version, not the real answer. I'm at hour zero.
 
-## What I'll cover
+That's a problem when you're about to start a 12-month AI programme at Queen Mary specialising in speech and language processing. Twelve months sounds like a lot until you realise the first term is fundamentals, the second is specialisation, and the third is your dissertation. If I spend September through December catching up on linear algebra and learning what a loss function is, I've burned a quarter of the programme on things I could have learned at my kitchen table in April.
 
-- Why I'm front-loading preparation
-- The curriculum: Jurafsky & Martin, CS224N, linear algebra refresher
-- Tracking study hours and retention
-- Balancing prep with building Arday
+So I'm front-loading. Two hundred hours of structured prep before I walk into a lecture hall.
+
+The number isn't scientific — it's what five months of consistent work looks like minus the weeks I'll lose to Arday bugs and life. I built an iOS app called TimeBudget that passively tracks time across seven sources, so the hours are logged, not estimated. If I'm going to be honest about whether I'm actually prepared by September, I need data, not vibes.
+
+## What I'm studying
+
+The core of the prep is two things: one textbook and one lecture series.
+
+The textbook is *Speech and Language Processing* by Jurafsky and Martin — the NLP textbook, the one every programme assigns, the one that's freely available online and covers everything from n-gram language models through transformers to speech recognition. It maps directly to my MSc specialisation. If I'm going to read one book before September, it's this.
+
+The lecture series is Stanford's CS224N, their NLP with deep learning course. Full lectures, assignments, slides, all free. Where Jurafsky and Martin give you the theory, CS224N shows you how it connects to modern deep learning — word vectors, attention mechanisms, pretraining, BERT, GPT. It bridges the gap between "I understand this conceptually" and "I could implement this."
+
+On the side I'm working through Goodfellow, Bengio, and Courville's *Deep Learning* for the math foundations — the parts on optimisation, regularisation, and backpropagation that I need to stop treating as black boxes. And Chip Huyen's *Designing Machine Learning Systems* is on the list for production ML, though I'll probably hit that closer to summer.
+
+The math refresher is the least glamorous part and probably the most important. I need linear algebra to not be something I vaguely remember. Attention mechanisms are matrix operations. Embeddings are vectors. Gradient descent is calculus. If I can't read a paper's equations without glazing over, the MSc will hurt.
+
+## What I already know (and what I don't)
+
+Here's where I'm trying to be honest with myself, because the temptation is to overcount what I know.
+
+I've built Arday — a Somali-English language learning app with 120 lessons, 561 vocabulary words, 1,659 TTS audio files, eight question types, offline PWA support. I've integrated GPT-4o for translation, Whisper for speech recognition, NLLB-200 for machine translation. I've deployed it, I have beta testers using it, it works. I know how to build and ship software.
+
+What I don't know is what's happening inside any of those models. I've used GPT-4o as an API. I've never fine-tuned anything. I've never written a training loop. I've never touched PyTorch. I've never opened a Jupyter notebook and built a model from scratch.
+
+I also don't know the production ML stack that employers actually care about: Docker, AWS, MLflow, FastAPI, CI/CD for ML pipelines. MSc programmes notoriously underteach this stuff. You graduate knowing how to train a model in a notebook but not how to deploy it as an API that handles 10,000 requests a day. I need to learn this myself.
+
+In priority order, the gaps are:
+
+ML fundamentals — the math. Loss functions, backpropagation, optimisation. The stuff that makes everything else make sense.
+
+PyTorch — I need to be comfortable building things in it before September, not learning the basics during coursework.
+
+Transformer architecture — real understanding, not API-level familiarity. I want to read "Attention Is All You Need" and follow every equation.
+
+Production ML — Docker, cloud deployment, experiment tracking. The hiring gap.
+
+LLM-specific skills — fine-tuning with LoRA and QLoRA, RAG pipelines, evaluation methods. This is where the dissertation lives.
+
+## The dissertation is the product
+
+My planned dissertation topic is adapting large language models for Somali language tutoring — comparing fine-tuning versus RAG for factual accuracy in a low-resource language context. The plan is to fine-tune Llama for Somali using LoRA, build a RAG pipeline with Somali educational content, compare the two approaches, and deploy the result as an API that plugs into Arday.
+
+This isn't an academic exercise disconnected from reality. It directly advances a product I'm already building for real users. If the fine-tuned model works well enough, it becomes Arday's conversation engine. If RAG performs better, that changes how I architect the app's content pipeline. Either way, the dissertation produces something that ships.
+
+It's also a topic that sits at an interesting intersection for hiring. LLM fine-tuning is the most in-demand skill in ML right now. Somali is genuinely under-researched — the best prior work on Somali ASR used 1.57 hours of annotated speech data. An MSc dissertation that combines fine-tuning, RAG, a low-resource language, and a deployed product is distinctive in a way that "I fine-tuned BERT on sentiment analysis" is not.
+
+I'm eyeing the LoResLM workshop at EACL for a potential submission. That's ambitious for someone who hasn't written a paper before. But the topic fits perfectly, and having a deadline beyond the MSc would force me to produce work at a publishable standard.
+
+## The balancing act
+
+I'm doing this while running Arday in beta, managing an automated six-posts-a-day social pipeline, and training for a sub-25 minute 5K — so the hours are tracked, not hoped for.
+
+On a good week I expect to get 15 hours of focused study. On a week where Arday has a critical bug or I'm restructuring the content pipeline, I'll get 5. That's fine. The tracking exists precisely so I can look at the number and know whether I'm actually on pace or just feeling busy. Feeling busy is easy. Logging 200 real hours is not.
+
+This is also why the prep is focused on depth in NLP and speech processing rather than trying to cover every subfield of AI. I'd rather deeply understand transformers and attention than superficially touch computer vision, reinforcement learning, and robotics. The MSc will give me breadth. The prep is for building a foundation in the specific area I'm going to work in.
+
+## September
+
+The goal is simple: walk into Queen Mary in September and contribute from week one. Not spend the first term Googling "what is a tensor." Not fall behind in the math. Not be the person in the cohort who's clearly winging it.
+
+I want to open Jurafsky and Martin in a lecture and think "I've read this chapter." I want to see a PyTorch training loop on a slide and think "I've written one of those." I want my supervisor to propose a dissertation direction and respond with "I've already started."
+
+Two hundred hours won't make me an ML engineer. The MSc won't either, on its own. Right now I'm sitting at a kitchen table with a textbook I haven't opened, a framework I've never used, and a five-month countdown. I'm not confident. But I'm not guessing either — I have a plan, I have the tracking to hold myself to it, and I have a product that needs every hour of this to be worth something. That's enough to start.
