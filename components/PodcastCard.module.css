@@ -5,11 +5,13 @@
   padding: 24px;
   display: flex;
   gap: 20px;
-  transition: background var(--transition);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
   background: var(--bg-muted);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 26, 24, 0.06);
 }
 
 .artwork {
@@ -122,6 +124,11 @@
   height: 100%;
   background: var(--text-primary);
   border-radius: 1px;
+  animation: progressGrow 0.8s ease-out 0.3s both;
+}
+
+@keyframes progressGrow {
+  from { width: 0 !important; }
 }
 
 @media (max-width: 768px) {

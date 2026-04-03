@@ -106,13 +106,13 @@ export default function RunStats({ runs, stats }: RunStatsProps) {
                 return (
                   <div
                     key={i}
-                    className={`${styles.barWrapper}`}
+                    className={styles.barWrapper}
                   >
                     <div
                       className={`${styles.bar} ${
                         i === 0 ? styles.barCurrent : ""
                       }`}
-                      style={{ height: `${height}%` }}
+                      style={{ height: `${height}%`, animationDelay: `${i * 60}ms` }}
                     />
                   </div>
                 );

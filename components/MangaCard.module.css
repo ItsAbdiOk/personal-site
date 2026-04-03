@@ -5,11 +5,13 @@
   padding: 24px;
   display: flex;
   gap: 20px;
-  transition: background var(--transition);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
   background: var(--bg-muted);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 26, 24, 0.06);
 }
 
 .cover {
@@ -68,12 +70,24 @@
 }
 
 .dotLive {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--text-primary);
-  animation: pulse 2s infinite;
   flex-shrink: 0;
+  position: relative;
+}
+
+.dotLive::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--text-primary);
+  animation: ringPulse 2s ease-out infinite;
 }
 
 .dotStatic {
@@ -84,9 +98,9 @@
   flex-shrink: 0;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+@keyframes ringPulse {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.8); }
 }
 
 .source {
@@ -131,6 +145,11 @@
   height: 100%;
   background: var(--text-primary);
   border-radius: 1px;
+  animation: progressGrow 0.8s ease-out 0.3s both;
+}
+
+@keyframes progressGrow {
+  from { width: 0 !important; }
 }
 
 @media (max-width: 768px) {
