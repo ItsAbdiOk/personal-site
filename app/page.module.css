@@ -72,14 +72,35 @@
 /* --- Responsive --- */
 @media (max-width: 640px) {
   .hero {
-    padding: 48px 0 40px;
+    padding: 40px 0 32px;
   }
 
   .headline {
-    font-size: 2rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  .bio {
+    font-size: 0.875rem;
+  }
+
+  .links {
+    gap: 6px;
+  }
+
+  .heroLink {
+    font-size: 0.75rem;
+  }
+
+  .projects {
+    padding: 32px 0;
   }
 
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .writing {
+    padding: 32px 0;
   }
 }

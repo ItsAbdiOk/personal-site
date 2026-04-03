@@ -42,11 +42,19 @@
 }
 
 @media (max-width: 640px) {
+  .nav {
+    padding: 16px 0;
+  }
+
   .links {
-    gap: 20px;
+    gap: 16px;
   }
 
   .link {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
+  }
+
+  .name {
+    font-size: 0.875rem;
   }
 }

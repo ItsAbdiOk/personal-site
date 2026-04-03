@@ -127,18 +127,26 @@ img {
 /* --- Responsive --- */
 @media (max-width: 640px) {
   :root {
-    --page-padding: 20px;
+    --page-padding: 16px;
+  }
+
+  body {
+    font-size: 15px;
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   h2 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
 
   .section {
-    padding: 48px 0;
+    padding: 36px 0;
+  }
+
+  .section-label {
+    margin-bottom: 16px;
   }
 }

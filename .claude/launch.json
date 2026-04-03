@@ -4,8 +4,8 @@
     {
       "name": "dev",
       "runtimeExecutable": "/opt/homebrew/Cellar/node/25.8.2/bin/node",
-      "runtimeArgs": ["node_modules/.bin/next", "dev"],
-      "port": 3000
+      "runtimeArgs": ["node_modules/next/dist/bin/next", "dev", "-p", "3002"],
+      "port": 3002
     }
   ]
 }

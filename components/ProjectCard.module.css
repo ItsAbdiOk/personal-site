@@ -56,3 +56,22 @@
 .card:hover .pill {
   background: var(--bg);
 }
+
+@media (max-width: 640px) {
+  .card {
+    padding: 20px;
+    gap: 6px;
+  }
+
+  .title {
+    font-size: 0.9375rem;
+  }
+
+  .description {
+    font-size: 0.8125rem;
+  }
+
+  .pill {
+    font-size: 0.625rem;
+  }
+}

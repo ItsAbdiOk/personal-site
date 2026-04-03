@@ -61,3 +61,29 @@
   text-decoration-color: var(--border);
   text-underline-offset: 2px;
 }
+
+@media (max-width: 640px) {
+  .header {
+    padding: 40px 0 8px;
+  }
+
+  .header h1 {
+    font-size: 1.75rem;
+  }
+
+  .content {
+    padding: 24px 0 36px;
+  }
+
+  .block h2 {
+    font-size: 1.125rem;
+  }
+
+  .block p {
+    font-size: 0.875rem;
+  }
+
+  .nownow {
+    padding: 20px 0 48px;
+  }
+}

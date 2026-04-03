@@ -15,3 +15,21 @@
 .list {
   padding-bottom: 64px;
 }
+
+@media (max-width: 640px) {
+  .header {
+    padding: 40px 0 28px;
+  }
+
+  .header h1 {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+  }
+
+  .list {
+    padding-bottom: 48px;
+  }
+}
