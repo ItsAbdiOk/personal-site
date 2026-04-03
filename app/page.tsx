@@ -30,6 +30,22 @@ const projects = [
     stack: ["Python", "Shortcuts", "GCal API"],
   },
   {
+    tag: "Automation · Live",
+    title: "WARARKA",
+    description:
+      "Automated Somali news pipeline. Fetches RSS feeds, deduplicates stories with AI, renders graphics, and posts to Instagram and Facebook every 2 hours.",
+    stack: ["Remotion", "Gemini", "Meta API"],
+    href: "https://github.com/ItsAbdiOk/News",
+  },
+  {
+    tag: "Automation · Live",
+    title: "Arday Social",
+    description:
+      "Daily Word of the Day content pipeline for Arday. Renders bilingual vocabulary cards and auto-posts 6 times daily across Instagram and Facebook.",
+    stack: ["Remotion", "GitHub Actions", "Meta API"],
+    href: "https://github.com/ItsAbdiOk/arday-remotion",
+  },
+  {
     tag: "Research · Ongoing",
     title: "AI Job Agent",
     description:
