@@ -26,7 +26,11 @@ export async function GET() {
     const token = await getToken();
 
     const res = await fetch(HISTORY_URL, {
-      headers: { Authorization: `Bearer ${token}` },
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
