@@ -61,7 +61,7 @@ export default function LifePage() {
         if (data.error) {
           setMangaError(true);
         } else {
-          setManga([...(data.current ?? []), ...(data.completed ?? [])]);
+          setManga(data.entries ?? []);
         }
       })
       .catch(() => setMangaError(true));

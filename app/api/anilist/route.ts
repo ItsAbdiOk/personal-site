@@ -63,25 +63,23 @@ export async function GET() {
     const completedEntries =
       completedData?.data?.MediaListCollection?.lists?.[0]?.entries ?? [];
 
-    const current = currentEntries.map((e: any) => ({
+    const toEntry = (e: any, status: string) => ({
       title: e.media.title.english || e.media.title.romaji,
       coverImage: e.media.coverImage.medium,
       totalChapters: e.media.chapters,
       progress: e.progress,
       updatedAt: e.updatedAt,
-      status: "current",
-    }));
+      status,
+    });
 
-    const completed = completedEntries.slice(0, 1).map((e: any) => ({
-      title: e.media.title.english || e.media.title.romaji,
-      coverImage: e.media.coverImage.medium,
-      totalChapters: e.media.chapters,
-      progress: e.progress,
-      updatedAt: e.updatedAt,
-      status: "completed",
-    }));
+    const all = [
+      ...currentEntries.map((e: any) => toEntry(e, "current")),
+      ...completedEntries.map((e: any) => toEntry(e, "completed")),
+    ]
+      .sort((a: any, b: any) => b.updatedAt - a.updatedAt)
+      .slice(0, 3);
 
-    return NextResponse.json({ current, completed });
+    return NextResponse.json({ entries: all });
   } catch {
     return NextResponse.json(
       { error: "Failed to fetch manga data" },
