@@ -12,6 +12,14 @@
   background: var(--bg-muted);
 }
 
+.artwork {
+  width: 52px;
+  height: 52px;
+  border-radius: 3px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .waveform {
   width: 52px;
   height: 52px;

@@ -7,6 +7,7 @@ interface PodcastCardProps {
   playedUpTo: number;
   playingStatus: number;
   publishedAt: string;
+  artwork?: string | null;
   index: number;
 }
 
@@ -37,6 +38,7 @@ export default function PodcastCard({
   playedUpTo,
   playingStatus,
   publishedAt,
+  artwork,
   index,
 }: PodcastCardProps) {
   const isCompleted = playingStatus === 3 || (duration > 0 && playedUpTo >= duration * 0.95);
@@ -46,15 +48,24 @@ export default function PodcastCard({
 
   return (
     <div className={styles.card}>
-      <div className={styles.waveform} style={{ background: bgColor }}>
-        {BAR_HEIGHTS.map((h, i) => (
-          <div
-            key={i}
-            className={styles.bar}
-            style={{ height: `${h}px` }}
-          />
-        ))}
-      </div>
+      {artwork ? (
+        <img
+          src={artwork}
+          alt={podcastTitle}
+          className={styles.artwork}
+          loading="lazy"
+        />
+      ) : (
+        <div className={styles.waveform} style={{ background: bgColor }}>
+          {BAR_HEIGHTS.map((h, i) => (
+            <div
+              key={i}
+              className={styles.bar}
+              style={{ height: `${h}px` }}
+            />
+          ))}
+        </div>
+      )}
       <div className={styles.body}>
         <span className={styles.tag}>{tag}</span>
         <h3 className={styles.title}>{podcastTitle}</h3>

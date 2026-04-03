@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 const LOGIN_URL = "https://api.pocketcasts.com/user/login";
 const HISTORY_URL = "https://api.pocketcasts.com/user/history";
+const ITUNES_SEARCH = "https://itunes.apple.com/search";
 
 async function getToken(): Promise<string> {
   const email = process.env.POCKETCASTS_EMAIL;
@@ -21,6 +22,18 @@ async function getToken(): Promise<string> {
   return data.token;
 }
 
+async function getArtwork(podcastName: string): Promise<string | null> {
+  try {
+    const url = `${ITUNES_SEARCH}?term=${encodeURIComponent(podcastName)}&media=podcast&limit=1`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.results?.[0]?.artworkUrl100 ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function GET() {
   try {
     const token = await getToken();
@@ -36,14 +49,29 @@ export async function GET() {
     if (!res.ok) throw new Error(`History fetch failed: ${res.status}`);
 
     const data = await res.json();
-    const episodes = (data.episodes ?? []).slice(0, 2).map((ep: any) => ({
-      podcastTitle: ep.podcastTitle ?? ep.podcast_title ?? "Unknown Podcast",
-      episodeTitle: ep.title ?? "Unknown Episode",
-      duration: ep.duration ?? 0,
-      playedUpTo: ep.playedUpTo ?? ep.played_up_to ?? 0,
-      playingStatus: ep.playingStatus ?? ep.playing_status ?? 0,
-      publishedAt: ep.published ?? ep.publishedDate ?? "",
-    }));
+    const raw = (data.episodes ?? []).slice(0, 2);
+
+    // Fetch artwork in parallel
+    const podcastNames: string[] = [...new Set(raw.map((ep: any) => ep.podcastTitle ?? ep.podcast_title ?? ""))] as string[];
+    const artworkMap: Record<string, string | null> = {};
+    await Promise.all(
+      podcastNames.map(async (name) => {
+        artworkMap[name] = await getArtwork(name);
+      })
+    );
+
+    const episodes = raw.map((ep: any) => {
+      const title = ep.podcastTitle ?? ep.podcast_title ?? "Unknown Podcast";
+      return {
+        podcastTitle: title,
+        episodeTitle: ep.title ?? "Unknown Episode",
+        duration: ep.duration ?? 0,
+        playedUpTo: ep.playedUpTo ?? ep.played_up_to ?? 0,
+        playingStatus: ep.playingStatus ?? ep.playing_status ?? 0,
+        publishedAt: ep.published ?? ep.publishedDate ?? "",
+        artwork: artworkMap[title] ?? null,
+      };
+    });
 
     return NextResponse.json({ episodes });
   } catch {
