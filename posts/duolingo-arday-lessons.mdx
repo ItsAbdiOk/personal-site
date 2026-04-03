@@ -1,14 +1,75 @@
 ---
 title: "What Duolingo's path to profit taught me about Arday"
-date: "2025-03-20"
+date: "2026-04-02"
 description: "Lessons from Duolingo's business model and what they mean for building a language app targeting Somali speakers."
 ---
 
-This post is coming soon. It will explore what Duolingo's journey from free app to profitable business reveals about building language learning products — and how those lessons apply (and don't) to Arday's very different market.
+I used Duolingo for 374 days straight. Didn't miss one. Spanish, because I thought learning a third language would be fun, and honestly it was — the streaks got me, the XP got me, the whole dopamine machine worked exactly as designed. So when my mum started her ESOL classes and was struggling with homework, my first thought was obvious: just get her on Duolingo.
 
-## What I'll cover
+She opened the app. The onboarding was in English. The instructions were in English. The grammar explanations — English. Everything assumed you already spoke enough English to learn English, which is a bit like handing someone a Spanish dictionary written in Spanish and wishing them luck.
 
-- Duolingo's freemium evolution
-- Why the Somali market needs a different approach
-- Pricing for diaspora vs. East Africa
-- The role of ads in a learning experience
+That was the moment I stopped seeing Duolingo as a product that just hadn't added Somali yet and started seeing it as a product whose architecture fundamentally cannot serve my mum. Not because they're bad at what they do — they're exceptional at what they do. But what they do doesn't work here.
+
+So I built Arday.
+
+## What Duolingo actually got right
+
+Before I get into the gap, I want to be honest about what Duolingo nailed, because I've stolen most of it.
+
+The freemium model is genuinely brilliant. The core product is free. Not free-for-seven-days free, not free-but-you-hit-a-paywall-at-lesson-three free. Actually free. You can learn an entire language on Duolingo without paying a penny. They make money on convenience — no ads, streak freezes, unlimited hearts — not on access. The free tier is the product. Premium is the product without friction.
+
+I've copied this directly. Arday's free tier gives you 48 lessons across the first two levels. That's a complete beginner English course, all explained in Somali. Not a demo. Not a teaser. A real course that actually teaches you something. Premium unlocks Levels 3 through 5, all 15 real-world conversations, and offline access — but if you never pay, you still learned English.
+
+The gamification is the other thing they got right, and the thing most people misunderstand. Streaks and XP don't acquire users. Nobody downloads Duolingo because of streaks. They keep people coming back after the initial motivation fades, which for language learning happens around week three when you realise you still can't order food in your target language.
+
+Arday has XP, streaks, daily goals, a mini-leaderboard. But I think for my users the dynamic is different. When your motivation is "I want to understand what the doctor is telling me without my twelve-year-old translating," that doesn't fade at week three. Gamification is a supplement for Arday's audience, not the engine. The engine is dignity.
+
+## Where Duolingo's model breaks
+
+Duolingo charges $12.99 a month. In London, that's a coffee and a pastry. In Mogadishu, where the average monthly income is around $200, that's 6.5% of someone's salary. For a language app.
+
+But the price isn't even the real problem. The real problem is the payment rail. Duolingo takes Visa, Mastercard, and app store payments. My cousins in Hargeisa don't have Visa cards. They have M-PESA. They have EVC Plus. They top up mobile data 1GB at a time because a full day costs between fifty cents and two dollars, and they choose carefully what that gigabyte goes toward.
+
+Duolingo has 40-plus languages. Somali isn't one of them, and I don't think it ever will be — not because they couldn't build it, but because the unit economics of a $12.99/month subscription collected via credit card don't work in a market where the users pay for things through their phone carrier.
+
+This is where Arday diverges completely. Same product, two price points, two payment systems:
+
+Diaspora users — Somalis in London, Minneapolis, Toronto — pay $6.99/month through Stripe. Card, Apple Pay, Google Pay. Standard stuff.
+
+Africa users — Mogadishu, Hargeisa, Nairobi's Eastleigh — pay $1.99/month through Flutterwave. M-PESA, EVC Plus, bank transfer. The payment methods people actually use.
+
+$6.99 is reasonable if you're earning £2,000 a month in Birmingham. $1.99 is reasonable if you're earning $200 a month in Mogadishu. Same lessons, same quality, different acknowledgment of economic reality.
+
+## Distribution is a different game
+
+Duolingo grows through app store rankings and word of mouth in markets where people discover software by searching an app store. That's not how Somali communities work.
+
+Somali communities run on WhatsApp. News, gossip, job leads, memes, warnings about speed cameras — it all moves through WhatsApp groups. If something is useful, it gets shared in the family group, which gets shared in the neighbourhood group, which gets shared in the mosque group. I've seen a single message reach thousands of people in a day through nothing but group forwards.
+
+So Arday's primary distribution channel isn't the App Store. It's WhatsApp groups. It's short TikTok clips — "How do you say ___ in English?" with the Arday logo in the corner. It's Somali radio. It's the referral loop where you invite a friend and both get a week of premium free.
+
+This sounds scrappy because it is. Duolingo spent $183 million before their IPO building brand awareness and app store dominance. I'm a solo developer whose entire infrastructure runs on Vercel's free tier. Different constraints, different playbook.
+
+## What surprised me
+
+The thing I didn't expect was how far free tiers would carry a solo developer in 2025. Vercel hosts the app for free. Supabase handles the database for free. I'm generating TTS audio with Kokoro. The 1,659 MP3 files serving pronunciation across 561 vocabulary words were generated without paying for a single API call.
+
+I sat down to build an MVP expecting to immediately hit a wall where I'd need to start spending money. That wall hasn't come yet. The entire app — 120 lessons, 15 conversations, 8 question types, offline PWA support — costs me nothing to run right now. Zero. The first dollar Arday earns will be pure margin.
+
+This matters because it changes the math on serving a market that most companies ignore. The reason nobody's built an English learning app for Somali speakers isn't that 25 million people don't exist. It's that the per-user revenue in Mogadishu is low enough that you need VC-subsidised infrastructure just to break even. But if your infrastructure costs are zero, low per-user revenue is fine. You just need enough users.
+
+## What I'm borrowing and what I'm not
+
+From Duolingo I'm taking: freemium with a genuinely useful free tier. Gamification as a retention layer. Mobile-first, offline-capable design. The insight that language learning can be a real business, not just an NGO project.
+
+From Duolingo I'm leaving behind: global flat-rate pricing. Credit-card-only payment. English-language onboarding. The assumption that your users found you through an app store. The implicit requirement that you already speak a major language to use the product.
+
+The gap Arday fills isn't a feature Duolingo is missing. It's a structural limitation of how Duolingo is built. Their product assumes you can navigate English well enough to learn from it. Twenty-five million Somali speakers can't, and no amount of Duolingo adding a Somali course would fix that — because the course instructions would still be in English.
+
+## Where I'm at
+
+Right now Arday is in beta. A handful of testers are checking content accuracy and finding bugs before I put it in front of strangers. Nobody's paying for it yet. The pricing model, the dual payment rails, the WhatsApp distribution — all of that is the plan, not the reality.
+
+I'm writing this because I think the thinking is worth sharing even before the results prove it right or wrong. Duolingo showed that language learning is a viable business. The question I'm trying to answer is whether it's a viable business when your users pay with M-PESA, discover apps through WhatsApp forwards, and need the entire product explained in a language that Big Tech has mostly ignored.
+
+I'm building Arday for my mum. And for the 25 million people in exactly her situation, who've been waiting for someone who speaks their language to build something that actually helps.
