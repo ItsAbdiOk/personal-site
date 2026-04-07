@@ -52,7 +52,9 @@ export function isElevationGridAvailable(): boolean {
 }
 
 /**
- * Look up elevation (meters) at a lat/lng. Returns null if outside the grid.
+ * Look up elevation (meters) at a lat/lng using bilinear interpolation.
+ * Smooths out the source 50m grid when sampling at finer resolution.
+ * Returns null if outside the grid.
  */
 export function elevationAt(lat: number, lng: number): number | null {
   const grid = loadGrid();
@@ -60,16 +62,43 @@ export function elevationAt(lat: number, lng: number): number | null {
 
   const [easting, northing] = proj4("EPSG:4326", "EPSG:27700", [lng, lat]);
 
-  const col = Math.floor((easting - grid.xllcorner) / grid.cellsize);
-  // Stored bottom-to-top, so row 0 is at yllcorner
-  const row = Math.floor((northing - grid.yllcorner) / grid.cellsize);
+  // Continuous grid coordinates
+  const cf = (easting - grid.xllcorner) / grid.cellsize;
+  const rf = (northing - grid.yllcorner) / grid.cellsize;
 
-  if (col < 0 || col >= grid.ncols || row < 0 || row >= grid.nrows) {
+  if (cf < 0 || cf > grid.ncols - 1 || rf < 0 || rf > grid.nrows - 1) {
     return null;
   }
-  const stored = grid.elevations[row * grid.ncols + col];
-  if (stored === grid.noData) return null;
-  return stored / grid.scale;
+
+  const c0 = Math.floor(cf);
+  const r0 = Math.floor(rf);
+  const c1 = Math.min(c0 + 1, grid.ncols - 1);
+  const r1 = Math.min(r0 + 1, grid.nrows - 1);
+  const fx = cf - c0;
+  const fy = rf - r0;
+
+  const v00 = grid.elevations[r0 * grid.ncols + c0];
+  const v10 = grid.elevations[r0 * grid.ncols + c1];
+  const v01 = grid.elevations[r1 * grid.ncols + c0];
+  const v11 = grid.elevations[r1 * grid.ncols + c1];
+
+  // If any sample is NoData, fall back to nearest valid
+  if (
+    v00 === grid.noData ||
+    v10 === grid.noData ||
+    v01 === grid.noData ||
+    v11 === grid.noData
+  ) {
+    const stored = grid.elevations[r0 * grid.ncols + c0];
+    if (stored === grid.noData) return null;
+    return stored / grid.scale;
+  }
+
+  // Bilinear interpolation
+  const top = v00 * (1 - fx) + v10 * fx;
+  const bottom = v01 * (1 - fx) + v11 * fx;
+  const interpolated = top * (1 - fy) + bottom * fy;
+  return interpolated / grid.scale;
 }
 
 /**

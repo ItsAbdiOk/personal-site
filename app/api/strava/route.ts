@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sampleElevationGrid, isElevationGridAvailable } from "@/lib/elevation";
+import { sampleElevationGrid, isElevationGridAvailable, elevationAt } from "@/lib/elevation";
 
 export const revalidate = 600; // 10 min cache
 
@@ -113,6 +113,24 @@ export async function GET() {
           gridSize: sampled.gridSize,
           bounds: sampled.bounds,
         };
+        // Replace the route's GPS altitudes with OS Terrain elevations so
+        // the route line aligns perfectly with the terrain mesh.
+        const realRouteAltitudes: number[] = [];
+        let allValid = true;
+        for (const [lat, lng] of latestStreams.latlng) {
+          const e = elevationAt(lat, lng);
+          if (e === null) {
+            allValid = false;
+            break;
+          }
+          realRouteAltitudes.push(e);
+        }
+        if (allValid && realRouteAltitudes.length === latestStreams.altitude.length) {
+          latestStreams = {
+            latlng: latestStreams.latlng,
+            altitude: realRouteAltitudes,
+          };
+        }
       }
     }
 

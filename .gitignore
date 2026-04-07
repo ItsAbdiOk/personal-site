@@ -28,3 +28,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.gstack/
+
+# OS Terrain 50 source data (run scripts/convert-os-terrain-50.ts to regenerate
+# public/data/london-elevation.json from this; we don't ship the raw GB data)
+/terr50_gagg_gb/
