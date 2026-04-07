@@ -417,8 +417,16 @@ export default function Route3D({
     const xz = latlngToMeters(latlng);
     const minAlt = Math.min(...altitude);
     const elevationGain = Math.max(...altitude) - minAlt;
-    // Vertical exaggeration so flat runs still look interesting
-    const yScale = elevationGain > 5 ? 3 : 8;
+    // Vertical exaggeration so flat runs still look interesting.
+    // Use a lower scale for topo variants since real terrain has its own range.
+    const yScale =
+      variant === "topo-real"
+        ? elevationGain > 5
+          ? 1.5
+          : 4
+        : elevationGain > 5
+          ? 3
+          : 8;
 
     const points = xz.map((p, i) => new THREE.Vector3(p.x, (altitude[i] - minAlt) * yScale, p.z));
 
@@ -429,7 +437,9 @@ export default function Route3D({
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.z);
-    const cameraDistance = maxDim * 1.4;
+    // Pull the camera back a bit further for topo-real so we get a wider view
+    // including the surrounding terrain.
+    const cameraDistance = variant === "topo-real" ? maxDim * 1.8 : maxDim * 1.4;
 
     // --- Route tube ---
     const tubeRadius = Math.max(maxDim * 0.004, 1.5);
@@ -440,8 +450,11 @@ export default function Route3D({
       emissiveIntensity: variant === "light" ? 0 : 0.6,
       roughness: 0.4,
       metalness: 0.1,
+      // Always render the route on top so it's never hidden by terrain
+      depthTest: variant !== "topo-real",
     });
     const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+    tube.renderOrder = 999; // Draw last so it sits on top
     scene.add(tube);
 
     // --- Start and end markers ---
@@ -452,9 +465,11 @@ export default function Route3D({
         color: theme.routeColor,
         emissive: theme.routeEmissive,
         emissiveIntensity: variant === "light" ? 0 : 0.4,
+        depthTest: variant !== "topo-real",
       })
     );
     startMarker.position.copy(points[0]);
+    startMarker.renderOrder = 1000;
     scene.add(startMarker);
 
     const endMarker = new THREE.Mesh(
@@ -463,9 +478,11 @@ export default function Route3D({
         color: theme.routeColor,
         emissive: theme.routeEmissive,
         emissiveIntensity: variant === "light" ? 0 : 0.8,
+        depthTest: variant !== "topo-real",
       })
     );
     endMarker.position.copy(points[points.length - 1]);
+    endMarker.renderOrder = 1000;
     scene.add(endMarker);
 
     // --- Lighting ---
@@ -713,6 +730,9 @@ export default function Route3D({
     }
 
     // --- Camera orbit ---
+    // Higher elevation angle for topo-real (more top-down) so terrain doesn't
+    // occlude the route. Other variants stay lower-angle for drama.
+    const cameraHeightFactor = variant === "topo-real" ? 0.95 : 0.55;
     let frameId = 0;
     let time = reduceMotion ? Math.PI * 0.25 : 0;
 
@@ -720,7 +740,7 @@ export default function Route3D({
       time += 0.0025;
       const orbitX = center.x + Math.sin(time) * cameraDistance;
       const orbitZ = center.z + Math.cos(time) * cameraDistance;
-      const orbitY = center.y + cameraDistance * 0.55;
+      const orbitY = center.y + cameraDistance * cameraHeightFactor;
       camera.position.set(orbitX, orbitY, orbitZ);
       camera.lookAt(center.x, center.y, center.z);
       renderer.render(scene, camera);
