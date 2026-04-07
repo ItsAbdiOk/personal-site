@@ -10,7 +10,8 @@ export type Route3DVariant =
   | "terrain"
   | "topo-wireframe"
   | "topo-contour"
-  | "topo-banded";
+  | "topo-banded"
+  | "topo-real";
 
 interface Route3DProps {
   latlng: number[][];
@@ -59,15 +60,26 @@ function idwElevation(
   return den > 0 ? num / den : 0;
 }
 
-/** Build a terrain mesh from interpolated route altitudes */
-function buildTerrainGeometry(
+interface ElevationGrid {
+  data: Float32Array; // (gridSize+1)^2 values
+  size: number; // number of cells per side
+  x0: number;
+  z0: number;
+  cellW: number; // width of one cell in world units
+  cellH: number; // depth of one cell in world units
+  minElev: number;
+  maxElev: number;
+}
+
+/** Build a 2D elevation grid via IDW from the route stream */
+function buildElevationGrid(
   routeXZ: { x: number; z: number }[],
   routeYRaw: number[],
   bounds: { minX: number; maxX: number; minZ: number; maxZ: number },
-  gridSize: number,
+  size: number,
   yScale: number,
   minAlt: number
-): THREE.PlaneGeometry {
+): ElevationGrid {
   const padX = (bounds.maxX - bounds.minX) * 0.4;
   const padZ = (bounds.maxZ - bounds.minZ) * 0.4;
   const x0 = bounds.minX - padX;
@@ -77,7 +89,6 @@ function buildTerrainGeometry(
   const w = x1 - x0;
   const h = z1 - z0;
 
-  // Pack known points into typed arrays for fast IDW
   const knownX = new Float32Array(routeXZ.length);
   const knownZ = new Float32Array(routeXZ.length);
   const knownY = new Float32Array(routeXZ.length);
@@ -87,20 +98,149 @@ function buildTerrainGeometry(
     knownY[i] = (routeYRaw[i] - minAlt) * yScale;
   }
 
-  const planeGeo = new THREE.PlaneGeometry(w, h, gridSize, gridSize);
-  const positions = planeGeo.attributes.position;
+  const cellW = w / size;
+  const cellH = h / size;
+  const data = new Float32Array((size + 1) * (size + 1));
+  let minE = Infinity;
+  let maxE = -Infinity;
+  for (let j = 0; j <= size; j++) {
+    for (let i = 0; i <= size; i++) {
+      const wx = x0 + i * cellW;
+      const wz = z0 + j * cellH;
+      const e = idwElevation(wx, wz, knownX, knownZ, knownY);
+      data[j * (size + 1) + i] = e;
+      if (e < minE) minE = e;
+      if (e > maxE) maxE = e;
+    }
+  }
 
-  // Plane is in XY before rotation. Map UV to world XZ for IDW lookup.
+  return { data, size, x0, z0, cellW, cellH, minElev: minE, maxElev: maxE };
+}
+
+/** Build a terrain mesh from an existing elevation grid */
+function buildTerrainGeometryFromGrid(grid: ElevationGrid): THREE.PlaneGeometry {
+  const w = grid.size * grid.cellW;
+  const h = grid.size * grid.cellH;
+  const planeGeo = new THREE.PlaneGeometry(w, h, grid.size, grid.size);
+  const positions = planeGeo.attributes.position;
+  const cx = grid.x0 + w / 2;
+  const cz = grid.z0 + h / 2;
+
   for (let i = 0; i < positions.count; i++) {
-    const px = positions.getX(i); // -w/2 .. w/2
-    const py = positions.getY(i); // -h/2 .. h/2
-    const worldX = px + (x0 + x1) / 2;
-    const worldZ = py + (z0 + z1) / 2;
-    const elev = idwElevation(worldX, worldZ, knownX, knownZ, knownY);
-    positions.setZ(i, elev);
+    const px = positions.getX(i);
+    const py = positions.getY(i);
+    const worldX = px + cx;
+    const worldZ = py + cz;
+    const gi = Math.round((worldX - grid.x0) / grid.cellW);
+    const gj = Math.round((worldZ - grid.z0) / grid.cellH);
+    const idx = gj * (grid.size + 1) + gi;
+    positions.setZ(i, grid.data[idx] || 0);
   }
   planeGeo.computeVertexNormals();
   return planeGeo;
+}
+
+/**
+ * Marching squares: extract contour line segments at a given elevation level.
+ * Returns an array of line segment endpoints in world space (x,z pairs).
+ */
+function marchingSquares(grid: ElevationGrid, level: number): number[] {
+  const { data, size, x0, z0, cellW, cellH } = grid;
+  const segments: number[] = [];
+  const w = size + 1;
+
+  // For each cell defined by 4 corners (a=tl, b=tr, c=br, d=bl)
+  for (let j = 0; j < size; j++) {
+    for (let i = 0; i < size; i++) {
+      const a = data[j * w + i];
+      const b = data[j * w + (i + 1)];
+      const c = data[(j + 1) * w + (i + 1)];
+      const d = data[(j + 1) * w + i];
+
+      const ax = x0 + i * cellW;
+      const ay = z0 + j * cellH;
+      const bx = x0 + (i + 1) * cellW;
+      const by = ay;
+      const cx = bx;
+      const cy = z0 + (j + 1) * cellH;
+      const dx = ax;
+      const dy = cy;
+
+      // Linear interpolation for edge crossing
+      const lerp = (
+        e1x: number,
+        e1y: number,
+        e1v: number,
+        e2x: number,
+        e2y: number,
+        e2v: number
+      ) => {
+        if (Math.abs(e2v - e1v) < 1e-6) return [(e1x + e2x) / 2, (e1y + e2y) / 2];
+        const t = (level - e1v) / (e2v - e1v);
+        return [e1x + t * (e2x - e1x), e1y + t * (e2y - e1y)];
+      };
+
+      let code = 0;
+      if (a >= level) code |= 1;
+      if (b >= level) code |= 2;
+      if (c >= level) code |= 4;
+      if (d >= level) code |= 8;
+
+      if (code === 0 || code === 15) continue;
+
+      // Edge intersections
+      const top = () => lerp(ax, ay, a, bx, by, b);
+      const right = () => lerp(bx, by, b, cx, cy, c);
+      const bottom = () => lerp(dx, dy, d, cx, cy, c);
+      const left = () => lerp(ax, ay, a, dx, dy, d);
+
+      let segs: number[][][] = [];
+      switch (code) {
+        case 1:
+        case 14:
+          segs = [[left(), top()]];
+          break;
+        case 2:
+        case 13:
+          segs = [[top(), right()]];
+          break;
+        case 3:
+        case 12:
+          segs = [[left(), right()]];
+          break;
+        case 4:
+        case 11:
+          segs = [[right(), bottom()]];
+          break;
+        case 5:
+          segs = [
+            [left(), top()],
+            [right(), bottom()],
+          ];
+          break;
+        case 6:
+        case 9:
+          segs = [[top(), bottom()]];
+          break;
+        case 7:
+        case 8:
+          segs = [[left(), bottom()]];
+          break;
+        case 10:
+          segs = [
+            [left(), bottom()],
+            [right(), top()],
+          ];
+          break;
+      }
+
+      for (const s of segs) {
+        segments.push(s[0][0], s[0][1], s[1][0], s[1][1]);
+      }
+    }
+  }
+
+  return segments;
 }
 
 export default function Route3D({
@@ -175,12 +315,23 @@ export default function Route3D({
         hemiGround: 0x0d0d0c,
         terrainColor: 0x1a1a18,
       },
+      "topo-real": {
+        // Light theme like a real USGS topo map
+        bg: 0xfafaf8,
+        routeColor: 0x1a1a18,
+        routeEmissive: 0x000000,
+        ambientIntensity: 0.9,
+        hemiSky: 0xffffff,
+        hemiGround: 0xe8e8e4,
+        terrainColor: 0xfafaf8,
+      },
     };
     const theme = themes[variant];
     const isTopo =
       variant === "topo-wireframe" ||
       variant === "topo-contour" ||
-      variant === "topo-banded";
+      variant === "topo-banded" ||
+      variant === "topo-real";
 
     const width = container.clientWidth;
 
@@ -268,6 +419,8 @@ export default function Route3D({
     let terrainMat: THREE.Material | null = null;
     let wireMat: THREE.LineBasicMaterial | null = null;
     let wireSegments: THREE.LineSegments | null = null;
+    const contourGeometries: THREE.BufferGeometry[] = [];
+    const contourMaterials: THREE.Material[] = [];
 
     if (isTopo) {
       const bounds = {
@@ -276,7 +429,10 @@ export default function Route3D({
         minZ: box.min.z,
         maxZ: box.max.z,
       };
-      terrainGeo = buildTerrainGeometry(xz, altitude, bounds, 48, yScale, minAlt);
+      // Build elevation grid first; reuse for both terrain mesh and marching squares
+      const gridResolution = variant === "topo-real" ? 96 : 48;
+      const grid = buildElevationGrid(xz, altitude, bounds, gridResolution, yScale, minAlt);
+      terrainGeo = buildTerrainGeometryFromGrid(grid);
 
       // The plane is initially in XY. We'll rotate it -90deg X so its
       // local Z (which we used for elevation) becomes world Y. Position
@@ -397,6 +553,72 @@ export default function Route3D({
         terrainMesh.rotation.x = -Math.PI / 2;
         terrainMesh.position.y = -1;
         scene.add(terrainMesh);
+      } else if (variant === "topo-real") {
+        // REAL topographic map: marching squares contour lines on a light background.
+        // 1. Subtle terrain shading underneath (very light)
+        // 2. ~30 contour lines extracted via marching squares
+        // 3. Glowing dark route on top
+        terrainMat = new THREE.MeshStandardMaterial({
+          color: 0xf2f2ee,
+          roughness: 0.95,
+          metalness: 0,
+          flatShading: false,
+          side: THREE.DoubleSide,
+        });
+        const terrainMesh = new THREE.Mesh(terrainGeo, terrainMat);
+        terrainMesh.rotation.x = -Math.PI / 2;
+        terrainMesh.position.y = -1;
+        scene.add(terrainMesh);
+
+        // Marching squares contour extraction
+        const elevRange = grid.maxElev - grid.minElev;
+        const contourCount = 28;
+        const contourStep = elevRange / contourCount;
+        // Center of the grid in world space
+        const gridCenterX = grid.x0 + (grid.size * grid.cellW) / 2;
+        const gridCenterZ = grid.z0 + (grid.size * grid.cellH) / 2;
+
+        for (let n = 1; n < contourCount; n++) {
+          const level = grid.minElev + n * contourStep;
+          const segments = marchingSquares(grid, level);
+          if (segments.length === 0) continue;
+
+          // Convert (x, z) pairs to (x, level, z) Vector3 positions
+          // Position relative to grid center (since terrain mesh is at world origin
+          // before we offset it)
+          const positions = new Float32Array((segments.length / 2) * 3);
+          for (let s = 0; s < segments.length / 2; s++) {
+            positions[s * 3] = segments[s * 2] - gridCenterX;
+            positions[s * 3 + 1] = level;
+            positions[s * 3 + 2] = segments[s * 2 + 1] - gridCenterZ;
+          }
+
+          const contourGeo = new THREE.BufferGeometry();
+          contourGeo.setAttribute(
+            "position",
+            new THREE.BufferAttribute(positions, 3)
+          );
+          contourGeometries.push(contourGeo);
+
+          // Color contours by elevation: lower = light brown, higher = dark brown
+          const t = n / contourCount;
+          const r = 0.45 + t * 0.15;
+          const g = 0.32 + t * 0.10;
+          const b = 0.22 + t * 0.05;
+          // Every 5th contour is bolder (index contour like real maps)
+          const isIndex = n % 5 === 0;
+          const contourMat = new THREE.LineBasicMaterial({
+            color: new THREE.Color(r, g, b),
+            transparent: true,
+            opacity: isIndex ? 0.95 : 0.55,
+            linewidth: 1, // Note: most browsers ignore this, lines are always 1px
+          });
+          contourMaterials.push(contourMat);
+
+          const contourLines = new THREE.LineSegments(contourGeo, contourMat);
+          contourLines.position.y = -0.5; // Slightly above terrain
+          scene.add(contourLines);
+        }
       }
     }
 
@@ -450,6 +672,8 @@ export default function Route3D({
       terrainMat?.dispose();
       wireMat?.dispose();
       wireSegments?.geometry.dispose();
+      contourGeometries.forEach((g) => g.dispose());
+      contourMaterials.forEach((m) => m.dispose());
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
@@ -457,12 +681,25 @@ export default function Route3D({
   }, [latlng, altitude, variant, height]);
 
   return (
-    <div className={`${styles.container} ${variant === "light" ? styles.containerLight : styles.containerDark}`}>
+    <div
+      className={`${styles.container} ${
+        variant === "light" || variant === "topo-real"
+          ? styles.containerLight
+          : styles.containerDark
+      }`}
+    >
       <div ref={containerRef} className={styles.canvas} style={{ height }} />
-      <span className={variant === "light" ? styles.label : styles.labelLight}>
+      <span
+        className={
+          variant === "light" || variant === "topo-real"
+            ? styles.label
+            : styles.labelLight
+        }
+      >
         {variant === "topo-wireframe" && "A · Wireframe contour"}
         {variant === "topo-contour" && "B · Contour shader"}
         {variant === "topo-banded" && "C · Banded elevation"}
+        {variant === "topo-real" && "D · Topographic map"}
         {(variant === "dark" || variant === "light" || variant === "terrain") &&
           "Route · with elevation"}
       </span>

@@ -109,23 +109,13 @@ export default function RunStats({ runs, stats, latestStreams }: RunStatsProps) 
             </div>
           </div>
 
-          {/* 3D route map: showing 3 topo terrain variants for comparison */}
+          {/* 3D route map: real topographic style with marching-squares contours */}
           {latestStreams && latestStreams.latlng.length > 1 ? (
-            <div className={styles.route3DStack}>
+            <div className={styles.route3DSection}>
               <Route3D
                 latlng={latestStreams.latlng}
                 altitude={latestStreams.altitude}
-                variant="topo-wireframe"
-              />
-              <Route3D
-                latlng={latestStreams.latlng}
-                altitude={latestStreams.altitude}
-                variant="topo-contour"
-              />
-              <Route3D
-                latlng={latestStreams.latlng}
-                altitude={latestStreams.altitude}
-                variant="topo-banded"
+                variant="topo-real"
               />
             </div>
           ) : lastRun.polyline ? (
