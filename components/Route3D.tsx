@@ -707,13 +707,15 @@ export default function Route3D({
           const contourMat = new THREE.LineBasicMaterial({
             color: new THREE.Color(r, g, b),
             transparent: true,
-            opacity: isIndex ? 0.95 : 0.55,
+            opacity: isIndex ? 0.9 : 0.55,
             linewidth: 1, // Note: most browsers ignore this, lines are always 1px
+            // Always render contours on top of terrain so they never disappear
+            depthTest: false,
           });
           contourMaterials.push(contourMat);
 
           const contourLines = new THREE.LineSegments(contourGeo, contourMat);
-          contourLines.position.y = -0.5; // Slightly above terrain
+          contourLines.renderOrder = 500; // After terrain (default 0), before route (999)
           scene.add(contourLines);
         }
       }

@@ -97,14 +97,23 @@ export async function GET() {
       const maxLat = Math.max(...lats);
       const minLng = Math.min(...lngs);
       const maxLng = Math.max(...lngs);
-      // Pad bounding box by 40% so terrain extends beyond the route
-      const padLat = (maxLat - minLat) * 0.4;
-      const padLng = (maxLng - minLng) * 0.4;
+      const cLat = (minLat + maxLat) / 2;
+      const cLng = (minLng + maxLng) / 2;
+
+      // Enforce a minimum area of ~5km x 5km so you see real London
+      // topography (Thames valley, hills) even on a tiny walk.
+      // 1 deg lat ≈ 111km, 1 deg lng at London ≈ 69km
+      const minHalfLatDeg = 2.5 / 111; // 2.5km half-width = 5km total
+      const minHalfLngDeg = 2.5 / 69;
+
+      const halfLat = Math.max((maxLat - minLat) / 2 + 0.2 * (maxLat - minLat), minHalfLatDeg);
+      const halfLng = Math.max((maxLng - minLng) / 2 + 0.2 * (maxLng - minLng), minHalfLngDeg);
+
       const bounds = {
-        minLat: minLat - padLat,
-        maxLat: maxLat + padLat,
-        minLng: minLng - padLng,
-        maxLng: maxLng + padLng,
+        minLat: cLat - halfLat,
+        maxLat: cLat + halfLat,
+        minLng: cLng - halfLng,
+        maxLng: cLng + halfLng,
       };
       const sampled = sampleElevationGrid(bounds, 96);
       if (sampled) {
