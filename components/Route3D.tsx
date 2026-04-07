@@ -13,11 +13,18 @@ export type Route3DVariant =
   | "topo-banded"
   | "topo-real";
 
+interface RealElevationGrid {
+  elevations: number[];
+  gridSize: number;
+  bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number };
+}
+
 interface Route3DProps {
   latlng: number[][];
   altitude: number[];
   variant?: Route3DVariant;
   height?: number;
+  realElevationGrid?: RealElevationGrid | null;
 }
 
 /** Convert lat/lng to local meters relative to centroid */
@@ -69,6 +76,63 @@ interface ElevationGrid {
   cellH: number; // depth of one cell in world units
   minElev: number;
   maxElev: number;
+}
+
+/**
+ * Build an ElevationGrid from a real lat/lng-bounded elevation array
+ * (e.g. sampled from OS Terrain 50). Coordinates are converted to local
+ * meters relative to the route's centroid.
+ */
+function buildElevationGridFromReal(
+  real: RealElevationGrid,
+  routeCentroidLat: number,
+  routeCentroidLng: number,
+  yScale: number,
+  minAltOffset: number
+): ElevationGrid {
+  const { elevations, gridSize, bounds } = real;
+  // gridSize here is number of vertices per side. ElevationGrid.size is cells (vertices - 1).
+  const cellsPerSide = gridSize - 1;
+
+  // Convert lat/lng bounds to local meters
+  const mPerDegLat = 111320;
+  const mPerDegLng = 111320 * Math.cos((routeCentroidLat * Math.PI) / 180);
+
+  const x0 = (bounds.minLng - routeCentroidLng) * mPerDegLng;
+  const x1 = (bounds.maxLng - routeCentroidLng) * mPerDegLng;
+  // North is -Z, so the maxLat row maps to minZ
+  const z0 = -(bounds.maxLat - routeCentroidLat) * mPerDegLat;
+  const z1 = -(bounds.minLat - routeCentroidLat) * mPerDegLat;
+
+  const cellW = (x1 - x0) / cellsPerSide;
+  const cellH = (z1 - z0) / cellsPerSide;
+
+  // Source array has row 0 at minLat (south). We want row 0 at minZ (north),
+  // so flip rows when copying.
+  const data = new Float32Array(gridSize * gridSize);
+  let minE = Infinity;
+  let maxE = -Infinity;
+  for (let r = 0; r < gridSize; r++) {
+    const srcRow = gridSize - 1 - r;
+    for (let c = 0; c < gridSize; c++) {
+      const srcVal = elevations[srcRow * gridSize + c];
+      const scaled = (srcVal - minAltOffset) * yScale;
+      data[r * gridSize + c] = scaled;
+      if (scaled < minE) minE = scaled;
+      if (scaled > maxE) maxE = scaled;
+    }
+  }
+
+  return {
+    data,
+    size: cellsPerSide,
+    x0,
+    z0,
+    cellW,
+    cellH,
+    minElev: minE,
+    maxElev: maxE,
+  };
 }
 
 /** Build a 2D elevation grid via IDW from the route stream */
@@ -248,6 +312,7 @@ export default function Route3D({
   altitude,
   variant = "dark",
   height = 320,
+  realElevationGrid,
 }: Route3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -429,9 +494,24 @@ export default function Route3D({
         minZ: box.min.z,
         maxZ: box.max.z,
       };
-      // Build elevation grid first; reuse for both terrain mesh and marching squares
-      const gridResolution = variant === "topo-real" ? 96 : 48;
-      const grid = buildElevationGrid(xz, altitude, bounds, gridResolution, yScale, minAlt);
+
+      // Prefer real elevation grid (OS Terrain 50) over IDW interpolation
+      let grid: ElevationGrid;
+      if (realElevationGrid && realElevationGrid.elevations.length > 0) {
+        // Centroid of route in lat/lng for the local-meters projection
+        const cLat = latlng.reduce((s, p) => s + p[0], 0) / latlng.length;
+        const cLng = latlng.reduce((s, p) => s + p[1], 0) / latlng.length;
+        grid = buildElevationGridFromReal(
+          realElevationGrid,
+          cLat,
+          cLng,
+          yScale,
+          minAlt
+        );
+      } else {
+        const gridResolution = variant === "topo-real" ? 96 : 48;
+        grid = buildElevationGrid(xz, altitude, bounds, gridResolution, yScale, minAlt);
+      }
       terrainGeo = buildTerrainGeometryFromGrid(grid);
 
       // The plane is initially in XY. We'll rotate it -90deg X so its

@@ -24,9 +24,16 @@ interface LatestStreams {
   altitude: number[];
 }
 
+interface RealElevationGrid {
+  elevations: number[];
+  gridSize: number;
+  bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number };
+}
+
 interface RunStatsProps {
   runs: Run[];
   latestStreams?: LatestStreams | null;
+  realElevationGrid?: RealElevationGrid | null;
   stats: {
     lastRunKm: string;
     avgPace: string;
@@ -51,7 +58,7 @@ function getPacePerKm(run: Run): number {
   return 1000 / run.averageSpeed / 60; // minutes per km
 }
 
-export default function RunStats({ runs, stats, latestStreams }: RunStatsProps) {
+export default function RunStats({ runs, stats, latestStreams, realElevationGrid }: RunStatsProps) {
   const lastRun = runs[0] ?? null;
 
   // Pace values for bar chart
@@ -116,6 +123,7 @@ export default function RunStats({ runs, stats, latestStreams }: RunStatsProps) 
                 latlng={latestStreams.latlng}
                 altitude={latestStreams.altitude}
                 variant="topo-real"
+                realElevationGrid={realElevationGrid}
               />
             </div>
           ) : lastRun.polyline ? (

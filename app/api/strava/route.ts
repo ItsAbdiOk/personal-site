@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sampleElevationGrid, isElevationGridAvailable } from "@/lib/elevation";
 
 export const revalidate = 600; // 10 min cache
 
@@ -81,6 +82,40 @@ export async function GET() {
       }
     }
 
+    // Sample real elevation grid from OS Terrain 50 (if available) for the
+    // bounding box of the latest run, padded for context. This gives the
+    // 3D map real London topography instead of IDW interpolation.
+    let realElevationGrid: {
+      elevations: number[];
+      gridSize: number;
+      bounds: { minLat: number; minLng: number; maxLat: number; maxLng: number };
+    } | null = null;
+    if (latestStreams && isElevationGridAvailable()) {
+      const lats = latestStreams.latlng.map((p) => p[0]);
+      const lngs = latestStreams.latlng.map((p) => p[1]);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+      // Pad bounding box by 40% so terrain extends beyond the route
+      const padLat = (maxLat - minLat) * 0.4;
+      const padLng = (maxLng - minLng) * 0.4;
+      const bounds = {
+        minLat: minLat - padLat,
+        maxLat: maxLat + padLat,
+        minLng: minLng - padLng,
+        maxLng: maxLng + padLng,
+      };
+      const sampled = sampleElevationGrid(bounds, 96);
+      if (sampled) {
+        realElevationGrid = {
+          elevations: sampled.elevations,
+          gridSize: sampled.gridSize,
+          bounds: sampled.bounds,
+        };
+      }
+    }
+
     // Compute aggregate stats
     const now = new Date();
     const startOfWeek = new Date(now);
@@ -110,6 +145,7 @@ export async function GET() {
     return NextResponse.json({
       runs,
       latestStreams,
+      realElevationGrid,
       stats: {
         lastRunKm,
         avgPace,
