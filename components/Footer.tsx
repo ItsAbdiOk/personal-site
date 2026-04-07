@@ -20,7 +20,7 @@ export default function Footer() {
           </a>
           <span className={styles.dot}>·</span>
           <a
-            href="https://linkedin.com/in/itsabdiok"
+            href="https://linkedin.com/in/abdirahmanomarmohamed"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.link}

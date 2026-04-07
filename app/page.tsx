@@ -60,7 +60,7 @@ export default function Home() {
       <main>
         {/* Hero — entrance animations */}
         <section className={`${styles.hero} page-container`}>
-          <p className="eyebrow animate-in animate-in-1">ML Engineer · London</p>
+          <p className="eyebrow animate-in animate-in-1">Abdirahman Mohamed · ML Engineer · London</p>
           <h1 className={`${styles.headline} animate-in animate-in-2`}>
             Building things
             <br />
@@ -69,10 +69,10 @@ export default function Home() {
             and machine.
           </h1>
           <p className={`${styles.bio} animate-in animate-in-3`}>
-            MSc AI student at Queen Mary University of London, specialising in
-            speech and language processing. I build products that make language
-            accessible — currently Arday, an English learning app for Somali
-            speakers.
+            I&apos;m Abdirahman, an MSc AI student at Queen Mary University of
+            London, specialising in speech and language processing. I build
+            products that make language accessible — currently Arday, an English
+            learning app for Somali speakers.
           </p>
           <div className={`${styles.links} animate-in animate-in-4`}>
             <a
@@ -94,7 +94,7 @@ export default function Home() {
             </a>
             <span className={styles.linkDot}>·</span>
             <a
-              href="https://linkedin.com/in/itsabdiok"
+              href="https://linkedin.com/in/abdirahmanomarmohamed"
               target="_blank"
               rel="noopener noreferrer"
               className={styles.heroLink}
