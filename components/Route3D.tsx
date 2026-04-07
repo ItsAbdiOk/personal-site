@@ -945,7 +945,6 @@ export default function Route3D({
         {variant === "topo-wireframe" && "A · Wireframe contour"}
         {variant === "topo-contour" && "B · Contour shader"}
         {variant === "topo-banded" && "C · Banded elevation"}
-        {variant === "topo-real" && "D · Topographic map"}
         {(variant === "dark" || variant === "light" || variant === "terrain") &&
           "Route · with elevation"}
       </span>
