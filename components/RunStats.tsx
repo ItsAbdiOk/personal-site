@@ -109,15 +109,23 @@ export default function RunStats({ runs, stats, latestStreams }: RunStatsProps) 
             </div>
           </div>
 
-          {/* 3D route map (with elevation from Strava streams).
-              Falls back to SVG polyline if streams unavailable.
-              FUTURE: add topographic terrain mesh under the route. */}
+          {/* 3D route map: showing 3 topo terrain variants for comparison */}
           {latestStreams && latestStreams.latlng.length > 1 ? (
-            <div className={styles.route3DSection}>
+            <div className={styles.route3DStack}>
               <Route3D
                 latlng={latestStreams.latlng}
                 altitude={latestStreams.altitude}
-                variant="dark"
+                variant="topo-wireframe"
+              />
+              <Route3D
+                latlng={latestStreams.latlng}
+                altitude={latestStreams.altitude}
+                variant="topo-contour"
+              />
+              <Route3D
+                latlng={latestStreams.latlng}
+                altitude={latestStreams.altitude}
+                variant="topo-banded"
               />
             </div>
           ) : lastRun.polyline ? (
