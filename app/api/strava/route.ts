@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sampleElevationGrid, isElevationGridAvailable, elevationAt } from "@/lib/elevation";
+import { matchTraceCached } from "@/lib/map-match";
 
 export const revalidate = 600; // 10 min cache
 
@@ -79,6 +80,25 @@ export async function GET() {
         }
       } catch {
         // Streams optional — fall back to polyline only
+      }
+    }
+
+    // Map-match the GPS trace to OSM streets via Valhalla (cached per run ID).
+    // This snaps the noisy GPS path onto real streets so it doesn't clip
+    // through buildings in the 3D view.
+    if (latestStreams && runs[0]?.id) {
+      try {
+        const matched = await matchTraceCached(runs[0].id, latestStreams.latlng);
+        if (matched && matched.length >= 2) {
+          // Replace latlng with matched coordinates. We'll re-interpolate
+          // altitudes below when the elevation grid is available.
+          latestStreams = {
+            latlng: matched,
+            altitude: new Array(matched.length).fill(latestStreams.altitude[0]),
+          };
+        }
+      } catch (e) {
+        console.warn("map-match failed, using raw trace:", e);
       }
     }
 

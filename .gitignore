@@ -33,3 +33,6 @@ next-env.d.ts
 # OS Terrain 50 source data (run scripts/convert-os-terrain-50.ts to regenerate
 # public/data/london-elevation.json from this; we don't ship the raw GB data)
 /terr50_gagg_gb/
+
+# Valhalla map-match cache (per Strava activity ID)
+/.map-match-cache/

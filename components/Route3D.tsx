@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import styles from "./Route3D.module.css";
 
 export type Route3DVariant =
@@ -19,12 +20,120 @@ interface RealElevationGrid {
   bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number };
 }
 
+interface BuildingsData {
+  bounds: { minLat: number; minLng: number; maxLat: number; maxLng: number };
+  scale: number;
+  heightScale: number;
+  count: number;
+  buildings: [number, number[]][]; // [heightDeci, [latDelta0, lngDelta0, ...]]
+}
+
 interface Route3DProps {
   latlng: number[][];
   altitude: number[];
   variant?: Route3DVariant;
   height?: number;
   realElevationGrid?: RealElevationGrid | null;
+  buildingsUrl?: string; // path to london-buildings.json
+}
+
+// Cache the buildings JSON across component re-renders / route changes
+let buildingsCache: BuildingsData | null = null;
+let buildingsPromise: Promise<BuildingsData> | null = null;
+async function loadBuildings(url: string): Promise<BuildingsData> {
+  if (buildingsCache) return buildingsCache;
+  if (buildingsPromise) return buildingsPromise;
+  buildingsPromise = fetch(url).then(async (r) => {
+    if (!r.ok) throw new Error(`buildings fetch ${r.status}`);
+    const data = (await r.json()) as BuildingsData;
+    buildingsCache = data;
+    return data;
+  });
+  return buildingsPromise;
+}
+
+/** Build a single merged mesh of all buildings within the route's bbox */
+function buildBuildingsMesh(
+  data: BuildingsData,
+  routeCentroidLat: number,
+  routeCentroidLng: number,
+  yScale: number,
+  cropBounds: { minLat: number; maxLat: number; minLng: number; maxLng: number }
+): THREE.Mesh | null {
+  const mPerDegLat = 111320;
+  const mPerDegLng = 111320 * Math.cos((routeCentroidLat * Math.PI) / 180);
+
+  const geometries: THREE.BufferGeometry[] = [];
+
+  for (const [heightDeci, flat] of data.buildings) {
+    if (flat.length < 6) continue; // need 3+ points
+    const heightMeters = heightDeci / data.heightScale;
+
+    // Decode polygon: deltas back to lat/lng, then to local meters
+    const shape = new THREE.Shape();
+    let firstX = 0;
+    let firstZ = 0;
+    let inBbox = false;
+
+    for (let i = 0; i < flat.length; i += 2) {
+      const lat = data.bounds.minLat + flat[i] / data.scale;
+      const lng = data.bounds.minLng + flat[i + 1] / data.scale;
+      if (
+        lat >= cropBounds.minLat &&
+        lat <= cropBounds.maxLat &&
+        lng >= cropBounds.minLng &&
+        lng <= cropBounds.maxLng
+      ) {
+        inBbox = true;
+      }
+      // Local meters relative to route centroid (Y axis = -north)
+      const x = (lng - routeCentroidLng) * mPerDegLng;
+      const z = -(lat - routeCentroidLat) * mPerDegLat;
+      if (i === 0) {
+        shape.moveTo(x, z);
+        firstX = x;
+        firstZ = z;
+      } else {
+        shape.lineTo(x, z);
+      }
+    }
+    shape.lineTo(firstX, firstZ);
+
+    if (!inBbox) continue;
+
+    try {
+      const extrudeSettings = {
+        depth: heightMeters * yScale,
+        bevelEnabled: false,
+        curveSegments: 1,
+      };
+      const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+      // ExtrudeGeometry extrudes along +Z. We want +Y. Rotate so the bottom
+      // is at y=0 and the building rises upward.
+      geo.rotateX(-Math.PI / 2);
+      geometries.push(geo);
+    } catch {
+      // Self-intersecting polygons throw — skip them
+    }
+  }
+
+  if (geometries.length === 0) return null;
+
+  const merged = mergeGeometries(geometries, false);
+  if (!merged) return null;
+
+  // Free per-building geometries
+  for (const g of geometries) g.dispose();
+
+  merged.computeVertexNormals();
+
+  const material = new THREE.MeshLambertMaterial({
+    color: 0xeeeae0,
+    side: THREE.DoubleSide,
+  });
+
+  const mesh = new THREE.Mesh(merged, material);
+  return mesh;
 }
 
 /** Convert lat/lng to local meters relative to centroid */
@@ -313,6 +422,7 @@ export default function Route3D({
   variant = "dark",
   height = 320,
   realElevationGrid,
+  buildingsUrl,
 }: Route3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -721,6 +831,33 @@ export default function Route3D({
       }
     }
 
+    // --- 3D buildings (topo-real only) ---
+    let buildingsMesh: THREE.Mesh | null = null;
+    let buildingsCancelled = false;
+    if (variant === "topo-real" && buildingsUrl) {
+      const cLat = latlng.reduce((s, p) => s + p[0], 0) / latlng.length;
+      const cLng = latlng.reduce((s, p) => s + p[1], 0) / latlng.length;
+      // Crop to the same area as the elevation grid (or padded route bounds)
+      const cropBounds = realElevationGrid?.bounds ?? {
+        minLat: Math.min(...latlng.map((p) => p[0])) - 0.02,
+        maxLat: Math.max(...latlng.map((p) => p[0])) + 0.02,
+        minLng: Math.min(...latlng.map((p) => p[1])) - 0.02,
+        maxLng: Math.max(...latlng.map((p) => p[1])) + 0.02,
+      };
+      loadBuildings(buildingsUrl)
+        .then((data) => {
+          if (buildingsCancelled) return;
+          const mesh = buildBuildingsMesh(data, cLat, cLng, yScale, cropBounds);
+          if (mesh && !buildingsCancelled) {
+            // Sit on top of terrain
+            mesh.position.y = -1;
+            scene.add(mesh);
+            buildingsMesh = mesh;
+          }
+        })
+        .catch((e) => console.warn("buildings load failed:", e));
+    }
+
     // --- Subtle grid for the plain dark variant only ---
     if (variant === "dark") {
       const gridSize = maxDim * 2;
@@ -766,6 +903,7 @@ export default function Route3D({
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
+      buildingsCancelled = true;
       renderer.dispose();
       tubeGeometry.dispose();
       tubeMaterial.dispose();
@@ -776,11 +914,17 @@ export default function Route3D({
       wireSegments?.geometry.dispose();
       contourGeometries.forEach((g) => g.dispose());
       contourMaterials.forEach((m) => m.dispose());
+      if (buildingsMesh) {
+        buildingsMesh.geometry.dispose();
+        if (buildingsMesh.material instanceof THREE.Material) {
+          buildingsMesh.material.dispose();
+        }
+      }
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, [latlng, altitude, variant, height]);
+  }, [latlng, altitude, variant, height, realElevationGrid, buildingsUrl]);
 
   return (
     <div
@@ -801,7 +945,6 @@ export default function Route3D({
         {variant === "topo-wireframe" && "A · Wireframe contour"}
         {variant === "topo-contour" && "B · Contour shader"}
         {variant === "topo-banded" && "C · Banded elevation"}
-        {variant === "topo-real" && "D · Topographic map"}
         {(variant === "dark" || variant === "light" || variant === "terrain") &&
           "Route · with elevation"}
       </span>

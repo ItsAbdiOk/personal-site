@@ -124,6 +124,7 @@ export default function RunStats({ runs, stats, latestStreams, realElevationGrid
                 altitude={latestStreams.altitude}
                 variant="topo-real"
                 realElevationGrid={realElevationGrid}
+                buildingsUrl="/data/london-buildings.json"
               />
             </div>
           ) : lastRun.polyline ? (
