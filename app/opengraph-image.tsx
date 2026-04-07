@@ -54,11 +54,12 @@ export default async function OpengraphImage() {
               lineHeight: 1.2,
               display: "flex",
               flexWrap: "wrap",
+              gap: "0 14px",
             }}
           >
-            <span>Building things at the edge of&nbsp;</span>
+            <span>Building things at the edge of</span>
             <span style={{ fontStyle: "italic", color: "#6E6E68" }}>language</span>
-            <span>&nbsp;and machine.</span>
+            <span>and machine.</span>
           </div>
         </div>
 
