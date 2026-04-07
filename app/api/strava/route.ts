@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sampleElevationGrid, isElevationGridAvailable, elevationAt } from "@/lib/elevation";
 
 export const revalidate = 600; // 10 min cache
 
@@ -81,6 +82,67 @@ export async function GET() {
       }
     }
 
+    // Sample real elevation grid from OS Terrain 50 (if available) for the
+    // bounding box of the latest run, padded for context. This gives the
+    // 3D map real London topography instead of IDW interpolation.
+    let realElevationGrid: {
+      elevations: number[];
+      gridSize: number;
+      bounds: { minLat: number; minLng: number; maxLat: number; maxLng: number };
+    } | null = null;
+    if (latestStreams && isElevationGridAvailable()) {
+      const lats = latestStreams.latlng.map((p) => p[0]);
+      const lngs = latestStreams.latlng.map((p) => p[1]);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+      const cLat = (minLat + maxLat) / 2;
+      const cLng = (minLng + maxLng) / 2;
+
+      // Enforce a minimum area of ~5km x 5km so you see real London
+      // topography (Thames valley, hills) even on a tiny walk.
+      // 1 deg lat ≈ 111km, 1 deg lng at London ≈ 69km
+      const minHalfLatDeg = 2.5 / 111; // 2.5km half-width = 5km total
+      const minHalfLngDeg = 2.5 / 69;
+
+      const halfLat = Math.max((maxLat - minLat) / 2 + 0.2 * (maxLat - minLat), minHalfLatDeg);
+      const halfLng = Math.max((maxLng - minLng) / 2 + 0.2 * (maxLng - minLng), minHalfLngDeg);
+
+      const bounds = {
+        minLat: cLat - halfLat,
+        maxLat: cLat + halfLat,
+        minLng: cLng - halfLng,
+        maxLng: cLng + halfLng,
+      };
+      const sampled = sampleElevationGrid(bounds, 96);
+      if (sampled) {
+        realElevationGrid = {
+          elevations: sampled.elevations,
+          gridSize: sampled.gridSize,
+          bounds: sampled.bounds,
+        };
+        // Replace the route's GPS altitudes with OS Terrain elevations so
+        // the route line aligns perfectly with the terrain mesh.
+        const realRouteAltitudes: number[] = [];
+        let allValid = true;
+        for (const [lat, lng] of latestStreams.latlng) {
+          const e = elevationAt(lat, lng);
+          if (e === null) {
+            allValid = false;
+            break;
+          }
+          realRouteAltitudes.push(e);
+        }
+        if (allValid && realRouteAltitudes.length === latestStreams.altitude.length) {
+          latestStreams = {
+            latlng: latestStreams.latlng,
+            altitude: realRouteAltitudes,
+          };
+        }
+      }
+    }
+
     // Compute aggregate stats
     const now = new Date();
     const startOfWeek = new Date(now);
@@ -110,6 +172,7 @@ export async function GET() {
     return NextResponse.json({
       runs,
       latestStreams,
+      realElevationGrid,
       stats: {
         lastRunKm,
         avgPace,

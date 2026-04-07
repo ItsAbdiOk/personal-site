@@ -31,6 +31,11 @@ interface PodcastEpisode {
 interface RunData {
   runs: any[];
   latestStreams?: { latlng: number[][]; altitude: number[] } | null;
+  realElevationGrid?: {
+    elevations: number[];
+    gridSize: number;
+    bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number };
+  } | null;
   stats: {
     lastRunKm: string;
     avgPace: string;
@@ -187,7 +192,12 @@ export default function LifePage() {
               ) : runData.runs.length === 0 ? (
                 <p className={styles.empty}>No recent runs.</p>
               ) : (
-                <RunStats runs={runData.runs} stats={runData.stats} latestStreams={runData.latestStreams} />
+                <RunStats
+                  runs={runData.runs}
+                  stats={runData.stats}
+                  latestStreams={runData.latestStreams}
+                  realElevationGrid={runData.realElevationGrid}
+                />
               )}
             </section>
           </ScrollReveal>
