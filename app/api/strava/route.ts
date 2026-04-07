@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 
+export const revalidate = 600; // 10 min cache
+
 const TOKEN_URL = "https://www.strava.com/oauth/token";
 const ACTIVITIES_URL = "https://www.strava.com/api/v3/athlete/activities";
+const STREAMS_URL = (id: number) =>
+  `https://www.strava.com/api/v3/activities/${id}/streams?keys=latlng,altitude,distance&key_by_type=true`;
 
 async function getAccessToken(): Promise<string> {
   const clientId = process.env.STRAVA_CLIENT_ID;
@@ -43,6 +47,7 @@ export async function GET() {
     const activities = await res.json();
 
     const runs = activities.map((a: any) => ({
+      id: a.id,
       name: a.name ?? "Run",
       distance: a.distance ?? 0,
       movingTime: a.moving_time ?? 0,
@@ -55,6 +60,26 @@ export async function GET() {
       polyline: a.map?.summary_polyline ?? null,
       startLatlng: a.start_latlng ?? null,
     }));
+
+    // Fetch streams (latlng + altitude) for the latest run only — for 3D map
+    let latestStreams: { latlng: number[][]; altitude: number[] } | null = null;
+    if (runs[0]?.id) {
+      try {
+        const streamRes = await fetch(STREAMS_URL(runs[0].id), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (streamRes.ok) {
+          const streamData = await streamRes.json();
+          const latlng = streamData?.latlng?.data ?? null;
+          const altitude = streamData?.altitude?.data ?? null;
+          if (latlng && altitude && latlng.length === altitude.length) {
+            latestStreams = { latlng, altitude };
+          }
+        }
+      } catch {
+        // Streams optional — fall back to polyline only
+      }
+    }
 
     // Compute aggregate stats
     const now = new Date();
@@ -84,6 +109,7 @@ export async function GET() {
 
     return NextResponse.json({
       runs,
+      latestStreams,
       stats: {
         lastRunKm,
         avgPace,

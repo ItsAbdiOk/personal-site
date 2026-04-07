@@ -30,6 +30,7 @@ interface PodcastEpisode {
 
 interface RunData {
   runs: any[];
+  latestStreams?: { latlng: number[][]; altitude: number[] } | null;
   stats: {
     lastRunKm: string;
     avgPace: string;
@@ -186,7 +187,7 @@ export default function LifePage() {
               ) : runData.runs.length === 0 ? (
                 <p className={styles.empty}>No recent runs.</p>
               ) : (
-                <RunStats runs={runData.runs} stats={runData.stats} />
+                <RunStats runs={runData.runs} stats={runData.stats} latestStreams={runData.latestStreams} />
               )}
             </section>
           </ScrollReveal>

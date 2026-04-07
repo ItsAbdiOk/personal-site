@@ -1,7 +1,7 @@
 # Design System — Abdirahman Mohamed
 
 ## Product Context
-- **What this is:** Personal portfolio and blog for an ML engineer and MSc AI student
+- **What this is:** Personal portfolio and blog for an AI engineer and MSc AI student
 - **Who it's for:** Recruiters, fellow builders, potential collaborators, the ML/AI community
 - **Space/industry:** Personal developer portfolio, ML/AI
 - **Project type:** Marketing site / editorial blog

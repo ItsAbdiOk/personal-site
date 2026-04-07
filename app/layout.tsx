@@ -18,14 +18,16 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL("https://abdirahmanmohamed.dev"),
   title: {
-    default: "Abdirahman Mohamed — ML Engineer & MSc AI Student at QMUL",
+    default: "Abdirahman Mohamed — AI Engineer & MSc AI Student at QMUL",
     template: "%s — Abdirahman Mohamed",
   },
   description:
-    "Abdirahman Mohamed is an ML engineer and MSc AI student at Queen Mary University of London, specialising in speech and language processing. Building Arday, an English learning app for Somali speakers.",
+    "Abdirahman Mohamed is an AI engineer and MSc AI student at Queen Mary University of London, specialising in speech and language processing. Building Arday, an English learning app for Somali speakers.",
   keywords: [
     "Abdirahman Mohamed",
     "Abdirahman Omar Mohamed",
+    "AI engineer London",
+    "AI engineer portfolio",
     "ML engineer London",
     "MSc AI QMUL",
     "Queen Mary University of London",
@@ -44,9 +46,9 @@ export const metadata: Metadata = {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "Abdirahman Mohamed — ML Engineer & MSc AI Student at QMUL",
+    title: "Abdirahman Mohamed — AI Engineer & MSc AI Student at QMUL",
     description:
-      "ML engineer and MSc AI student at QMUL, specialising in speech and language processing. Building Arday, an English learning app for Somali speakers.",
+      "AI engineer and MSc AI student at QMUL, specialising in speech and language processing. Building Arday, an English learning app for Somali speakers.",
     url: "https://abdirahmanmohamed.dev",
     siteName: "Abdirahman Mohamed",
     locale: "en_GB",
@@ -54,9 +56,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Abdirahman Mohamed — ML Engineer & MSc AI Student at QMUL",
+    title: "Abdirahman Mohamed — AI Engineer & MSc AI Student at QMUL",
     description:
-      "ML engineer and MSc AI student at QMUL. Building Arday, an English learning app for Somali speakers.",
+      "AI engineer and MSc AI student at QMUL. Building Arday, an English learning app for Somali speakers.",
   },
   robots: {
     index: true,
@@ -78,9 +80,9 @@ const personJsonLd = {
   givenName: "Abdirahman",
   familyName: "Mohamed",
   alternateName: "Abdirahman Omar Mohamed",
-  jobTitle: "ML Engineer",
+  jobTitle: "AI Engineer",
   description:
-    "ML engineer and MSc AI student at Queen Mary University of London, specialising in speech and language processing.",
+    "AI engineer and MSc AI student at Queen Mary University of London, specialising in speech and language processing.",
   url: "https://abdirahmanmohamed.dev",
   image: "https://abdirahmanmohamed.dev/opengraph-image",
   email: "mailto:hi@abdirahmanmohamed.dev",

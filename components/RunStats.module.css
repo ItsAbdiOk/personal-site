@@ -109,6 +109,31 @@
   border-radius: 0;
 }
 
+.route3DSection {
+  padding: 0;
+}
+
+.route3DSection > div {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+}
+
+.route3DStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.route3DLoading {
+  height: 320px;
+  background: var(--bg-muted);
+  border-radius: 6px;
+}
+
 .divider {
   border-top: 0.5px solid var(--border);
 }

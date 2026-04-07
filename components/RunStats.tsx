@@ -1,5 +1,12 @@
+import dynamic from "next/dynamic";
 import RouteMap from "./RouteMap";
 import styles from "./RunStats.module.css";
+
+// Lazy-load three.js so it only ships on the Life page when needed
+const Route3D = dynamic(() => import("./Route3D"), {
+  ssr: false,
+  loading: () => <div className={styles.route3DLoading} />,
+});
 
 interface Run {
   name: string;
@@ -12,8 +19,14 @@ interface Run {
   polyline?: string | null;
 }
 
+interface LatestStreams {
+  latlng: number[][];
+  altitude: number[];
+}
+
 interface RunStatsProps {
   runs: Run[];
+  latestStreams?: LatestStreams | null;
   stats: {
     lastRunKm: string;
     avgPace: string;
@@ -38,7 +51,7 @@ function getPacePerKm(run: Run): number {
   return 1000 / run.averageSpeed / 60; // minutes per km
 }
 
-export default function RunStats({ runs, stats }: RunStatsProps) {
+export default function RunStats({ runs, stats, latestStreams }: RunStatsProps) {
   const lastRun = runs[0] ?? null;
 
   // Pace values for bar chart
@@ -96,12 +109,22 @@ export default function RunStats({ runs, stats }: RunStatsProps) {
             </div>
           </div>
 
-          {/* Route map */}
-          {lastRun.polyline && (
+          {/* 3D route map (with elevation from Strava streams).
+              Falls back to SVG polyline if streams unavailable.
+              FUTURE: add topographic terrain mesh under the route. */}
+          {latestStreams && latestStreams.latlng.length > 1 ? (
+            <div className={styles.route3DSection}>
+              <Route3D
+                latlng={latestStreams.latlng}
+                altitude={latestStreams.altitude}
+                variant="dark"
+              />
+            </div>
+          ) : lastRun.polyline ? (
             <div className={styles.routeSection}>
               <RouteMap polyline={lastRun.polyline} variant="minimal" />
             </div>
-          )}
+          ) : null}
 
           <div className={styles.divider} />
 
