@@ -16,7 +16,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://abdirahmanmohamed.dev"),
+  metadataBase: new URL("https://www.abdirahmanmohamed.dev"),
   title: {
     default: "Abdirahman Mohamed — AI Engineer & MSc AI Student at QMUL",
     template: "%s — Abdirahman Mohamed",
@@ -36,11 +36,11 @@ export const metadata: Metadata = {
     "Arday app",
     "machine learning portfolio",
   ],
-  authors: [{ name: "Abdirahman Mohamed", url: "https://abdirahmanmohamed.dev" }],
+  authors: [{ name: "Abdirahman Mohamed", url: "https://www.abdirahmanmohamed.dev" }],
   creator: "Abdirahman Mohamed",
   publisher: "Abdirahman Mohamed",
   alternates: {
-    canonical: "https://abdirahmanmohamed.dev",
+    canonical: "https://www.abdirahmanmohamed.dev",
   },
   icons: {
     icon: "/favicon.svg",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     title: "Abdirahman Mohamed — AI Engineer & MSc AI Student at QMUL",
     description:
       "AI engineer and MSc AI student at QMUL, specialising in speech and language processing. Building Arday, an English learning app for Somali speakers.",
-    url: "https://abdirahmanmohamed.dev",
+    url: "https://www.abdirahmanmohamed.dev",
     siteName: "Abdirahman Mohamed",
     locale: "en_GB",
     type: "website",
@@ -83,8 +83,8 @@ const personJsonLd = {
   jobTitle: "AI Engineer",
   description:
     "AI engineer and MSc AI student at Queen Mary University of London, specialising in speech and language processing.",
-  url: "https://abdirahmanmohamed.dev",
-  image: "https://abdirahmanmohamed.dev/opengraph-image",
+  url: "https://www.abdirahmanmohamed.dev",
+  image: "https://www.abdirahmanmohamed.dev/opengraph-image",
   email: "mailto:hi@abdirahmanmohamed.dev",
   address: {
     "@type": "PostalAddress",
@@ -116,7 +116,7 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Abdirahman Mohamed",
-  url: "https://abdirahmanmohamed.dev",
+  url: "https://www.abdirahmanmohamed.dev",
   author: {
     "@type": "Person",
     name: "Abdirahman Mohamed",

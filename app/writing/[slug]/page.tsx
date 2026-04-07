@@ -20,12 +20,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(params.slug);
   if (!post) return { title: "Post not found" };
 
-  const url = `https://abdirahmanmohamed.dev/writing/${params.slug}`;
+  const url = `https://www.abdirahmanmohamed.dev/writing/${params.slug}`;
 
   return {
     title: post.meta.title,
     description: post.meta.description,
-    authors: [{ name: "Abdirahman Mohamed", url: "https://abdirahmanmohamed.dev" }],
+    authors: [{ name: "Abdirahman Mohamed", url: "https://www.abdirahmanmohamed.dev" }],
     alternates: { canonical: url },
     openGraph: {
       title: post.meta.title,
@@ -47,7 +47,7 @@ export default function PostPage({ params }: Props) {
   const post = getPostBySlug(params.slug);
   if (!post) notFound();
 
-  const url = `https://abdirahmanmohamed.dev/writing/${params.slug}`;
+  const url = `https://www.abdirahmanmohamed.dev/writing/${params.slug}`;
   const blogPostingJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -58,19 +58,19 @@ export default function PostPage({ params }: Props) {
     author: {
       "@type": "Person",
       name: "Abdirahman Mohamed",
-      url: "https://abdirahmanmohamed.dev",
+      url: "https://www.abdirahmanmohamed.dev",
     },
     publisher: {
       "@type": "Person",
       name: "Abdirahman Mohamed",
-      url: "https://abdirahmanmohamed.dev",
+      url: "https://www.abdirahmanmohamed.dev",
     },
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": url,
     },
     url,
-    image: "https://abdirahmanmohamed.dev/opengraph-image",
+    image: "https://www.abdirahmanmohamed.dev/opengraph-image",
     inLanguage: "en-GB",
   };
 

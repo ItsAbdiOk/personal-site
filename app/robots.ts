@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://abdirahmanmohamed.dev/sitemap.xml",
+    sitemap: "https://www.abdirahmanmohamed.dev/sitemap.xml",
   };
 }
