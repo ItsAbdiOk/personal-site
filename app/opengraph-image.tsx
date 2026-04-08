@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Abdirahman Mohamed — AI Engineer";
+export const alt = "Abdirahman Mohamed — MSc AI Student";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -31,7 +31,7 @@ export default async function OpengraphImage() {
             display: "flex",
           }}
         >
-          AI ENGINEER · LONDON
+          MSC AI STUDENT · LONDON
         </div>
 
         {/* Middle: name + tagline */}

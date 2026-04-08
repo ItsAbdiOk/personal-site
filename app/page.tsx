@@ -60,7 +60,7 @@ export default function Home() {
       <main>
         {/* Hero — entrance animations */}
         <section className={`${styles.hero} page-container`}>
-          <p className="eyebrow animate-in animate-in-1">Abdirahman Mohamed · AI Engineer · London</p>
+          <p className="eyebrow animate-in animate-in-1">Abdirahman Mohamed · MSc AI Student · London</p>
           <h1 className={`${styles.headline} animate-in animate-in-2`}>
             Building things
             <br />
