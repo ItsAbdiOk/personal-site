@@ -53,3 +53,8 @@ Reader: a Year 12 student who is new to the topic. Aim for "I could explain this
 - Every worked example gets a diagram where **each number is drawn where it lives** (the height on the cliff, the speed on its arrow, the distance along the ground, the time on the path).
 - Label quantities in three layers, example → plain words → exam term, e.g. `13.0 m/s · sideways speed · horizontal velocity vₓ`. On narrow diagrams, stack them on two lines, or put the plain + exam layers in a small key under the diagram.
 - Unknowns being solved for appear as `?` on the "before" diagram and with their value on the answer.
+
+## Check anything odd against the source (every agent, every stage)
+- If something reads fine and makes sense, carry on.
+- If it's odd — a number that doesn't fit, a mark scheme that doesn't match its question, garbled symbols, a comment that seems to belong elsewhere, a claim that surprises you — look at the original before using it: `scripts/zakiya/papers/show_source.sh "<question id>"` (add `--ms` for the mark scheme) gives an image of just that question; textbook pages: `data/textbook-marker/page-images/` or render the page.
+- Log every check (what looked odd, what the source showed, what you changed) in the output you hand on. Never pass an unresolved oddity up the chain silently — fix it or flag it.

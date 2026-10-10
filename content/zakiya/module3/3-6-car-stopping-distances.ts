@@ -1,0 +1,478 @@
+import type { Subchapter } from "@/lib/zakiya/types";
+import sections from "./3-6/sections";
+import explain from "./3-6/explain";
+import { vtSvg } from "./3-6/figures";
+
+// All numbers rechecked in Python (see sections/figures headers).
+const AS1 = (s: string, t: "QP" | "MS") =>
+  `https://pmt.physicsandmathstutor.com/download/Physics/A-level/Past-Papers/OCR-A/AS-Paper-1/${s.replace(" ", "%20")}%20${t}%20-%20Paper%201%20OCR%20(A)%20Physics%20AS-level.pdf`;
+const AS2 = (s: string, t: "QP" | "MS") =>
+  `https://pmt.physicsandmathstutor.com/download/Physics/A-level/Past-Papers/OCR-A/AS-Paper-2/${s.replace(" ", "%20")}%20${t}%20-%20Paper%202%20OCR%20(A)%20Physics%20AS-level.pdf`;
+const AL1 = (s: string, t: "QP" | "MS") =>
+  `https://pmt.physicsandmathstutor.com/download/Physics/A-level/Past-Papers/OCR-A/Paper-1/${t}/${s.replace(" ", "%20")}%20${t}.pdf`;
+
+const sub: Subchapter = {
+  slug: "3-6-car-stopping-distances",
+  number: "3.6",
+  title: "Car stopping distances",
+  module: 3,
+  chapter: { number: 3, title: "Motion" },
+  specRefs: ["3.1.2(c)", "3.1.1(d)"],
+  textbookPages: "35–36",
+  colour: "#0071E3",
+  summary:
+    "How far a car travels from the moment the driver sees a hazard to standing still. It splits into a **thinking distance** (reacting, full speed) and a **braking distance** (slowing down).",
+  keyIdea:
+    "**Stopping = thinking + braking.** Thinking distance = speed × reaction time (∝ speed). Braking distance = u² ÷ 2a (∝ speed²).",
+
+  sections,
+  explain,
+
+  // ====================================================================
+  definitions: [
+    {
+      term: "stopping distance",
+      plain: "Total distance from seeing a hazard to the car standing still.",
+      spec: "Mark scheme: sum of the thinking distance and the braking distance (allow: the total distance travelled from when the driver sees a hazard to the vehicle stopping).",
+      textbook: "The total distance travelled from when the driver first sees a reason to stop, to when the vehicle stops.",
+      differenceNote:
+        "Both earn the mark (H156/02 June 2017 Q1(a)). The \"sum of thinking and braking\" version is shortest. Never describe only the braking part.",
+      source: "both",
+    },
+    {
+      term: "thinking distance",
+      plain: "How far the car moves, still at full speed, before the driver presses the brake.",
+      spec: "Pack mark scheme: distance travelled from the moment the driver sees a hazard until the brakes are applied; proportional to speed (for constant thinking time).",
+      textbook: "The distance travelled between the moment when you first see a reason to stop, to the moment when you use the brake.",
+      differenceNote:
+        "Same meaning. The mark needs **both ends**: seeing the hazard (stimulus) and applying the brakes. \"Speed × reaction time\" is how to calculate it, not a definition (refused in an older OCR scheme).",
+      source: "both",
+    },
+    {
+      term: "braking distance",
+      plain: "How far the car moves from the brakes going on to stopping.",
+      textbook: "The distance travelled from the time the brake is applied until the vehicle stops.",
+      differenceNote:
+        "No separate mark-scheme definition; use the textbook wording. Add, if useful: ∝ speed² for a constant braking force.",
+      source: "both",
+    },
+    {
+      term: "reaction time",
+      plain: "Time between seeing the hazard and pressing the brake.",
+      textbook: "Not defined in a sentence; used in thinking distance = speed × reaction time (0.67 s in the Highway Code).",
+      differenceNote:
+        "Never asked as a definition in current-spec papers; usually read off a graph (the flat part). Safe wording: **the time between seeing a hazard (stimulus) and applying the brakes**. Increased by tiredness, alcohol, drugs, distraction.",
+      source: "both",
+    },
+  ],
+
+  // ====================================================================
+  flashcards: [
+    { id: "sd-fc-01", front: "What is the stopping distance of a car?", back: "**Thinking distance + braking distance**: the total distance from the driver seeing a hazard to the car stopping.", tag: "definition", source: "both", page: "35" },
+    { id: "sd-fc-02", front: "What is thinking distance?", back: "The distance travelled from the moment the driver **sees a hazard** until the **brakes are applied**.", tag: "definition", source: "both", page: "35" },
+    { id: "sd-fc-03", front: "What is braking distance?", back: "The distance travelled from when the **brakes are applied** until the vehicle **stops**.", tag: "definition", source: "both", page: "35" },
+    { id: "sd-fc-04", front: "How do you calculate thinking distance?", back: "**Thinking distance = speed × reaction time.** The speed is constant while the driver reacts.", tag: "equation", source: "both", page: "35" },
+    { id: "sd-fc-05", front: "The Highway Code thinking distance at 13.4 m s⁻¹ is 9.0 m. What reaction time does it assume?", back: "**0.67 s** (9.0 ÷ 13.4).", tag: "concept", source: "textbook-only", page: "35" },
+    { id: "sd-fc-06", front: "How does thinking distance depend on speed, for a fixed reaction time?", back: "**Directly proportional.** Double the speed, double the thinking distance.", tag: "concept", source: "both", page: "36" },
+    { id: "sd-fc-07", front: "How does braking distance depend on speed, for a constant braking force?", back: "**Proportional to speed².** Double the speed → four times the braking distance.", tag: "concept", source: "both", page: "36" },
+    { id: "sd-fc-08", front: "Which SUVAT equation gives the deceleration from the braking distance and initial speed?", back: "**v² = u² + 2as** with v = 0, so a = −u² ÷ 2s.", tag: "equation", source: "both", page: "36" },
+    { id: "sd-fc-09", front: "A car brakes from 13.4 m s⁻¹ to rest in 14.0 m. What is its deceleration?", back: "**6.4 m s⁻²** (13.4² ÷ (2 × 14.0)).", tag: "concept", source: "textbook-only", page: "36" },
+    { id: "sd-fc-10", front: "Name three things that increase a driver's reaction time.", back: "Any three: **tiredness, alcohol, drugs, distraction** (e.g. a phone). They increase the thinking distance only.", tag: "concept", source: "both", page: "35" },
+    { id: "sd-fc-11", front: "Name three things that increase braking distance, apart from speed.", back: "Any three: **worn brakes or tyres, wet or icy road, heavier load, going downhill.** They reduce the deceleration.", tag: "concept", source: "both", page: "35" },
+    { id: "sd-fc-12", front: "On a velocity–time graph from hazard to stop, what does the flat part show?", back: "The **reaction time** (its length). The area under it is the **thinking distance**.", tag: "concept", source: "spec-only" },
+    { id: "sd-fc-13", front: "On a velocity–time graph from hazard to stop, how do you find the braking distance?", back: "**Area of the triangle** under the sloping part: ½ × braking time × initial speed.", tag: "concept", source: "spec-only" },
+    { id: "sd-fc-14", front: "How does a stopping velocity–time graph change for a tired driver?", back: "The **horizontal section is longer**. The sloping section is unchanged.", tag: "concept", source: "spec-only" },
+    { id: "sd-fc-15", front: "How does a stopping velocity–time graph change on a more resistive road surface?", back: "The **sloping section is steeper** (greater deceleration). The horizontal section is unchanged.", tag: "concept", source: "spec-only" },
+    { id: "sd-fc-16", front: "How are braking force, braking distance and the car's speed linked by energy?", back: "**F × d = ½mv²**: the work done by the brakes equals the kinetic energy removed.", tag: "equation", source: "spec-only" },
+    { id: "sd-fc-17", front: "Stopping distance d = vt + v² ÷ 2a. What straight-line graph gives t and a?", back: "Plot **d/v against v**: y-intercept = reaction time t, gradient = 1 ÷ 2a.", tag: "practical", source: "spec-only" },
+    { id: "sd-fc-18", front: "Are the stopping-distance relationships on the OCR data sheet?", back: "**No.** Learn thinking = speed × reaction time. The SUVAT equations you need are on it.", tag: "equation", source: "spec-only" },
+  ],
+
+  // ====================================================================
+  questions: [
+    {
+      id: "sd-r1",
+      title: "Stopping distance from a graph",
+      style: "Paper 1 MCQ",
+      difficulty: 1,
+      origin: { kind: "ours" },
+      basedOn: "Modelled on H156/01 June 2018 Q10",
+      stem: "The graph shows the velocity of a car from the moment the driver sees a hazard. The velocity is constant until 0.60 s, then decreases uniformly to zero at 3.1 s. The {{thinking}} is 12 m.",
+      figure: {
+        kind: "svg",
+        svg: vtSvg({ id: "sd-q1", tMax: 3.5, vMax: 25, tTicks: [0, 0.6, 1, 2, 3.1], vTicks: [0], u: 20, tReact: 0.6, tStop: 3.1, uLabel: "?", thinking: "12 m" }),
+        alt: "Velocity against time. Flat at an unknown velocity until 0.6 seconds, then a straight line down to zero at 3.1 seconds. The area under the flat part is labelled 12 metres.",
+      },
+      parts: [
+        {
+          prompt: "What is the {{stopping}} of the car?",
+          marks: 1,
+          kind: "mcq",
+          options: ["13 m", "25 m", "37 m", "62 m"],
+          correctIndex: 2,
+          modelAnswer:
+            "**C.** Speed = 12 ÷ 0.60 = 20 m s⁻¹. Braking distance = triangle area = ½ × 2.5 × 20 = 25 m. Stopping distance = 12 + 25 = **37 m**.",
+          markScheme: ["C"],
+          commonMistakes: [
+            "**B (25 m)**: braking distance only. In the real June 2018 question this was the most popular wrong answer.",
+            "**D (62 m)**: 20 × 3.1, treating the whole graph as constant speed.",
+            "**A (13 m)**: braking minus thinking.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "sd-r2",
+      title: "Deceleration from a stopping table",
+      style: "Paper 1 MCQ",
+      difficulty: 1,
+      origin: { kind: "ours" },
+      basedOn: "Modelled on H556/01 November 2021 Q3",
+      stem: "A car travelling at 15.0 m s⁻¹ has a thinking distance of 10.5 m, a braking distance of 18.0 m and a stopping distance of 28.5 m.",
+      parts: [
+        {
+          prompt: "What is the magnitude of the {{decel}} of the car while braking? Assume it is constant.",
+          marks: 1,
+          kind: "mcq",
+          options: ["0.83 m s⁻²", "3.9 m s⁻²", "6.3 m s⁻²", "12.5 m s⁻²"],
+          correctIndex: 2,
+          modelAnswer: "**C.** {{v2eq}} with v = 0 and s = **braking** distance: a = 15.0² ÷ (2 × 18.0) = 225 ÷ 36 = **6.25 m s⁻²**.",
+          markScheme: ["C"],
+          commonMistakes: [
+            "**B**: uses the stopping distance (28.5 m). The car isn't braking during the thinking distance.",
+            "**D**: forgets the 2 in 2as.",
+            "**A**: divides speed by distance (15 ÷ 18). That's not an acceleration.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "sd-r3",
+      title: "Faster, same brakes",
+      style: "Paper 1 MCQ",
+      difficulty: 2,
+      origin: { kind: "ours" },
+      basedOn: "Modelled on H556/01 June 2017 Q3 and H556/01 June 2024 Q7",
+      stem: "A van has a {{braking}} of 12 m when travelling at 12 m s⁻¹. The braking force is the same at all speeds.",
+      parts: [
+        {
+          prompt: "What is the braking distance when the van travels at 30 m s⁻¹?",
+          marks: 1,
+          kind: "mcq",
+          options: ["19 m", "30 m", "48 m", "75 m"],
+          correctIndex: 3,
+          modelAnswer: "**D.** {{braking}} is {{propsq}} ({{F}}{{d}} = ½mv² with F constant). Speed × 2.5, so distance × 2.5² = 6.25: 12 × 6.25 = **75 m**.",
+          markScheme: ["D"],
+          commonMistakes: [
+            "**B**: assumes distance ∝ speed. That's thinking distance, not braking distance.",
+            "**A**: uses √2.5 instead of 2.5².",
+            "**C**: multiplies by 4 out of habit (\"double speed, four times distance\"), but the speed isn't doubled here.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "sd-r4",
+      title: "Brake test",
+      style: "Structured",
+      difficulty: 2,
+      origin: { kind: "ours" },
+      basedOn: "Modelled on H156/02 June 2023 Q1",
+      stem: "A car of mass 1100 kg is moving at 16 m s⁻¹ when the driver sees a hazard. The velocity stays at 16 m s⁻¹ until t = 0.80 s, then decreases uniformly to zero at t = 3.3 s.",
+      figure: {
+        kind: "svg",
+        svg: vtSvg({ id: "sd-q4", tMax: 3.6, vMax: 20, tTicks: [0, 0.8, 2, 3.3], vTicks: [0, 5, 10, 20], u: 16, tReact: 0.8, tStop: 3.3, uLabel: "16" }),
+        alt: "Velocity against time. Flat at 16 metres per second until 0.8 seconds, then a straight line down to zero at 3.3 seconds.",
+      },
+      parts: [
+        {
+          label: "a",
+          prompt: "Calculate the magnitude of the {{decel}} of the car.",
+          marks: 2,
+          kind: "numeric",
+          answer: { value: 6.4, unit: "m s⁻²", tolerancePct: 2 },
+          modelAnswer: "Braking time = 3.3 − 0.80 = 2.5 s. {{gradient}} = (0 − 16) ÷ 2.5 = −6.4, so deceleration = **6.4 m s⁻²**.",
+          markScheme: ["C1 16 ÷ 2.5 (gradient of the sloping section)", "A1 6.4 (m s⁻²); ignore sign"],
+          commonMistakes: ["Dividing by 3.3 s (the whole time). The car only decelerates for 2.5 s."],
+        },
+        {
+          label: "b",
+          prompt: "Calculate the braking force on the car.",
+          marks: 1,
+          kind: "numeric",
+          answer: { value: 7040, unit: "N", tolerancePct: 2 },
+          modelAnswer: "F = ma = 1100 × 6.4 = **7040 N** (7.0 × 10³ N).",
+          markScheme: ["B1 7000 N; allow 7040 N; ECF from (a)"],
+          commonMistakes: ["Using the weight (mg) instead of F = ma."],
+        },
+        {
+          label: "c",
+          prompt: "Calculate the {{stopping}} of the car.",
+          marks: 3,
+          kind: "numeric",
+          answer: { value: 32.8, unit: "m", tolerancePct: 2 },
+          modelAnswer:
+            "Thinking distance = rectangle = 16 × 0.80 = 12.8 m.\nBraking distance = triangle = ½ × 2.5 × 16 = 20 m.\nStopping distance = 12.8 + 20 = **32.8 m** (33 m).",
+          markScheme: ["C1 16 × 0.80 (= 12.8 m)", "C1 ½ × 16 × 2.5 (= 20 m)", "A1 33 m; one mark only for 20 m"],
+          commonMistakes: [
+            "Giving 20 m (braking only). In the real 2023 question examiners said this was the common error.",
+            "Using ½ × 3.3 × 16: the triangle's base starts at 0.80 s, not 0.",
+          ],
+        },
+        {
+          label: "d",
+          prompt: "Calculate the work done by the brakes.",
+          marks: 2,
+          kind: "numeric",
+          answer: { value: 140800, unit: "J", tolerancePct: 3 },
+          modelAnswer: "W = F × **braking** distance = 7040 × 20 = **1.4 × 10⁵ J**. Check: ½mv² = ½ × 1100 × 16² = 140 800 J.",
+          markScheme: ["C1 7040 × 20 or ½ × 1100 × 16²", "A1 1.4 × 10⁵ J; one mark only for 7040 × 32.8 (= 2.3 × 10⁵ J)"],
+          commonMistakes: ["Using the stopping distance. The brakes do no work during the thinking distance (same error flagged in June 2023 H156/02 Q1(a)(iv))."],
+        },
+        {
+          label: "e",
+          prompt: "State how the graph would change if (i) the driver was tired, (ii) the road was icy.",
+          marks: 2,
+          kind: "written",
+          modelAnswer: "(i) The **horizontal section would be longer**; the sloping line has the same gradient.\n(ii) The **sloping section would be less steep** (smaller deceleration), so it meets the time axis later; the horizontal section is unchanged.",
+          markScheme: ["B1 (i) horizontal / flat section longer", "B1 (ii) sloping section less steep / smaller magnitude of gradient", "Ignore: \"thinking time longer\" / \"braking distance longer\" without describing the line"],
+          commonMistakes: ["Describing the time or distance instead of the **line**. The 2023 report criticised exactly this."],
+        },
+      ],
+    },
+    {
+      id: "sd-r5",
+      title: "Motorway chevrons",
+      style: "Structured",
+      difficulty: 2,
+      origin: { kind: "ours" },
+      basedOn: "Modelled on H556/01 June 2023 Q16(a),(b)",
+      stem: "Chevrons painted on a motorway are 45 m apart. Drivers are told to \"keep two chevrons\" (90 m) from the vehicle in front. A car travels at 60 {{mph}}. 1 mile = 1609 m.",
+      parts: [
+        {
+          label: "a",
+          prompt: "Show that 60 mph is about 27 m s⁻¹.",
+          marks: 1,
+          kind: "numeric",
+          answer: { value: 26.8, unit: "m s⁻¹", tolerancePct: 1 },
+          modelAnswer: "60 × 1609 ÷ 3600 = **26.8 m s⁻¹**.",
+          markScheme: ["B1 60 × 1609 ÷ 3600 = 26.8 (at least 3 s.f. for a show-that)"],
+          commonMistakes: ["Dividing by 60 instead of 3600: an hour is 3600 s."],
+        },
+        {
+          label: "b",
+          prompt: "The driver's {{reaction}} is 0.70 s. Calculate the {{thinking}}.",
+          marks: 1,
+          kind: "numeric",
+          answer: { value: 18.8, unit: "m", tolerancePct: 2 },
+          modelAnswer: "26.8 × 0.70 = **18.8 m**.",
+          markScheme: ["B1 19 m"],
+          commonMistakes: ["Using 60 (mph) as the speed."],
+        },
+        {
+          label: "c",
+          prompt: "The maximum {{decel}} of the car is 6.5 m s⁻². Explain whether a driver keeping two chevrons from the car in front could stop before reaching the point where that car began to stop suddenly. Treat the car in front as stopping instantly.",
+          marks: 3,
+          kind: "written",
+          modelAnswer:
+            "Braking distance = 26.8² ÷ (2 × 6.5) = 55.2 m. Stopping distance = 18.8 + 55.2 = **74 m**. 74 m < 90 m, so **yes, the driver can stop in time**.",
+          markScheme: [
+            "C1 braking distance = 26.8² ÷ (2 × 6.5) (= 55 m)",
+            "M1 compares a correct quantity with the gap: stopping distance 74 m < 90 m (or braking 55 m < 90 − 18.8 = 71 m)",
+            "A1 conclusion consistent with the comparison: can stop",
+          ],
+          commonMistakes: [
+            "Quoting the numbers with no comparison. Examiners in June 2023 wanted an explicit \"less than\" with the gap.",
+            "Comparing the braking distance with 90 m and forgetting the thinking distance.",
+          ],
+        },
+        {
+          label: "d",
+          prompt: "Explain why the braking distance would be greater if the road sloped downhill. Assume the same braking force.",
+          marks: 2,
+          kind: "written",
+          modelAnswer:
+            "A {{weight-comp}} acts **forwards (down the slope)**, against the braking force. The resultant backwards force is smaller, so the deceleration is smaller and a **greater distance** is needed to stop.",
+          markScheme: [
+            "B1 component of weight parallel to / down the slope acts forwards (against the brakes)",
+            "B1 smaller resultant force / smaller deceleration, so a greater distance is needed (unqualified \"longer distance\" is not enough)",
+          ],
+          commonMistakes: ["Saying \"gravity pulls it\" or \"extra force\" without naming the component of weight along the slope (June 2023 H556/01 Q16(b)(ii) report)."],
+        },
+      ],
+    },
+    {
+      id: "sd-r6",
+      title: "Can the tram stop?",
+      style: "Structured",
+      difficulty: 2,
+      origin: { kind: "ours" },
+      basedOn: "Modelled on H556/01 June 2022 Q17(c)",
+      stem: "A tram of mass 30 000 kg travels at 18 m s⁻¹. The driver sees an obstruction 85 m ahead. The driver's reaction time is 0.50 s and the brakes then give a constant braking force of 75 000 N.",
+      parts: [
+        {
+          prompt: "Show whether the tram stops before reaching the obstruction.",
+          marks: 4,
+          kind: "written",
+          modelAnswer:
+            "Thinking distance = 18 × 0.50 = 9.0 m.\nDeceleration = 75 000 ÷ 30 000 = 2.5 m s⁻². Braking distance = 18² ÷ (2 × 2.5) = 64.8 m.\nStopping distance = 9.0 + 64.8 = **73.8 m < 85 m**, so **it stops in time**.\n(Energy route: KE = ½ × 30 000 × 18² = 4.86 MJ; braking distance = 4.86 × 10⁶ ÷ 75 000 = 64.8 m.)",
+          markScheme: [
+            "B1 thinking distance = 18 × 0.50 (= 9.0 m)",
+            "C1 a = 2.5 m s⁻² or ½mv² = Fd",
+            "A1 braking distance = 65 m",
+            "B1 total 74 m compared with 85 m: stops in time (or 65 m < 85 − 9 = 76 m)",
+          ],
+          commonMistakes: [
+            "Leaving out the thinking distance: the comparison must use the **stopping** distance (or subtract thinking first).",
+            "Using KE ÷ 85 m and comparing forces with no conclusion. Always end with a clear yes/no.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "sd-r7",
+      title: "Reaction time from a graph",
+      style: "Structured",
+      difficulty: 3,
+      origin: { kind: "ours" },
+      basedOn: "Modelled on H556/03 Specimen Q2 and H156/01 June 2016 Q22",
+      stem: "A driver's {{stopping}} d is measured at different speeds v. The relationship is $d = vt + \\dfrac{v^2}{2a}$, where t is the reaction time and a is the magnitude of the deceleration. A student plots {{dv}} against v and gets a straight line through (10 m s⁻¹, 1.40 s) and (30 m s⁻¹, 3.00 s).",
+      parts: [
+        {
+          label: "a",
+          prompt: "Show that a graph of d/v against v should be a straight line, and state what its gradient and y-intercept represent.",
+          marks: 2,
+          kind: "written",
+          modelAnswer: "Divide by v: $\\dfrac{d}{v} = t + \\dfrac{1}{2a}v$. This is y = c + mx, so a straight line with **gradient = 1 ÷ 2a** and **y-intercept = t** (reaction time).",
+          markScheme: ["M1 d/v = t + v/2a (or compares with y = mx + c)", "A1 gradient = 1/2a and intercept = t"],
+          commonMistakes: ["Saying the gradient is a, or 2a. Match the term with v in it: 1/(2a)."],
+        },
+        {
+          label: "b",
+          prompt: "Calculate the deceleration a.",
+          marks: 2,
+          kind: "numeric",
+          answer: { value: 6.25, unit: "m s⁻²", tolerancePct: 2 },
+          modelAnswer: "Gradient = (3.00 − 1.40) ÷ (30 − 10) = 0.080 s² m⁻¹. 1 ÷ 2a = 0.080, so a = 1 ÷ 0.16 = **6.25 m s⁻²**.",
+          markScheme: ["C1 gradient = 0.080 from the line", "A1 a = 6.3 m s⁻²"],
+          commonMistakes: ["Taking a = 1 ÷ gradient (12.5): forgets the 2.", "Using one point's d/v ÷ v instead of the gradient. The 2016 scheme refused this."],
+        },
+        {
+          label: "c",
+          prompt: "Calculate the reaction time t.",
+          marks: 1,
+          kind: "numeric",
+          answer: { value: 0.6, unit: "s", tolerancePct: 2 },
+          modelAnswer: "Intercept: 1.40 − 0.080 × 10 = **0.60 s**.",
+          markScheme: ["B1 0.60 s; ECF from gradient"],
+          commonMistakes: ["Reading the y-value at the first data point (1.40 s) as the intercept."],
+        },
+        {
+          label: "d",
+          prompt: "Every measured stopping distance is later found to be too large because of a zero error. State and explain the effect on the value of t.",
+          marks: 2,
+          kind: "written",
+          modelAnswer: "Each measured d/v is too big, so the line (and its intercept) is too high. The **true reaction time is smaller** than the value found. (Strictly, a constant error c adds c/v to each d/v, so the line bends slightly too; the mark scheme only wants the intercept effect.)",
+          markScheme: ["B1 d/v values too large / line too high", "B1 intercept too high, so true t smaller (ORA)"],
+          commonMistakes: ["Saying the gradient changes but not the intercept."],
+        },
+      ],
+    },
+  ],
+
+  // ====================================================================
+  pastPapers: [
+    {
+      id: "pp-h156-01-2018-q10",
+      paper: "H156/01",
+      series: "June 2018",
+      question: "Q10",
+      marks: 1,
+      difficulty: 1,
+      url: AS1("June 2018", "QP"),
+      msUrl: AS1("June 2018", "MS"),
+      tests: "Stopping distance from a velocity–time graph, given the thinking distance.",
+      answers: [{ value: "B" }],
+      explanation: "Use the thinking distance and reaction time to get the speed, then the triangle for braking distance. Add both: the popular wrong answer was braking only.",
+    },
+    {
+      id: "pp-h156-01-2020-q13",
+      paper: "H156/01",
+      series: "November 2020",
+      question: "Q13",
+      marks: 1,
+      difficulty: 1,
+      url: AS1("November 2020", "QP"),
+      msUrl: AS1("November 2020", "MS"),
+      tests: "Reaction time and braking distance read from a velocity–time graph.",
+      answers: [{ value: "A" }],
+      explanation: "Reaction time = length of the flat part. Braking distance = ½ × braking time × initial speed.",
+    },
+    {
+      id: "pp-h556-01-2021-q3",
+      paper: "H556/01",
+      series: "November 2021",
+      question: "Q3",
+      marks: 1,
+      difficulty: 1,
+      url: AL1("November 2021", "QP"),
+      msUrl: AL1("November 2021", "MS"),
+      tests: "Deceleration from thinking, braking and stopping distances.",
+      answers: [{ value: "C" }],
+      explanation: "v² = u² + 2as with s = the **braking** distance only.",
+    },
+    {
+      id: "pp-h156-02-2025-q1",
+      paper: "H156/02",
+      series: "June 2025",
+      question: "Q1",
+      marks: 5,
+      difficulty: 1,
+      url: AS2("June 2025", "QP"),
+      msUrl: AS2("June 2025", "MS"),
+      tests: "Train velocity–time graph: deceleration, distance from area, why the graph is unrealistic.",
+      answers: [
+        { label: "a (size)", value: 0.45, unit: "m s⁻²", tolerancePct: 3 },
+        { label: "b", value: 3700, unit: "m", tolerancePct: 1.5 },
+      ],
+      explanation: "Gradient of the sloping part for (a) (the scheme accepts 0.45 with or without the minus sign); area under the whole graph for (b). For (c) give two different reasons, e.g. acceleration changes gradually, air resistance depends on speed.",
+    },
+    {
+      id: "pp-h156-02-2023-q1",
+      paper: "H156/02",
+      series: "June 2023",
+      question: "Q1",
+      marks: 10,
+      difficulty: 2,
+      url: AS2("June 2023", "QP"),
+      msUrl: AS2("June 2023", "MS"),
+      tests: "Brake test graph: deceleration, force, stopping distance, work done, half-speed sketch, tired driver / resistive road.",
+      answers: [
+        { label: "a(i)", value: 6.7, unit: "m s⁻²", tolerancePct: 2 },
+        { label: "a(ii)", value: 8000, unit: "N", tolerancePct: 3 },
+        { label: "a(iii)", value: 37, unit: "m", tolerancePct: 2 },
+        { label: "a(iv)", value: 190000, unit: "J", tolerancePct: 6 },
+      ],
+      explanation: "Gradient → a, then F = ma. Stopping distance = rectangle + triangle. Work done by the brakes uses the **braking** distance only. Sketches: same gradient at half speed; describe the line, not the time.",
+    },
+    {
+      id: "pp-h156-02-2020-q5",
+      paper: "H156/02",
+      series: "November 2020",
+      question: "Q5",
+      marks: 11,
+      difficulty: 2,
+      url: AS2("November 2020", "QP"),
+      msUrl: AS2("November 2020", "MS"),
+      tests: "Braking car on a displacement–time graph: speed from gradient, tangent, force, repeat at a lower speed.",
+      answers: [
+        { label: "d", value: 7600, unit: "N", tolerancePct: 3 },
+        { label: "e time", value: 2, unit: "s", tolerancePct: 3 },
+        { label: "e distance", value: 13.75, unit: "m", tolerancePct: 3 },
+      ],
+      explanation: "On a displacement–time graph, velocity = gradient; the straight part is thinking (constant speed), the curve is braking. In (e) keep the same reaction time and deceleration at the new speed.",
+    },
+  ],
+};
+
+export default sub;

@@ -2,9 +2,19 @@
 // To add a subchapter: write content/zakiya/module<N>/<slug>.ts (default export `Subchapter`),
 // import it below and put it in SUBCHAPTERS. The outline entry with the same number lights up.
 import type { Subchapter } from "@/lib/zakiya/types";
+import sub3_1 from "./module3/3-1-distance-and-speed";
+import sub3_2 from "./module3/3-2-displacement-and-velocity";
+import sub3_3 from "./module3/3-3-acceleration";
+import sub3_4 from "./module3/3-4-more-on-velocity-time-graphs";
+import sub3_5 from "./module3/3-5-equations-of-motion";
+import sub3_6 from "./module3/3-6-car-stopping-distances";
+import sub3_7 from "./module3/3-7-free-fall-and-g";
 import projectileMotion from "./module3/3-8-projectile-motion";
 
-export const SUBCHAPTERS: Subchapter[] = [projectileMotion];
+export const SUBCHAPTERS: Subchapter[] = [
+  sub3_1, sub3_2, sub3_3, sub3_4, sub3_5, sub3_6, sub3_7,
+  projectileMotion,
+];
 
 export type OutlineChapter = {
   number: number;
