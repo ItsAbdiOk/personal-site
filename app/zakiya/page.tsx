@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Elevator, Plot, Plug, Sieve, Turntable } from "@lucasmarkes/hairline/react";
 import Header from "@/components/zakiya/Header";
+import HomeCards from "@/components/zakiya/HomeCards";
 import s from "@/components/zakiya/zakiya.module.css";
 import { OUTLINE, SUBCHAPTERS, getSubchapterByNumber } from "@/content/zakiya";
 
@@ -35,6 +36,8 @@ export default function ZakiyaHome() {
           </span>
           <span className={s.chip}>Progress saves on this device</span>
         </div>
+
+        <HomeCards />
 
         {OUTLINE.map((mod) => (
           <section key={mod.number}>

@@ -30,10 +30,41 @@ export default function SubchapterView({ sub }: { sub: Subchapter }) {
 
   // Restore tab from the URL hash and answers from localStorage (client only).
   useEffect(() => {
-    const h = window.location.hash.slice(1) as TabId;
-    if (TABS.some((t) => t.id === h)) setTabState(h);
+    const h = decodeURIComponent(window.location.hash.slice(1));
+    if (TABS.some((t) => t.id === h)) setTabState(h as TabId);
     setAnswers(load<Answers>(examKey, {}));
   }, [examKey]);
+
+  // Deep link to a Notes section (#section-id, e.g. "Go to source" from My Notes): open the Notes
+  // tab and land on that section under the sticky header (scroll-margin-top), with a brief glow.
+  useEffect(() => {
+    const go = () => {
+      const h = decodeURIComponent(window.location.hash.slice(1));
+      if (!h || TABS.some((t) => t.id === h)) return;
+      if (h !== "definitions" && !sub.sections.some((x) => x.id === h)) return;
+      setTabState("notes");
+      const timers: number[] = [];
+      const land = (glow: boolean) => {
+        const el = document.getElementById(h);
+        if (!el) return;
+        el.scrollIntoView({ block: "start", behavior: "instant" as ScrollBehavior });
+        if (glow) {
+          el.classList.remove(s.arrived);
+          void el.offsetWidth;
+          el.classList.add(s.arrived);
+        }
+      };
+      // Twice: once when the tab renders, again after figures/sims settle their height.
+      timers.push(window.setTimeout(() => land(true), 30), window.setTimeout(() => land(false), 400));
+      return () => timers.forEach((t) => window.clearTimeout(t));
+    };
+    const cleanup = go();
+    window.addEventListener("hashchange", go);
+    return () => {
+      cleanup?.();
+      window.removeEventListener("hashchange", go);
+    };
+  }, [sub.sections]);
 
   const setTab = useCallback((t: TabId) => {
     setTabState(t);

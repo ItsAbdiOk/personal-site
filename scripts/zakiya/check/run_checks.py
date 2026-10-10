@@ -5,15 +5,23 @@ ROUNDING  differs by exactly 1 in the last shown digit (names the rounded-interm
 FAIL      anything else
 UNCHECKED not expressible with physics.py
 
-Usage: python run_checks.py [output.md]   Exit code 1 if any FAIL.
+Usage: python run_checks.py [--claims claims_formulas_m3] [output.md]   Exit code 1 if any FAIL.
+(--claims picks another claims module in this folder; default claims_3_8.)
 """
 import math
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import importlib  # noqa: E402
 import physics as P  # noqa: E402
-from claims_3_8 import CLAIMS  # noqa: E402
+
+CLAIMS_MODULE = "claims_3_8"
+if "--claims" in sys.argv:
+    _i = sys.argv.index("--claims")
+    CLAIMS_MODULE = sys.argv[_i + 1]
+    del sys.argv[_i:_i + 2]
+CLAIMS = importlib.import_module(CLAIMS_MODULE).CLAIMS
 
 
 def rnd(x, c):
@@ -111,8 +119,9 @@ def main():
         rows.append((c["id"], st, c["where"], c["quote"], cl, comp, det))
 
     esc = lambda s: str(s).replace("|", "\\|")
-    out = ["# 3.8 Projectile motion: deterministic maths check", "",
-           f"Library: scripts/zakiya/check/physics.py (g = {P.G}). Claims: scripts/zakiya/check/claims_3_8.py. "
+    title = "3.8 Projectile motion" if CLAIMS_MODULE == "claims_3_8" else CLAIMS_MODULE
+    out = [f"# {title}: deterministic maths check", "",
+           f"Library: scripts/zakiya/check/physics.py (g = {P.G}). Claims: scripts/zakiya/check/{CLAIMS_MODULE}.py. "
            "Runner: scripts/zakiya/check/run_checks.py.", "",
            f"**Total {len(rows)}: PASS {counts['PASS']} · ROUNDING {counts['ROUNDING']} · "
            f"FAIL {counts['FAIL']} · UNCHECKED {counts['UNCHECKED']}**", ""]

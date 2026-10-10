@@ -39,3 +39,4 @@ next-env.d.ts
 
 # Zakiya Anki export intermediate JSON (npm run zakiya:anki)
 /.zakiya-anki/
+/data/
