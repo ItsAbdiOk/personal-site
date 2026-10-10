@@ -683,7 +683,7 @@ const sub: Subchapter = {
       tests: "Angled launch: KE description, time to the top, and how far a shot misses.",
       answers: [
         { label: "b", value: 1.32, unit: "s", tolerancePct: 2 },
-        { label: "c", value: 86.6, unit: "m", tolerancePct: 3 },
+        { label: "c", value: 86.6, unit: "m", tolerancePct: 3.6 },
       ],
       explanation: "Time to the top = u sin θ ÷ g; double it for the whole flight on level ground. Range = u cos θ × total time; subtract the target distance. Part (d) is momentum, not projectiles.",
     },
@@ -716,7 +716,7 @@ const sub: Subchapter = {
       answers: [
         { label: "a(ii)", value: 22.6, unit: "s", tolerancePct: 2 },
         { label: "a(iii) speed", value: 312, unit: "m s⁻¹", tolerancePct: 1.3 },
-        { label: "a(iii) angle", value: 44.8, unit: "° to vertical", tolerancePct: 0.5 },
+        { label: "a(iii) angle", value: 44.8, unit: "° to vertical", tolerancePct: 1.8 },
         { label: "b(i)", value: 0.997, tolerancePct: 0.2 },
       ],
       explanation: "Use two columns (H and V). The horizontal speed stays at the value given; the vertical speed after the fall is gt. Combine with Pythagoras and find the angle with tan⁻¹. For thrust, say thrust = drag (zero horizontal net force), not \"balanced forces\". For g, square the radius ratio. Weightless = same acceleration + no contact force.",

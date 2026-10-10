@@ -94,7 +94,7 @@ export const figArrowSetup: Figure = {
 };
 
 // ---------- Arrow impact triangle, to scale: 4 px per m s⁻¹ ----------
-// 49.2 → 196.8 px, 24.0 → 96 px, so the hypotenuse is 218.8 px (= 54.7 × 4) at 26.0°.
+// 49.2 → 196.8 px, 24.0 → 96 px, so the hypotenuse is 219.0 px (= 54.7 × 4) at 26.0°.
 export const svgImpactB = `${head(360, 205)}
   ${markers("pmb-im")}
   <line x1="20" y1="60" x2="216.8" y2="60" stroke-width="2.5" style="stroke:var(--vx)" marker-end="url(#pmb-im-x)"/>

@@ -61,8 +61,8 @@ const cliffBase = (p: string) =>
 export const svgCliffLaunch = `${OPEN(340, 220).replace('viewBox="0 0 340 220"', 'viewBox="0 55 340 165"')}
   ${defs("pmc-l")}
   <line x1="40" y1="150" x2="188" y2="150" stroke-width="2.5" style="stroke:var(--vx)" marker-end="url(#pmc-l-vx)"/>
-  <line x1="190" y1="150" x2="190" y2="77" stroke-width="2.5" style="stroke:var(--vy)" marker-end="url(#pmc-l-vy)"/>
-  <line x1="40" y1="150" x2="188" y2="76" stroke-width="2.5" marker-end="url(#pmc-l-cc)"/>
+  <line x1="190" y1="150" x2="190" y2="65.6" stroke-width="2.5" style="stroke:var(--vy)" marker-end="url(#pmc-l-vy)"/>
+  <line x1="40" y1="150" x2="188" y2="64.6" stroke-width="2.5" marker-end="url(#pmc-l-cc)"/>
   <circle cx="40" cy="150" r="4.5" fill="currentColor" stroke="none"/>
   <path d="M80,150 A40,40 0 0 0 74.6,130" stroke-width="1.5"/>
   ${T(86, 145, "30°", { bold: true })}
