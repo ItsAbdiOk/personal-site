@@ -2,8 +2,9 @@
 
 import { createContext, Fragment, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { Definition, Explain } from "@/lib/zakiya/types";
-import { findExplainOwners, parseRich, type ExplainOwners, type RichNode } from "@/lib/zakiya/rich";
+import { findExplainOwners, parseRich, richToText, type ExplainOwners, type RichNode } from "@/lib/zakiya/rich";
 import s from "./zakiya.module.css";
+import { Tex } from "./Tex";
 
 type Glossary = Map<string, Definition>;
 type ExplainDict = Record<string, Explain>;
@@ -68,7 +69,7 @@ export function GlossaryProvider({
         setPop({ def: glossary.get(key(target.term)) ?? null, ex: null, term: target.term, x, y, above });
       } else {
         const ex = explain[target.key] ?? null;
-        setPop({ def: null, ex, term: ex?.label ?? target.key, x, y, above });
+        setPop({ def: null, ex, term: ex ? richToText(ex.label) : target.key, x, y, above });
       }
     },
     [glossary, explain, pop],
@@ -196,6 +197,8 @@ function renderNodes(nodes: RichNode[], walk: Walk): React.ReactNode {
       }
       case "term":
         return <Term key={i} term={n.term} label={n.label} />;
+      case "math":
+        return <Tex key={i} tex={n.tex} />;
       case "explain": {
         // Every mention is tappable (not just the first), so she never has to hunt back for it.
         return <ExplainTerm key={i} k={n.key} c={n.c} tappable />;

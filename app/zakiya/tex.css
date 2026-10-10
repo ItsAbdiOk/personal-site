@@ -1,0 +1,6 @@
+/* KaTeX tweaks for the Zakiya study guide: inherit colour, match surrounding text size,
+   never push the page wider than the viewport. */
+.zk-tex .katex { color: inherit; font-size: 1.05em; }
+.zk-tex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; padding: 2px 0; }
+.zk-tex-display .katex-display { margin: 0; text-align: left; }
+.zk-tex-display .katex-display > .katex { text-align: left; }

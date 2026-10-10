@@ -5,6 +5,7 @@ import type { Block, Definition, Subchapter } from "@/lib/zakiya/types";
 import Figure from "./Figure";
 import { blockRichFields } from "@/lib/zakiya/rich";
 import { ExplainScope, Rich } from "./Rich";
+import { Tex } from "./Tex";
 import OriginBadge from "./OriginBadge";
 import SourceTag, { SOURCE_LABEL } from "./SourceTag";
 import { DEFS, blockKey, blockText, definitionText, saveBlocks, saveHighlight, useSaved } from "./saved";
@@ -95,7 +96,11 @@ export function BlockView({ block, at }: { block: Block; at: string }) {
       return (
         <div className={s.equation}>
           <div className={s.eqLine}>
-            <span className={s.eqText}>{block.latexless}</span>
+            {block.tex ? (
+              <Tex tex={block.tex} display className={`${s.eqText} ${s.eqTex}`} />
+            ) : (
+              <span className={s.eqText}>{block.latexless}</span>
+            )}
             <span className={`${s.pill} ${block.dataSheet ? s.badgeSheet : s.badgeLearn}`}>
               {block.dataSheet ? "On data sheet" : "Learn this"}
             </span>
@@ -106,10 +111,15 @@ export function BlockView({ block, at }: { block: Block; at: string }) {
               <Rich text={block.words} loc={`${at}words`} />
             </p>
           )}
-          {block.general && (
+          {(block.general || block.generalTex) && (
             <div className={s.eqGeneral}>
               <span className={s.eqLayerLabel}>General form (data sheet)</span>
-              <span className={s.eqGeneralText}>{block.general}</span>
+              {block.generalTex ? (
+                /* inline mode so long general forms wrap at = and + on a phone */
+                <Tex tex={block.generalTex} className={s.eqGeneralText} />
+              ) : (
+                <span className={s.eqGeneralText}>{block.general}</span>
+              )}
             </div>
           )}
           {block.note && (

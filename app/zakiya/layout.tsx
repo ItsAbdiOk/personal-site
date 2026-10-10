@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import "katex/dist/katex.min.css";
+import "./tex.css";
 
 // Private study guide: keep it out of search engines.
 export const metadata: Metadata = {

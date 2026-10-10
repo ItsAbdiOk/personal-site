@@ -30,7 +30,7 @@ export type Block =
   | { type: "list"; items: Rich[] }
   /** Equation in three layers: the symbol version, the same thing as a plain-English sentence,
    *  and (optionally) the general data-sheet form it comes from. */
-  | { type: "equation"; latexless: string; words?: Rich; general?: string; note?: Rich; dataSheet: boolean }
+  | { type: "equation"; latexless: string; tex?: string; words?: Rich; general?: string; generalTex?: string; note?: Rich; dataSheet: boolean }
   /** "Where this is going": one-line ramp-up at the top of a section. */
   | { type: "lead"; body: Rich }
   | { type: "analogy"; icon: string; body: Rich }

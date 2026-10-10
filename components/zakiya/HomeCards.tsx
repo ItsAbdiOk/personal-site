@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import BookmarkIcon from "./BookmarkIcon";
+import { allFormulas } from "@/content/zakiya/formulas";
 import { useSaved } from "./saved";
 import s from "./zakiya.module.css";
+
+const FORMULA_COUNT = allFormulas().length;
 
 /** Landing-page shortcuts above the modules: My notes (live count) and the formula sheet. */
 export default function HomeCards() {
@@ -25,15 +28,18 @@ export default function HomeCards() {
         </span>
         <span className={s.go}>Open ›</span>
       </Link>
-      <div className={`${s.homeCard} ${s.homeCardSoon}`} aria-disabled>
+      <Link href="/zakiya/formulas" className={s.homeCard}>
         <span className={s.homeCardIcon} aria-hidden>
           ƒ
         </span>
         <span className={s.homeCardText}>
           <span className={s.homeCardTitle}>Formula sheet</span>
-          <span className={s.homeCardSub}>Coming soon</span>
+          <span className={s.homeCardSub}>
+            {FORMULA_COUNT} equations · tap one to see it worked
+          </span>
         </span>
-      </div>
+        <span className={s.go}>Open ›</span>
+      </Link>
     </div>
   );
 }

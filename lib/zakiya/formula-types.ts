@@ -10,6 +10,7 @@ export type LegendEntry = {
   meaning: Rich;               // "time", "acceleration of free fall"
   unit?: string;               // SI unit in Unicode, e.g. "m s⁻²"; omit for pure numbers/ratios
   value?: string;              // fixed value when there is one, e.g. "9.81 m s⁻²" for g
+  tex?: string;                // LaTeX for the symbol when symbolTex() can't guess it
 };
 
 /** A number handed to us in the question, tied to a legend symbol so the UI can highlight where it goes. */
@@ -24,6 +25,9 @@ export type SolvedStep = {
   say: Rich;                   // "Put the numbers in"
   working: string;             // plain Unicode, numbers substituted: "t = √(2 × 44.1 ÷ 9.81)"
   result?: string;             // "t = 3.00 s"
+  /** KaTeX version of `working`. Wrap each number taken from `given` as \given{symbol}{number}
+   *  (symbol = GivenValue.symbol) so the sheet can colour it to match that symbol. */
+  tex?: string;
 };
 
 /** A fully solved question that shows one formula in use. */
@@ -47,7 +51,8 @@ export type DerivedFrom = {
 export type Formula = {
   id: string;                  // stable, e.g. "suvat-s-ut"
   name: string;                // "Distance with constant acceleration"
-  equation: string;            // plain Unicode, e.g. "s = ut + ½at²"
+  equation: string;            // plain Unicode, e.g. "s = ut + ½at²" (fallback + My Notes snapshot)
+  tex?: string;                // KaTeX version of `equation`, e.g. s = ut + \\tfrac{1}{2}at^2
   words: Rich;                 // the same thing as a plain-English sentence
   legend: LegendEntry[];
   /** true = printed on the OCR Data, Formulae and Relationships booklet; false = not printed. */
@@ -72,6 +77,7 @@ export function formulaStatus(f: Formula): FormulaStatus {
 export type FormulaGroup = {
   id: string;                  // "3-1-motion"
   title: string;               // "3.1 Motion"
+  short?: string;              // label in the jump index, e.g. "3.1.3 Projectiles"
   intro?: Rich;
   formulas: Formula[];
 };
@@ -83,3 +89,14 @@ export type FormulaSheet = {
   groups: FormulaGroup[];
   explain?: Record<string, Explain>; // tap-to-explain dictionary for {{key}} markup on this sheet
 };
+
+const GREEK: Record<string, string> = { "Δ": "\\Delta ", "θ": "\\theta ", "ρ": "\\rho ", "σ": "\\sigma ", "ε": "\\varepsilon " };
+
+/** LaTeX for a legend symbol: "vx" → v_x, "Δs" → \Delta s, "reaction time" → \text{reaction time}. */
+export function symbolTex(e: Pick<LegendEntry, "symbol" | "tex">): string {
+  if (e.tex) return e.tex;
+  const sym = e.symbol;
+  if (/\s/.test(sym) || /^[a-z]{4,}$/i.test(sym)) return `\\text{${sym}}`;
+  if (["vx", "vy", "ux", "uy", "Ek", "Ep"].includes(sym)) return `${sym[0]}_${sym[1]}`;
+  return sym.replace(/[Δθρσε]/g, (c) => GREEK[c]).trim();
+}

@@ -90,7 +90,7 @@ const sub: Subchapter = {
     { id: "pm-fc-10", front: "What is a projectile's velocity at its highest point?", back: "**Horizontal, equal to u cos θ.** Only the vertical component is zero, so the velocity (and KE) is not zero.", tag: "concept", source: "both", page: "40–43" },
     { id: "pm-fc-11", front: "What is a projectile's acceleration at its highest point?", back: "**9.81 m s⁻² downwards**, the same as everywhere else in the flight. It is not zero.", tag: "concept", source: "both", page: "40–43" },
     { id: "pm-fc-12", front: "Which of the SUVAT equations are given on the OCR data sheet?", back: "**All four:** v = u + at, s = ½(u + v)t, s = ut + ½at², v² = u² + 2as.", tag: "equation", source: "spec-only" },
-    { id: "pm-fc-13", front: "Are the equations for resolving a vector into components on the OCR data sheet?", back: "**Yes**, as Fₓ = F cos θ and F (vertical) = F sin θ.", tag: "equation", source: "spec-only" },
+    { id: "pm-fc-13", front: "Are the equations for resolving a vector into components on the OCR data sheet?", back: "**Yes**, as $F_x$ = F cos θ and F (vertical) = F sin θ.", tag: "equation", source: "spec-only" },
     { id: "pm-fc-14", front: "How do you find the magnitude of a projectile's velocity from its horizontal and vertical components?", back: "**Pythagoras:** v = √(horizontal² + vertical²). Not on the data sheet.", tag: "equation", source: "both", page: "40–43" },
     { id: "pm-fc-15", front: "How do you find the angle of a projectile's velocity to the horizontal from its components?", back: "**θ = tan⁻¹(vertical component ÷ horizontal component).** Not on the data sheet. The inverse ratio gives the angle to the vertical.", tag: "equation", source: "both", page: "40–43" },
     { id: "pm-fc-16", front: "What shape is the path of a projectile when air resistance is negligible?", back: "A **parabola**.", tag: "concept", source: "textbook-only", page: "40–43" },
@@ -120,7 +120,7 @@ const sub: Subchapter = {
             "**C.** At the top only the horizontal component is left: v = u cos 40°. KE ∝ v^2^, so KE = cos^2^40° × E = 0.587E ≈ **0.59E**.",
           markScheme: ["C"],
           commonMistakes: [
-            "**A (0)**: \"it stops at the top\". Only v~y~ is zero; the ball still has a horizontal velocity. In the real June 2016 question the zero option was the most popular wrong answer.",
+            "**A (0)**: \"it stops at the top\". Only $v_y$ is zero; the ball still has a horizontal velocity. In the real June 2016 question the zero option was the most popular wrong answer.",
             "**D (0.77E)**: uses cos 40° without squaring. KE depends on **speed squared**.",
             "**B (0.41E)**: uses sin^2^40°, the share of KE that went into GPE, not what is left.",
           ],
@@ -207,10 +207,10 @@ const sub: Subchapter = {
           kind: "numeric",
           answer: { value: 0.505, unit: "s", tolerancePct: 2 },
           modelAnswer:
-            "Vertically: u~V~ = 0, a = 9.81 m s⁻², s = 1.25 m.\ns = ½at^2^ → 1.25 = ½ × 9.81 × t^2^ → t = √(2 × 1.25 ÷ 9.81) = **0.505 s**",
+            "Vertically: $u_V$ = 0, a = 9.81 m s⁻², s = 1.25 m.\ns = ½at^2^ → 1.25 = ½ × 9.81 × t^2^ → $t = \\sqrt{\\dfrac{2 \\times 1.25}{9.81}}$ = **0.505 s**",
           markScheme: ["C1 1.25 = ½ × 9.81 × t^2^", "A1 0.50 s", "Allow 0.505 s; not a method using u = 9.0 m s⁻¹ vertically"],
           commonMistakes: [
-            "Putting 9.0 m s⁻¹ in as the vertical u. Launched horizontally means u~V~ = **0**. Examiners flagged exactly this in June 2022 H156/01 Q23(d).",
+            "Putting 9.0 m s⁻¹ in as the vertical u. Launched horizontally means $u_V$ = **0**. Examiners flagged exactly this in June 2022 H156/01 Q23(d).",
             "Forgetting the ½, giving t = 0.357 s.",
           ],
         },
@@ -237,7 +237,7 @@ const sub: Subchapter = {
           marks: 2,
           kind: "written",
           modelAnswer:
-            "The time of flight **does not change** (still 0.505 s). It depends only on the vertical motion: the **distance of fall is the same** and the **initial vertical velocity is still zero**, so t = √(2h ÷ g) has no v in it.",
+            "The time of flight **does not change** (still 0.505 s). It depends only on the vertical motion: the **distance of fall is the same** and the **initial vertical velocity is still zero**, so $t = \\sqrt{2h/g}$ has no v in it.",
           markScheme: [
             "B1 time of flight is unchanged / independent of speed (AW)",
             "B1 because the height (distance of fall) is the same and the initial vertical velocity is zero; allow algebraic answer t = √(2h/g)",
@@ -274,7 +274,7 @@ const sub: Subchapter = {
           marks: 1,
           kind: "numeric",
           answer: { value: 3.12, unit: "m s⁻¹", tolerancePct: 1 },
-          modelAnswer: "The angle is from the **vertical**, so the vertical side is next to it: u~V~ = 15.0 cos 78.0° = **3.12 m s⁻¹**. (Same as 15.0 sin 12.0°.)",
+          modelAnswer: "The angle is from the **vertical**, so the vertical side is next to it: $u_V$ = 15.0 cos 78.0° = **3.12 m s⁻¹**. (Same as 15.0 sin 12.0°.)",
           markScheme: ["M1 15.0 × cos 78.0° (= 3.119)", "ALLOW 15.0 × sin 12.0°", "A0 (show that)"],
           commonMistakes: [
             "Using sin 78.0° out of habit, giving 14.7 m s⁻¹. **Sketch the triangle**: the angle here is measured from the vertical.",
@@ -288,7 +288,7 @@ const sub: Subchapter = {
           kind: "numeric",
           answer: { value: 6.71, unit: "m s⁻¹", tolerancePct: 1 },
           modelAnswer:
-            "Down positive: u = 3.12 m s⁻¹ (the ball first goes up, but on returning to hand height it is moving down at 3.12 m s⁻¹; v^2^ = u^2^ + 2as handles this automatically), s = 1.80 m, a = 9.81 m s⁻².\nv^2^ = 3.12^2^ + 2 × 9.81 × 1.80 = 45.0\nv = √45.0 = **6.71 m s⁻¹**",
+            "Down positive: u = 3.12 m s⁻¹ (the ball first goes up, but on returning to hand height it is moving down at 3.12 m s⁻¹; $v^2 = u^2 + 2as$ handles this automatically), s = 1.80 m, a = 9.81 m s⁻².\nv^2^ = 3.12^2^ + 2 × 9.81 × 1.80 = 45.0\nv = √45.0 = **6.71 m s⁻¹**",
           markScheme: ["M1 v^2^ = 3.12^2^ + 2 × 9.81 × 1.80 (= 45.0)", "M1 v = √45.0 = 6.71 (square root step must be seen)", "A0 (show that); ALLOW ECF from (a)"],
           commonMistakes: [
             "Not showing the √ step. Examiners for the real question said the square root of v^2^ had to be shown.",
@@ -302,9 +302,9 @@ const sub: Subchapter = {
           kind: "numeric",
           answer: { value: 18.9, unit: "J", tolerancePct: 2 },
           modelAnswer:
-            "**Route 1 (components):** u~H~ = 15.0 sin 78.0° = 14.67 m s⁻¹ (constant). v^2^ = 14.67^2^ + 6.71^2^ = 260. KE = ½ × 0.145 × 260 = **18.9 J**\n**Route 2 (energy):** KE at release = ½ × 0.145 × 15.0^2^ = 16.3 J. GPE lost = 0.145 × 9.81 × 1.80 = 2.56 J. KE at ground = 16.3 + 2.56 = **18.9 J**",
+            "**Route 1 (components):** $u_H$ = 15.0 sin 78.0° = 14.67 m s⁻¹ (constant). v^2^ = 14.67^2^ + 6.71^2^ = 260. KE = ½ × 0.145 × 260 = **18.9 J**\n**Route 2 (energy):** KE at release = ½ × 0.145 × 15.0^2^ = 16.3 J. GPE lost = 0.145 × 9.81 × 1.80 = 2.56 J. KE at ground = 16.3 + 2.56 = **18.9 J**",
           markScheme: [
-            "C1 u~H~ = 15.0 sin 78.0° (= 14.7) OR ΔGPE = 0.145 × 9.81 × 1.80 (= 2.56 J)",
+            "C1 $u_H$ = 15.0 sin 78.0° (= 14.7) OR ΔGPE = 0.145 × 9.81 × 1.80 (= 2.56 J)",
             "C1 v^2^ = 14.7^2^ + 6.71^2^ (= 260) OR initial KE = ½ × 0.145 × 15.0^2^ (= 16.3 J)",
             "A1 18.9 J; ALLOW 19 J",
             "Not 3.3 J (vertical component only); not 16.3 J (GPE not added)",
@@ -320,7 +320,7 @@ const sub: Subchapter = {
           marks: 2,
           kind: "numeric",
           answer: { value: 24.6, unit: "°", tolerancePct: 2 },
-          modelAnswer: "tan θ = v~V~ ÷ v~H~ = 6.71 ÷ 14.67 → θ = **24.6°** below the horizontal.",
+          modelAnswer: "$\\tan\\theta = \\dfrac{v_V}{v_H} = \\dfrac{6.71}{14.67}$ → $\\theta$ = **24.6°** below the horizontal.",
           markScheme: ["C1 tan θ = 6.71 ÷ 14.7", "A1 25° (allow 24.6°); ALLOW ECF from (b)", "Not 65° (angle to the vertical)"],
           commonMistakes: [
             "Inverting the ratio (65.4°): that is the angle to the **vertical**.",
@@ -380,7 +380,7 @@ const sub: Subchapter = {
           kind: "numeric",
           answer: { value: 3.11, unit: "m", tolerancePct: 2 },
           modelAnswer:
-            "Vertical: u~V~ = 0, so 0.95 = ½ × 9.81 × t^2^ → t = **0.440 s**.\nHorizontal: R = 7.07 × 0.440 = **3.11 m**",
+            "Vertical: $u_V$ = 0, so 0.95 = ½ × 9.81 × t^2^ → t = **0.440 s**.\nHorizontal: R = 7.07 × 0.440 = **3.11 m**",
           markScheme: [
             "C1 0.95 = ½ × 9.81 × t^2^",
             "C1 t = 0.44 s",
@@ -440,9 +440,9 @@ const sub: Subchapter = {
           marks: 2,
           kind: "numeric",
           answer: { value: 1.29, unit: "s", tolerancePct: 1 },
-          modelAnswer: "u~V~ = 22.0 sin 35.0° = 12.6 m s⁻¹. At the top v~V~ = 0: 0 = 12.6 − 9.81t → t = **1.29 s**",
+          modelAnswer: "$u_V$ = 22.0 sin 35.0° = 12.6 m s⁻¹. At the top $v_V$ = 0: 0 = 12.6 − 9.81t → t = **1.29 s**",
           markScheme: [
-            "C1 u~V~ = 22.0 sin 35.0° (= 12.6)",
+            "C1 $u_V$ = 22.0 sin 35.0° (= 12.6)",
             "C1 t = 12.6 ÷ 9.81 (= 1.29 s)",
             "A0 (show that)",
             "Not t = 50.0 ÷ (22.0 cos 35.0°) — zero marks",
@@ -455,7 +455,7 @@ const sub: Subchapter = {
           marks: 2,
           kind: "numeric",
           answer: { value: 69.8, unit: "J", tolerancePct: 2 },
-          modelAnswer: "At the top v = v~H~ = 22.0 cos 35.0° = 18.0 m s⁻¹.\nKE = ½ × 0.43 × 18.0^2^ = **69.8 J**",
+          modelAnswer: "At the top v = $v_H$ = 22.0 cos 35.0° = 18.0 m s⁻¹.\nKE = ½ × 0.43 × 18.0^2^ = **69.8 J**",
           markScheme: ["C1 v = 22.0 cos 35.0° (= 18.0)", "A1 70 J", "Not 104 J (22.0 used); not 34 J (vertical component used)"],
           commonMistakes: [
             "Using the launch speed (104 J) or the vertical component (34 J). Examiners for June 2018 H556/01 Q16(a)(iv) saw both.",
@@ -510,7 +510,7 @@ const sub: Subchapter = {
           marks: 1,
           kind: "numeric",
           answer: { value: 2.364, unit: "km s⁻¹", tolerancePct: 0.5 },
-          modelAnswer: "u~V~ = 2.40 sin 80.0° = **2.364 km s⁻¹** (2364 m s⁻¹)",
+          modelAnswer: "$u_V$ = 2.40 sin 80.0° = **2.364 km s⁻¹** (2364 m s⁻¹)",
           markScheme: ["M1 2.40 × sin 80.0° = 2.364", "A0 (show that)"],
           commonMistakes: ["Using cos 80.0° (0.417 km s⁻¹). The 2024 report lists leaving out the sine, or using cos, as a common problem."],
         },
@@ -520,7 +520,7 @@ const sub: Subchapter = {
           marks: 2,
           kind: "numeric",
           answer: { value: 285, unit: "km", tolerancePct: 2 },
-          modelAnswer: "At the top v~V~ = 0: 0 = 2364^2^ − 2 × 9.81 × H\nH = 2364^2^ ÷ 19.62 = 2.85 × 10^5^ m = **285 km**",
+          modelAnswer: "At the top $v_V$ = 0: 0 = 2364^2^ − 2 × 9.81 × H\nH = 2364^2^ ÷ 19.62 = 2.85 × 10^5^ m = **285 km**",
           markScheme: ["C1 0 = 2364^2^ − 2 × 9.81 × H", "A1 2.8 × 10^5^ m (285 km)", "Not 8.9 km (cos 80.0° used)"],
           commonMistakes: [
             "Using 2.364 in km s⁻¹ with g in m s⁻² gives 0.285: a unit mix-up. Work in metres and seconds, then convert. The 2024 report flagged m/km slips.",
@@ -584,7 +584,7 @@ const sub: Subchapter = {
           marks: 6,
           kind: "written",
           modelAnswer:
-            "**Relationship.** Horizontal velocity is constant. Vertically u = 0, so h = ½gt^2^ and t = √(2h ÷ g): the time of fall does not depend on v. Then x = vt = v√(2h ÷ g), so **x^2^ = (2v^2^ ÷ g) h**: x^2^ ∝ h.\n\n**Method.** Clamp a curved track to a stand so its end is horizontal (check with a spirit level) at the bench edge. Release the ball from the **same marked point** each time so v is constant. Change h by raising the track and launch edge on an adjustable stand; measure h from the launch edge to the floor with a metre rule held vertical (set square). Mark the landing point with a sand tray or carbon paper on white paper; measure x from a plumb line below the edge with a tape measure. Repeat 3 times for each of 6 heights and average. Measure v directly with a light gate at the end of the track, **connected to a timer or data-logger**, using the ball's diameter (measured with vernier callipers).\n\n**Safety.** Use a sand tray or catch box so the ball does not roll across the floor (trip hazard); clamp the stand so it cannot topple.\n\n**Analysis.** Plot **x^2^ against h**. A **straight line through the origin** supports the relationship. Gradient = 2v^2^ ÷ g, so v = √(g × gradient ÷ 2). Compare with the light-gate value.",
+            "**Relationship.** Horizontal velocity is constant. Vertically u = 0, so h = ½gt^2^ and $t = \\sqrt{2h/g}$: the time of fall does not depend on v. Then x = vt = v√(2h ÷ g), so **x^2^ = (2v^2^ ÷ g) h**: x^2^ ∝ h.\n\n**Method.** Clamp a curved track to a stand so its end is horizontal (check with a spirit level) at the bench edge. Release the ball from the **same marked point** each time so v is constant. Change h by raising the track and launch edge on an adjustable stand; measure h from the launch edge to the floor with a metre rule held vertical (set square). Mark the landing point with a sand tray or carbon paper on white paper; measure x from a plumb line below the edge with a tape measure. Repeat 3 times for each of 6 heights and average. Measure v directly with a light gate at the end of the track, **connected to a timer or data-logger**, using the ball's diameter (measured with vernier callipers).\n\n**Safety.** Use a sand tray or catch box so the ball does not roll across the floor (trip hazard); clamp the stand so it cannot topple.\n\n**Analysis.** Plot **x^2^ against h**. A **straight line through the origin** supports the relationship. Gradient = 2v^2^ ÷ g, so v = √(g × gradient ÷ 2). Compare with the light-gate value.",
           markScheme: [
             "**Level 3 (5–6 marks):** relationship suggested AND supported by correct physics or algebra; clear, safe method with appropriate measurements; analysis with a suitable graph through the origin AND v found from the gradient. Well structured and logical.",
             "**Level 2 (3–4 marks):** relationship suggested with some physics; workable method; some analysis (e.g. graph named but no gradient → v). Some structure.",
@@ -652,7 +652,7 @@ const sub: Subchapter = {
         { label: "b(ii)", value: 15.4, unit: "J", tolerancePct: 3 },
         { label: "b(iii)", value: 30, unit: "°", tolerancePct: 2.5 },
       ],
-      explanation: "Part (a) is a straight drop (give 7.0, not 7). In (b) the vertical motion is the **same** drop, so reuse that vertical velocity. Landing KE = horizontal KE + GPE lost. Angle = tan⁻¹(v~V~ ÷ v~H~), from velocities only.",
+      explanation: "Part (a) is a straight drop (give 7.0, not 7). In (b) the vertical motion is the **same** drop, so reuse that vertical velocity. Landing KE = horizontal KE + GPE lost. Angle = tan⁻¹($v_V$ ÷ $v_H$), from velocities only.",
     },
     {
       id: "pp-h556-01-2022-q16b",
@@ -701,7 +701,7 @@ const sub: Subchapter = {
         { label: "b(i)", value: 1.86, unit: "s", tolerancePct: 3 },
         { label: "b(ii)", value: 15.7, unit: "m", tolerancePct: 5.5 },
       ],
-      explanation: "On release the velocity is horizontal (along the tangent) with size rω, so u~V~ = 0. Time from the drop height, then horizontal displacement = rω × t. For (iii): name a variable, its effect on speed or time, then a conclusion. Mass alone changes nothing.",
+      explanation: "On release the velocity is horizontal (along the tangent) with size rω, so $u_V$ = 0. Time from the drop height, then horizontal displacement = rω × t. For (iii): name a variable, its effect on speed or time, then a conclusion. Mass alone changes nothing.",
     },
     {
       id: "pp-h556-01-2025-q17",
@@ -732,7 +732,7 @@ const sub: Subchapter = {
       msUrl: "https://pmt.physicsandmathstutor.com/download/Physics/A-level/Past-Papers/OCR-A/Paper-3/MS/June%202024%20MS.pdf",
       tests: "Two-stage rocket estimate with assumptions, then evaluating constant g.",
       answers: [{ label: "H", value: 530, unit: "km", tolerancePct: 3 }],
-      explanation: "Stage 1 (powered): constant acceleration from rest, s = ½(u + v)t with the vertical component 3100 sin 75°. Stage 2 (coasting): v^2^ = u^2^ + 2as up to v~V~ = 0, no air resistance. State the assumption for each stage. Then find g at the top with g ∝ 1/r^2^ (square it) and give a clear verdict.",
+      explanation: "Stage 1 (powered): constant acceleration from rest, s = ½(u + v)t with the vertical component 3100 sin 75°. Stage 2 (coasting): $v^2 = u^2 + 2as$ up to $v_V$ = 0, no air resistance. State the assumption for each stage. Then find g at the top with g ∝ 1/r^2^ (square it) and give a clear verdict.",
     },
   ],
 };

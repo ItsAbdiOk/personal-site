@@ -5,7 +5,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { SUBCHAPTERS } from "@/content/zakiya";
 import { ankiDeckName, ankiFileName, ankiTopic } from "@/lib/zakiya/anki";
-import { flattenExplain, parseRich } from "@/lib/zakiya/rich";
+import { flattenExplain, mathToText, parseRich } from "@/lib/zakiya/rich";
 
 const out = resolve(process.argv[2] ?? ".zakiya-anki/cards.json");
 
@@ -29,10 +29,11 @@ for (const sub of SUBCHAPTERS) {
     textbookPages: sub.textbookPages,
     // Rich is pre-parsed here (lib/zakiya/rich.ts) so Python never re-implements the markup.
     // {{key|text}} → text, {{key}} → explain[key].label (or the key): cards have no popovers.
+    // $...$ LaTeX → plain Unicode text (vₓ, √(…), ⁻¹): never MathJax, amgi doesn't render it.
     flashcards: sub.flashcards.map((c) => ({
       ...c,
-      frontNodes: flattenExplain(parseRich(c.front), sub.explain),
-      backNodes: flattenExplain(parseRich(c.back), sub.explain),
+      frontNodes: mathToText(flattenExplain(parseRich(c.front), sub.explain)),
+      backNodes: mathToText(flattenExplain(parseRich(c.back), sub.explain)),
     })),
   });
 }

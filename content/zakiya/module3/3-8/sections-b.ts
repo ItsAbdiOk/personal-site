@@ -18,25 +18,29 @@ const sections: Section[] = [
         },
         {
           type: "text",
-          body: "Why: the launch is **sideways only**, so the starting up/down speed {{uy}} is **zero** ({{uy-zero|304 × cos 90° = 0}}). Vertically, it's just a dropped object. Sideways, nothing pushes or pulls it, so its sideways speed {{vx}} stays 304 m s⁻¹ the whole way down.",
+          body: "Why: the launch is **sideways only**, so the starting up/down speed {{uy}} is **zero** ({{uy-zero|$304 \\times \\cos 90^\\circ = 0$}}). Vertically, it's just a dropped object. Sideways, nothing pushes or pulls it, so its sideways speed {{vx}} stays 304 m s⁻¹ the whole way down.",
         },
         {
           type: "equation",
           latexless: "t = √(2h ÷ g)",
+          tex: "t = \\sqrt{\\dfrac{2h}{g}}",
           words: "**time to fall = square root of (2 × height ÷ 9.81)**. Only the height matters; the sideways speed plays no part.",
           general: "s = ut + ½at² with u = 0 (dropped from rest vertically), s = h, a = g",
+          generalTex: "s = ut + \\tfrac{1}{2}at^2 \\text{ with } u = 0 \\text{ (dropped from rest vertically)},\\ s = h,\\ a = g",
           dataSheet: false,
         },
         {
           type: "equation",
           latexless: "x = vx × t",
+          tex: "x = v_x \\times t",
           words: "**distance out = sideways speed × time in the air**. Sideways speed never changes, so this is plain speed × time.",
           general: "s = ut + ½at² with a = 0 horizontally, so s = ut",
+          generalTex: "s = ut + \\tfrac{1}{2}at^2 \\text{ with } a = 0 \\text{ horizontally, so } s = ut",
           dataSheet: false,
         },
         {
           type: "warning",
-          body: "Horizontal launch → **u~y~ = 0**. Students often put the launch speed in as the vertical u. The launch speed belongs only in the horizontal column.",
+          body: "Horizontal launch → **$u_y$ = 0**. Students often put the launch speed in as the vertical u. The launch speed belongs only in the horizontal column.",
         },
         {
           type: "worked",
@@ -46,9 +50,9 @@ const sections: Section[] = [
             "A cannonball is fired horizontally at 304 m s⁻¹ from a clifftop 44.1 m above the sea. Ignore air resistance. Find (a) the {{flight-time|time of flight}}, (b) the horizontal distance it travels.",
           steps: [
             "**Split the motion.** Falling and moving sideways happen independently, so treat them as two separate problems linked only by the time {{t}}.",
-            "**(a) Falling (down positive, since everything happens downwards).** Write what you know: start speed down u~y~ = 0, distance down {{s}} = 44.1 m, acceleration {{a}} = {{g}} = 9.81 m s⁻², time t = ?",
+            "**(a) Falling (down positive, since everything happens downwards).** Write what you know: start speed down $u_y$ = 0, distance down {{s}} = 44.1 m, acceleration {{a}} = {{g}} = 9.81 m s⁻², time t = ?",
             "Pick the {{suvat}} equation that has s, u, a and t: s = ut + ½at^2^. With u = 0 it becomes 44.1 = ½ × 9.81 × t^2^.",
-            "Rearrange for t: t^2^ = (2 × 44.1) ÷ 9.81 = 8.991, so t = √8.991 = **3.00 s**.",
+            "Rearrange for t: $t^2 = \\dfrac{2 \\times 44.1}{9.81} = 8.991$, so $t = \\sqrt{8.991}$ = **3.00 s**.",
             "**(b) Sideways.** No acceleration, so distance = speed × time = 304 × 3.00 = **912 m**.",
           ],
           answer: "Time of flight **3.00 s**; it lands **912 m** (almost 1 km) from the foot of the cliff.",
@@ -86,7 +90,7 @@ const sections: Section[] = [
         },
         {
           type: "text",
-          body: "At any moment the velocity has two parts: {{vx}} (never changes) and {{vy}} (changes by 9.81 m s⁻¹ every second). They are at right angles, so combine them with {{pythag|Pythagoras}} for the size, and {{tan-inv|tan⁻¹}} for the angle.",
+          body: "At any moment the velocity has two parts: {{vx}} (never changes) and {{vy}} (changes by 9.81 m s⁻¹ every second). They are at right angles, so combine them with {{pythag|Pythagoras}} for the size, and {{tan-inv}} for the angle.",
         },
         {
           type: "figure",
@@ -95,16 +99,20 @@ const sections: Section[] = [
         {
           type: "equation",
           latexless: "v = √(vx² + vy²)",
+          tex: "v = \\sqrt{v_x^2 + v_y^2}",
           words: "**actual speed = square root of (sideways speed² + up/down speed²)**. The two parts are the short sides of a right-angled triangle; the actual speed is the long side.",
           general: "Pythagoras: hypotenuse² = side² + side²",
+          generalTex: "\\text{Pythagoras: } \\text{hypotenuse}^2 = \\text{side}^2 + \\text{side}^2",
           note: "This gives the {{magnitude}} (size) of the velocity.",
           dataSheet: false,
         },
         {
           type: "equation",
           latexless: "θ = tan⁻¹(vy ÷ vx)",
+          tex: "\\theta = \\tan^{-1}\\left(\\dfrac{v_y}{v_x}\\right)",
           words: "**angle below (or above) the ground = tan⁻¹(up/down speed ÷ sideways speed)**. A big up/down speed compared with the sideways speed means a steep angle.",
           general: "tan θ = opposite ÷ adjacent in the right-angled triangle",
+          generalTex: "\\tan\\theta = \\dfrac{\\text{opposite}}{\\text{adjacent}} \\text{ in the right-angled triangle}",
           note: "This is the {{impact-angle|angle to the horizontal}}.",
           dataSheet: false,
         },
@@ -119,11 +127,11 @@ const sections: Section[] = [
           question: "An arrow is fired horizontally at 49.2 m s⁻¹ from a castle 29.4 m high. Ignore air resistance. Find its velocity when it hits the ground.",
           steps: [
             "**Plan:** velocity = size + direction. Find the two parts (sideways and down), then combine them.",
-            "**Down part.** We know u~y~ = 0, s = 29.4 m, a = 9.81 m s⁻², and want the final speed v~y~. No time given, so use the SUVAT equation without t: v^2^ = u^2^ + 2as.",
-            "v~y~^2^ = 0 + 2 × 9.81 × 29.4 = 576.8, so v~y~ = √576.8 = **24.0 m s⁻¹** downwards.",
-            "**Sideways part.** Nothing changes it: v~x~ = **49.2 m s⁻¹**.",
-            "**Size:** Pythagoras on the two parts: v = √(49.2^2^ + 24.0^2^) = **54.7 m s⁻¹**.",
-            "**Direction:** θ = tan⁻¹(down ÷ sideways) = tan⁻¹(24.0 ÷ 49.2) = **26.0°** below the horizontal.",
+            "**Down part.** We know $u_y$ = 0, s = 29.4 m, a = 9.81 m s⁻², and want the final speed $v_y$. No time given, so use the SUVAT equation without t: $v^2 = u^2 + 2as$.",
+            "$v_y^2 = 0 + 2 \\times 9.81 \\times 29.4 = 576.8$, so $v_y = \\sqrt{576.8}$ = **24.0 m s⁻¹** downwards.",
+            "**Sideways part.** Nothing changes it: $v_x$ = **49.2 m s⁻¹**.",
+            "**Size:** Pythagoras on the two parts: $v = \\sqrt{49.2^2 + 24.0^2}$ = **54.7 m s⁻¹**.",
+            "**Direction:** $\\theta = \\tan^{-1}\\left(\\dfrac{\\text{down}}{\\text{sideways}}\\right) = \\tan^{-1}\\left(\\dfrac{24.0}{49.2}\\right)$ = **26.0°** below the horizontal.",
           ],
           answer: "**54.7 m s⁻¹ at 26.0° below the horizontal.** A velocity needs a size **and** a direction.",
         },
@@ -133,11 +141,11 @@ const sections: Section[] = [
         },
         {
           type: "warning",
-          body: "\"Calculate the velocity\" means **magnitude and direction**. Giving only 54.7 m s⁻¹ usually loses the direction mark. Also: tan⁻¹(v~x~ ÷ v~y~) gives the angle to the **vertical** (64.0° here), so say which one you mean.",
+          body: "\"Calculate the velocity\" means **magnitude and direction**. Giving only 54.7 m s⁻¹ usually loses the direction mark. Also: $\\tan^{-1}(v_x \\div v_y)$ gives the angle to the **vertical** (64.0° here), so say which one you mean.",
         },
         {
           type: "text",
-          body: "**{{ke-land|Kinetic energy on landing}}** uses the **whole** speed: ½m(v~x~^2^ + v~y~^2^). Or by energy: KE on landing = ½mu^2^ + mgh (launch KE + GPE lost). Both routes give the same answer.",
+          body: "**{{ke-land|Kinetic energy on landing}}** uses the **whole** speed: $\\tfrac{1}{2}m(v_x^2 + v_y^2)$. Or by energy: KE on landing = $\\tfrac{1}{2}mu^2 + mgh$ (launch KE + GPE lost). Both routes give the same answer.",
         },
         {
           type: "examiners",
@@ -169,11 +177,12 @@ const sections: Section[] = [
         },
         {
           type: "text",
-          body: "The method: {{resolve|resolve}} the launch speed {{u}} at angle {{theta}} into its two parts, then use the two columns. Try the simulator: change the angle and watch v~x~ stay fixed while v~y~ changes.",
+          body: "The method: {{resolve|resolve}} the launch speed {{u}} at angle {{theta}} into its two parts, then use the two columns. Try the simulator: change the angle and watch $v_x$ stay fixed while $v_y$ changes.",
         },
         {
           type: "equation",
           latexless: "ux = u cos θ    uy = u sin θ",
+          tex: "u_x = u\\cos\\theta \\qquad u_y = u\\sin\\theta",
           words: "**sideways part = launch speed × {{cos}} (angle)**; **upward part = launch speed × {{sin}} (angle)**. For 15 m s⁻¹ at 30°: 15 × cos 30° = 13.0 and 15 × sin 30° = 7.5.",
           general: "Resolving a vector: the side next to the angle uses cos, the side opposite uses sin",
           dataSheet: false,
@@ -192,7 +201,7 @@ const sections: Section[] = [
         {
           type: "list",
           items: [
-            "**At the top:** v~y~ = 0. Use this to find the {{max-height|maximum height}} or the time to the top.",
+            "**At the top:** $v_y$ = 0. Use this to find the {{max-height|maximum height}} or the time to the top.",
             "**On flat ground the flight is {{symmetric|symmetric}}:** time up = time down, and it lands with the same speed it was launched with (no air resistance).",
             "**Time of flight** on flat ground = 2 × time to the top. The {{range-dist|range}} = sideways speed × time of flight.",
           ],
@@ -200,15 +209,19 @@ const sections: Section[] = [
         {
           type: "equation",
           latexless: "T = 2u sin θ ÷ g",
+          tex: "T = \\dfrac{2u\\sin\\theta}{g}",
           words: "**time in the air = 2 × upward part ÷ 9.81**. Gravity takes 9.81 m s⁻¹ off the upward speed each second; it takes (upward part ÷ 9.81) seconds to stop rising, and the same again to fall back.",
           general: "v = u + at with v = −u sin θ, u = u sin θ, a = −g",
+          generalTex: "v = u + at \\text{ with } v = -u\\sin\\theta,\\ u = u\\sin\\theta,\\ a = -g",
           dataSheet: false,
         },
         {
           type: "equation",
           latexless: "h = (u sin θ)² ÷ 2g",
+          tex: "h = \\dfrac{(u\\sin\\theta)^2}{2g}",
           words: "**max height = upward part² ÷ (2 × 9.81)**. At the top the upward speed has dropped to zero.",
           general: "v² = u² + 2as with v = 0 at the top, a = −g",
+          generalTex: "v^2 = u^2 + 2as \\text{ with } v = 0 \\text{ at the top},\\ a = -g",
           dataSheet: false,
         },
         {
@@ -218,11 +231,11 @@ const sections: Section[] = [
           question:
             "A ball is kicked at 15 m s⁻¹ at 30° to the horizontal on flat ground. Ignore air resistance. Find (a) the time of flight, (b) the range. (c) Extra step, not in the book: the maximum height.",
           steps: [
-            "**Resolve the kick** into parts: sideways u~x~ = 15 cos 30° = 13.0 m s⁻¹; upward u~y~ = 15 sin 30° = 7.5 m s⁻¹.",
+            "**Resolve the kick** into parts: sideways $u_x$ = 15 cos 30° = 13.0 m s⁻¹; upward $u_y$ = 15 sin 30° = 7.5 m s⁻¹.",
             "**(a) Up/down, taking up as positive.** It lands at the same height, so it lands moving down at the same speed it left: u = +7.5 m s⁻¹, v = −7.5 m s⁻¹, a = −9.81 m s⁻², t = ?",
             "Use v = u + at (it links v, u, a and t): t = (v − u) ÷ a = (−7.5 − 7.5) ÷ (−9.81) = **1.53 s**.",
             "**(b) Sideways.** Speed is fixed at 13.0 m s⁻¹, so range = 13.0 × 1.529 = 19.9 m ≈ **20 m**.",
-            "**(c) Max height.** At the top the upward speed is 0. Use v^2^ = u^2^ + 2as: 0 = 7.5^2^ + 2(−9.81)s, so s = 56.25 ÷ 19.62 = **2.87 m**.",
+            "**(c) Max height.** At the top the upward speed is 0. Use $v^2 = u^2 + 2as$: 0 = 7.5^2^ + 2(−9.81)s, so s = 56.25 ÷ 19.62 = **2.87 m**.",
           ],
           answer: "Time of flight **1.53 s**, range **20 m** (2 s.f.), max height **2.9 m**.",
         },

@@ -11,7 +11,8 @@ import { load, save } from "./storage";
 export type SavedItem = {
   id: string;
   savedAt: number;
-  kind: "block" | "highlight";
+  /** formula: slug = FORMULAS, sectionId = formula id (from the formula sheet). */
+  kind: "block" | "highlight" | "formula";
   slug: string;
   /** Section id, or "definitions" for a key definition (blockIndex = index in sub.definitions). */
   sectionId: string;
@@ -36,7 +37,7 @@ function valid(x: unknown): x is SavedItem {
   return (
     typeof o.id === "string" &&
     typeof o.savedAt === "number" &&
-    (o.kind === "block" || o.kind === "highlight") &&
+    (o.kind === "block" || o.kind === "highlight" || o.kind === "formula") &&
     typeof o.slug === "string" &&
     typeof o.sectionId === "string" &&
     typeof o.blockIndex === "number"
@@ -104,6 +105,14 @@ export function saveHighlight(sub: Subchapter, sectionId: string, blockIndex: nu
   ]);
 }
 
+export const FORMULAS = "formulas";
+
+/** Saves a formula-sheet card (once). `text` is a plain snapshot, e.g. "Weight: W = mg". */
+export function saveFormula(formulaId: string, text: string) {
+  if (read().some((i) => i.kind === "formula" && i.sectionId === formulaId)) return;
+  write([...read(), { id: newId(), savedAt: Date.now(), kind: "formula", slug: FORMULAS, sectionId: formulaId, blockIndex: 0, text }]);
+}
+
 export function updateNote(id: string, note: string) {
   write(read().map((i) => (i.id === id ? { ...i, note: note || undefined } : i)));
 }
@@ -162,6 +171,7 @@ export function blockText(sub: Subchapter, b: Block): string {
     case "list":
       return b.items.map((i) => `• ${t(sub, i)}`).join("\n");
     case "equation":
+      // latexless is the plain-text twin of tex, so snapshots stay readable without KaTeX.
       return [b.latexless, t(sub, b.words), b.general].filter(Boolean).join("\n");
     case "figure": {
       const f = b.figure;
@@ -204,6 +214,7 @@ export type Resolved = {
 /** Finds the block an item points at. If the index has moved, looks for a block with the same
  *  snapshot (same section first, then anywhere in the subchapter). */
 export function resolve(item: SavedItem, getSubchapter: (slug: string) => Subchapter | undefined): Resolved | null {
+  if (item.kind === "formula") return null; // shown in My Notes' own "Formula sheet" group
   const sub = getSubchapter(item.slug);
   if (!sub) return null;
   const snap = item.kind === "block" ? item.text : item.blockText;

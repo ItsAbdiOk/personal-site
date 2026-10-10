@@ -30,17 +30,19 @@ const sheet: FormulaSheet = {
   module: 3,
   title: "Module 3: Forces and motion",
   intro:
-    "Every Module 3 equation. **Data sheet** = printed in the exam booklet. **Memorise** = not printed, you must know it. **Derived** = not printed, but one step from a printed one. Tap a formula with a worked example to see every number go in.",
+    "Every Module 3 equation. **Data sheet** = printed in the exam booklet. **Learn this** = not printed, you must know it. **Derived** = not printed, but one step from a printed one. Tap a formula with a worked example to see every number go in.",
   groups: [
     // ------------------------------------------------------------------
     {
       id: "3-1-motion",
       title: "3.1 Motion",
+      short: "3.1 Motion",
       formulas: [
         {
           id: "speed",
           name: "Speed and velocity",
           equation: "v = Δs ÷ Δt",
+          tex: "v = \\dfrac{\\Delta s}{\\Delta t}",
           words: "velocity = change in displacement ÷ time taken",
           legend: [
             { symbol: "v", meaning: "velocity (average speed if you use distance)", unit: "m s⁻¹" },
@@ -56,6 +58,7 @@ const sheet: FormulaSheet = {
           id: "acceleration",
           name: "Acceleration",
           equation: "a = Δv ÷ Δt",
+          tex: "a = \\dfrac{\\Delta v}{\\Delta t}",
           words: "acceleration = change in velocity ÷ time taken",
           legend: [
             L.a,
@@ -71,6 +74,7 @@ const sheet: FormulaSheet = {
           id: "suvat-v-u-at",
           name: "Final velocity (SUVAT)",
           equation: "v = u + at",
+          tex: "v = u + at",
           words: "final velocity = starting velocity + (velocity gained each second × seconds)",
           legend: [L.v, L.u, L.a, L.t],
           onDataSheet: true,
@@ -91,10 +95,10 @@ const sheet: FormulaSheet = {
             ],
             find: "the time {{t}} from kick to landing",
             steps: [
-              { say: "Pick the equation with u, v, a and t (no distance given)", working: "v = u + at" },
-              { say: "Rearrange for t: take u away, then divide by a", working: "t = (v − u) ÷ a" },
-              { say: "Put the numbers in, keeping the signs ({{up-positive}})", working: "t = (−7.5 − 7.5) ÷ (−9.81)" },
-              { say: "Work it out", working: "t = −15 ÷ −9.81", result: "t = 1.53 s" },
+              { say: "Pick the equation with u, v, a and t (no distance given)", working: "v = u + at", tex: "v = u + at" },
+              { say: "Rearrange for t: take u away, then divide by a", working: "t = (v − u) ÷ a", tex: "t = \\dfrac{v - u}{a}" },
+              { say: "Put the numbers in, keeping the signs ({{up-positive}})", working: "t = (−7.5 − 7.5) ÷ (−9.81)", tex: "t = \\dfrac{\\given{v}{-7.5} - \\given{u}{7.5}}{\\given{a}{-9.81}}" },
+              { say: "Work it out", working: "t = −15 ÷ −9.81", tex: "t = \\dfrac{-15}{-9.81}", result: "t = 1.53 s" },
             ],
             answer: "The ball is in the air for **1.53 s**. (Sideways it moves 13.0 × 1.53 ≈ **20 m**.)",
           },
@@ -103,6 +107,7 @@ const sheet: FormulaSheet = {
           id: "suvat-s-avg",
           name: "Distance from average velocity (SUVAT)",
           equation: "s = ½(u + v)t",
+          tex: "s = \\tfrac{1}{2}(u + v)\\,t",
           words: "displacement = average of start and end velocity × time",
           legend: [L.s, L.u, L.v, L.t],
           onDataSheet: true,
@@ -123,9 +128,9 @@ const sheet: FormulaSheet = {
             ],
             find: "the height {{s}} gained",
             steps: [
-              { say: "Average vertical speed on the way up", working: "½(u + v) = ½ × (7.5 + 0)", result: "3.75 m s⁻¹" },
-              { say: "Multiply by the time", working: "s = ½ × (7.5 + 0) × 0.765" },
-              { say: "Work it out", working: "s = 3.75 × 0.765", result: "s = 2.87 m" },
+              { say: "Average vertical speed on the way up", working: "½(u + v) = ½ × (7.5 + 0)", tex: "\\tfrac{1}{2}(u + v) = \\tfrac{1}{2} \\times (\\given{u}{7.5} + \\given{v}{0})", result: "3.75 m s⁻¹" },
+              { say: "Multiply by the time", working: "s = ½ × (7.5 + 0) × 0.765", tex: "s = \\tfrac{1}{2} \\times (\\given{u}{7.5} + \\given{v}{0}) \\times \\given{t}{0.765}" },
+              { say: "Work it out", working: "s = 3.75 × 0.765", tex: "s = 3.75 \\times \\given{t}{0.765}", result: "s = 2.87 m" },
             ],
             answer: "The ball rises **2.87 m** above the ground.",
           },
@@ -134,6 +139,7 @@ const sheet: FormulaSheet = {
           id: "suvat-s-ut",
           name: "Distance with constant acceleration (SUVAT)",
           equation: "s = ut + ½at²",
+          tex: "s = ut + \\tfrac{1}{2}at^2",
           words: "displacement = (starting velocity × time) + extra distance from speeding up",
           legend: [L.s, L.u, L.t, L.a],
           onDataSheet: true,
@@ -154,10 +160,10 @@ const sheet: FormulaSheet = {
             ],
             find: "the time of flight {{t}}",
             steps: [
-              { say: "Vertical motion only. Pick the equation with s, u, a and t", working: "s = ut + ½at²" },
-              { say: "u = 0, so the first term vanishes", working: "44.1 = 0 × t + ½ × 9.81 × t²" },
-              { say: "Rearrange for t²: times 2, divide by 9.81", working: "t² = (2 × 44.1) ÷ 9.81", result: "t² = 8.99 s²" },
-              { say: "Square root", working: "t = √8.99", result: "t = 3.00 s" },
+              { say: "Vertical motion only. Pick the equation with s, u, a and t", working: "s = ut + ½at²", tex: "s = ut + \\tfrac{1}{2}at^2" },
+              { say: "u = 0, so the first term vanishes", working: "44.1 = 0 × t + ½ × 9.81 × t²", tex: "\\given{s}{44.1} = \\given{u}{0} \\times t + \\tfrac{1}{2} \\times \\given{a}{9.81} \\times t^2" },
+              { say: "Rearrange for t²: times 2, divide by 9.81", working: "t² = (2 × 44.1) ÷ 9.81", tex: "t^2 = \\dfrac{2 \\times \\given{s}{44.1}}{\\given{a}{9.81}}", result: "t² = 8.99 s²" },
+              { say: "Square root", working: "t = √8.99", tex: "t = \\sqrt{8.99}", result: "t = 3.00 s" },
             ],
             answer: "The cannonball is in the air for **3.00 s**. The 304 m s⁻¹ plays no part: sideways speed doesn't change the fall.",
           },
@@ -166,6 +172,7 @@ const sheet: FormulaSheet = {
           id: "suvat-v2",
           name: "Velocity from distance (SUVAT)",
           equation: "v² = u² + 2as",
+          tex: "v^2 = u^2 + 2as",
           words: "final velocity² = starting velocity² + 2 × acceleration × displacement",
           legend: [L.v, L.u, L.a, L.s],
           onDataSheet: true,
@@ -186,9 +193,9 @@ const sheet: FormulaSheet = {
             ],
             find: "the vertical velocity {{v}} at the ground",
             steps: [
-              { say: "No time given, so pick the equation without t", working: "v² = u² + 2as" },
-              { say: "Put the numbers in", working: "v² = 0² + 2 × 9.81 × 29.4", result: "v² = 577 m² s⁻²" },
-              { say: "Square root", working: "v = √577", result: "v = 24.0 m s⁻¹" },
+              { say: "No time given, so pick the equation without t", working: "v² = u² + 2as", tex: "v^2 = u^2 + 2as" },
+              { say: "Put the numbers in", working: "v² = 0² + 2 × 9.81 × 29.4", tex: "v^2 = \\given{u}{0}^2 + 2 \\times \\given{a}{9.81} \\times \\given{s}{29.4}", result: "v² = 577 m² s⁻²" },
+              { say: "Square root", working: "v = √577", tex: "v = \\sqrt{577}", result: "v = 24.0 m s⁻¹" },
             ],
             answer: "It hits the ground moving **24.0 m s⁻¹ downwards** (plus its 49.2 m s⁻¹ sideways).",
           },
@@ -197,6 +204,7 @@ const sheet: FormulaSheet = {
           id: "thinking-distance",
           name: "Thinking distance",
           equation: "thinking distance = speed × reaction time",
+          tex: "\\text{thinking distance} = \\text{speed} \\times \\text{reaction time}",
           words: "how far the car goes before the driver even touches the brake",
           legend: [
             { symbol: "speed", meaning: "speed of the car (constant while reacting)", unit: "m s⁻¹" },
@@ -210,6 +218,7 @@ const sheet: FormulaSheet = {
           id: "stopping-distance",
           name: "Stopping distance",
           equation: "stopping distance = thinking distance + braking distance",
+          tex: "\\text{stopping distance} = \\text{thinking distance} + \\text{braking distance}",
           words: "total distance to stop = distance while reacting + distance while braking",
           legend: [
             { symbol: "thinking distance", meaning: "distance travelled during the reaction time", unit: "m" },
@@ -227,6 +236,7 @@ const sheet: FormulaSheet = {
     {
       id: "3-1-3-projectiles",
       title: "3.1.3 Projectiles (derived from the sheet)",
+      short: "3.1.3 Projectiles",
       intro:
         "**None of these are printed.** Each is one step from a printed equation, so you can rebuild it in the exam. Sideways: no acceleration. Vertically: {{g}} downwards.",
       formulas: [
@@ -234,6 +244,7 @@ const sheet: FormulaSheet = {
           id: "proj-components",
           name: "Splitting the launch velocity",
           equation: "ux = u cos θ    uy = u sin θ",
+          tex: "u_x = u\\cos\\theta \\qquad u_y = u\\sin\\theta",
           words: "sideways part = launch speed × cos(angle); upward part = launch speed × sin(angle)",
           legend: [
             { symbol: "ux", meaning: "horizontal (sideways) part of the launch velocity", unit: "m s⁻¹" },
@@ -261,8 +272,8 @@ const sheet: FormulaSheet = {
             ],
             find: "the sideways part ux and the upward part uy",
             steps: [
-              { say: "Sideways part uses cos", working: "ux = 15 × cos 30°", result: "ux = 13.0 m s⁻¹" },
-              { say: "Upward part uses sin", working: "uy = 15 × sin 30°", result: "uy = 7.5 m s⁻¹" },
+              { say: "Sideways part uses cos", working: "ux = 15 × cos 30°", tex: "u_x = \\given{u}{15} \\times \\cos \\given{θ}{30^\\circ}", result: "ux = 13.0 m s⁻¹" },
+              { say: "Upward part uses sin", working: "uy = 15 × sin 30°", tex: "u_y = \\given{u}{15} \\times \\sin \\given{θ}{30^\\circ}", result: "uy = 7.5 m s⁻¹" },
             ],
             answer: "**13.0 m s⁻¹** sideways (stays the same all flight) and **7.5 m s⁻¹** upwards (gravity changes it).",
           },
@@ -271,6 +282,7 @@ const sheet: FormulaSheet = {
           id: "proj-range",
           name: "Horizontal distance",
           equation: "x = vx × t",
+          tex: "x = v_x \\times t",
           words: "sideways distance = sideways speed × time in the air",
           legend: [L.x, L.vx, L.t],
           onDataSheet: false,
@@ -294,8 +306,8 @@ const sheet: FormulaSheet = {
             ],
             find: "the horizontal distance {{x}}",
             steps: [
-              { say: "No sideways acceleration, so distance = speed × time", working: "x = vx × t" },
-              { say: "Put the numbers in", working: "x = 304 × 3.00", result: "x = 912 m" },
+              { say: "No sideways acceleration, so distance = speed × time", working: "x = vx × t", tex: "x = v_x \\times t" },
+              { say: "Put the numbers in", working: "x = 304 × 3.00", tex: "x = \\given{vx}{304} \\times \\given{t}{3.00}", result: "x = 912 m" },
             ],
             answer: "It lands **912 m** from the foot of the cliff, almost 1 km.",
           },
@@ -304,6 +316,7 @@ const sheet: FormulaSheet = {
           id: "proj-fall-time",
           name: "Time to fall from rest",
           equation: "t = √(2h ÷ g)",
+          tex: "t = \\sqrt{\\dfrac{2h}{g}}",
           words: "time to fall = square root of (2 × height ÷ 9.81)",
           legend: [L.t, L.h, L.g],
           onDataSheet: false,
@@ -326,9 +339,9 @@ const sheet: FormulaSheet = {
             ],
             find: "the time {{t}} to fall",
             steps: [
-              { say: "Fired sideways, so it starts with no vertical speed. Use the shortcut", working: "t = √(2h ÷ g)" },
-              { say: "Put the numbers in", working: "t = √(2 × 44.1 ÷ 9.81)" },
-              { say: "Inside the root first", working: "t = √8.99", result: "t = 3.00 s" },
+              { say: "Fired sideways, so it starts with no vertical speed. Use the shortcut", working: "t = √(2h ÷ g)", tex: "t = \\sqrt{\\dfrac{2h}{g}}" },
+              { say: "Put the numbers in", working: "t = √(2 × 44.1 ÷ 9.81)", tex: "t = \\sqrt{\\dfrac{2 \\times \\given{h}{44.1}}{\\given{g}{9.81}}}" },
+              { say: "Inside the root first", working: "t = √8.99", tex: "t = \\sqrt{8.99}", result: "t = 3.00 s" },
             ],
             answer: "**3.00 s**, the same as the full SUVAT working.",
           },
@@ -337,6 +350,7 @@ const sheet: FormulaSheet = {
           id: "proj-speed",
           name: "Resultant speed",
           equation: "v = √(vx² + vy²)",
+          tex: "v = \\sqrt{v_x^2 + v_y^2}",
           words: "actual speed = square root of (sideways speed² + vertical speed²)",
           legend: [
             { symbol: "v", meaning: "actual ({{resultant}}) speed", unit: "m s⁻¹" },
@@ -364,10 +378,10 @@ const sheet: FormulaSheet = {
             ],
             find: "the actual landing speed {{v}}",
             steps: [
-              { say: "The two parts are at right angles, so use {{pythag}}", working: "v = √(vx² + vy²)" },
-              { say: "Put the numbers in", working: "v = √(49.2² + 24.0²)" },
-              { say: "Square each and add", working: "v = √(2420.64 + 576)", result: "v = √2996.64" },
-              { say: "Square root", working: "v = √2996.64", result: "v = 54.7 m s⁻¹" },
+              { say: "The two parts are at right angles, so use {{pythag}}", working: "v = √(vx² + vy²)", tex: "v = \\sqrt{v_x^2 + v_y^2}" },
+              { say: "Put the numbers in", working: "v = √(49.2² + 24.0²)", tex: "v = \\sqrt{\\given{vx}{49.2}^2 + \\given{vy}{24.0}^2}" },
+              { say: "Square each and add", working: "v = √(2420.64 + 576)", tex: "v = \\sqrt{2420.64 + 576}", result: "v = √2996.64" },
+              { say: "Square root", working: "v = √2996.64", tex: "v = \\sqrt{2996.64}", result: "v = 54.7 m s⁻¹" },
             ],
             answer: "The arrow lands at **54.7 m s⁻¹**.",
           },
@@ -376,6 +390,7 @@ const sheet: FormulaSheet = {
           id: "proj-angle",
           name: "Direction of travel",
           equation: "θ = tan⁻¹(vy ÷ vx)",
+          tex: "\\theta = \\tan^{-1}\\!\\left(\\dfrac{v_y}{v_x}\\right)",
           words: "angle to the horizontal = inverse tan of (vertical speed ÷ sideways speed)",
           legend: [
             { symbol: "θ", meaning: "angle of the velocity to the horizontal", unit: "°" },
@@ -402,9 +417,9 @@ const sheet: FormulaSheet = {
             ],
             find: "the angle θ below the horizontal",
             steps: [
-              { say: "Opposite ÷ adjacent, so use {{tan-inv}}", working: "θ = tan⁻¹(vy ÷ vx)" },
-              { say: "Put the numbers in, vertical on top", working: "θ = tan⁻¹(24.0 ÷ 49.2)" },
-              { say: "Divide, then press tan⁻¹ (calculator in degrees)", working: "θ = tan⁻¹(0.488)", result: "θ = 26.0°" },
+              { say: "Opposite ÷ adjacent, so use {{tan-inv}}", working: "θ = tan⁻¹(vy ÷ vx)", tex: "\\theta = \\tan^{-1}\\!\\left(\\dfrac{v_y}{v_x}\\right)" },
+              { say: "Put the numbers in, vertical on top", working: "θ = tan⁻¹(24.0 ÷ 49.2)", tex: "\\theta = \\tan^{-1}\\!\\left(\\dfrac{\\given{vy}{24.0}}{\\given{vx}{49.2}}\\right)" },
+              { say: "Divide, then press tan⁻¹ (calculator in degrees)", working: "θ = tan⁻¹(0.488)", tex: "\\theta = \\tan^{-1}(0.488)", result: "θ = 26.0°" },
             ],
             answer: "It hits the ground at **26.0° below the horizontal**.",
           },
@@ -416,11 +431,13 @@ const sheet: FormulaSheet = {
     {
       id: "3-2-forces",
       title: "3.2 Forces in action",
+      short: "3.2 Forces",
       formulas: [
         {
           id: "f-ma",
           name: "Newton's second law",
           equation: "F = ma",
+          tex: "F = ma",
           words: "net force = mass × acceleration",
           legend: [{ symbol: "F", meaning: "net (resultant) force", unit: "N" }, L.m, L.a],
           onDataSheet: false,
@@ -432,6 +449,7 @@ const sheet: FormulaSheet = {
           id: "weight",
           name: "Weight",
           equation: "W = mg",
+          tex: "W = mg",
           words: "weight = mass × 9.81",
           legend: [{ symbol: "W", meaning: "weight (pull of gravity)", unit: "N" }, L.m, L.g],
           onDataSheet: false,
@@ -443,6 +461,7 @@ const sheet: FormulaSheet = {
           id: "terminal-velocity",
           name: "Terminal velocity",
           equation: "drag + upthrust = weight",
+          tex: "\\text{drag} + \\text{upthrust} = \\text{weight}",
           words: "at terminal velocity the up forces balance the weight, so the acceleration is zero",
           legend: [
             { symbol: "drag", meaning: "resistive force from the fluid, grows with speed", unit: "N" },
@@ -458,6 +477,7 @@ const sheet: FormulaSheet = {
           id: "moment",
           name: "Moment of a force",
           equation: "moment = Fx",
+          tex: "\\text{moment} = Fx",
           words: "moment = force × perpendicular distance from the pivot",
           legend: [
             { symbol: "moment", meaning: "turning effect", unit: "N m" },
@@ -472,6 +492,7 @@ const sheet: FormulaSheet = {
           id: "torque",
           name: "Torque of a couple",
           equation: "torque = Fd",
+          tex: "\\text{torque} = Fd",
           words: "torque = one of the two forces × perpendicular distance between them",
           legend: [
             { symbol: "torque", meaning: "turning effect of a couple", unit: "N m" },
@@ -487,6 +508,7 @@ const sheet: FormulaSheet = {
           id: "principle-of-moments",
           name: "Principle of moments",
           equation: "sum of clockwise moments = sum of anticlockwise moments",
+          tex: "\\textstyle\\sum \\text{clockwise moments} = \\sum \\text{anticlockwise moments}",
           words: "an object in equilibrium doesn't turn, so the turning effects each way balance",
           legend: [{ symbol: "moments", meaning: "each one is force × perpendicular distance, about the same point", unit: "N m" }],
           onDataSheet: false,
@@ -496,22 +518,30 @@ const sheet: FormulaSheet = {
         {
           id: "density",
           name: "Density",
-          equation: "ρ = m ÷ V",
+          equation: "p = m ÷ V",
+          tex: "p = \\dfrac{m}{V}",
           words: "density = mass ÷ volume",
           legend: [
-            { symbol: "ρ", meaning: "density (rho)", unit: "kg m⁻³" },
+            {
+              symbol: "p / ρ",
+              tex: "p \\;/\\; \\rho",
+              meaning: "density: **p** on the data sheet, **ρ** (rho) in textbooks and in p = hρg",
+              unit: "kg m⁻³",
+            },
             L.m,
             { symbol: "V", meaning: "volume", unit: "m³" },
           ],
           onDataSheet: true,
           specRef: "3.2.4(a)",
           topic: "3.2 Forces in action",
-          notes: "1 cm³ = 10⁻⁶ m³. Convert before you divide.",
+          notes:
+            "The data sheet writes density as p here, but uses ρ (the Greek letter rho) for density in p = hρg. Same quantity, two symbols — and don't confuse it with pressure p. Also: 1 cm³ = 10⁻⁶ m³, so convert before you divide.",
         },
         {
           id: "pressure",
           name: "Pressure",
           equation: "p = F ÷ A",
+          tex: "p = \\dfrac{F}{A}",
           words: "pressure = force ÷ area it pushes on",
           legend: [
             { symbol: "p", meaning: "pressure", unit: "Pa (N m⁻²)" },
@@ -526,6 +556,7 @@ const sheet: FormulaSheet = {
           id: "fluid-pressure",
           name: "Pressure in a fluid",
           equation: "p = hρg",
+          tex: "p = h\\rho g",
           words: "pressure from a fluid = depth × density × 9.81",
           legend: [
             { symbol: "p", meaning: "pressure due to the fluid", unit: "Pa" },
@@ -542,6 +573,7 @@ const sheet: FormulaSheet = {
           id: "upthrust",
           name: "Upthrust (Archimedes' principle)",
           equation: "upthrust = weight of fluid displaced = ρVg",
+          tex: "\\text{upthrust} = \\text{weight of fluid displaced} = \\rho V g",
           words: "the upward push equals the weight of the fluid the object pushes out of the way",
           legend: [
             { symbol: "ρ", meaning: "density of the **fluid** (not the object)", unit: "kg m⁻³" },
@@ -560,11 +592,13 @@ const sheet: FormulaSheet = {
     {
       id: "3-3-energy",
       title: "3.3 Work, energy and power",
+      short: "3.3 Energy",
       formulas: [
         {
           id: "work",
           name: "Work done",
           equation: "W = Fx cos θ",
+          tex: "W = Fx\\cos\\theta",
           words: "work done = force × distance moved × cos(angle between them)",
           legend: [
             { symbol: "W", meaning: "work done (energy transferred)", unit: "J" },
@@ -581,6 +615,7 @@ const sheet: FormulaSheet = {
           id: "kinetic-energy",
           name: "Kinetic energy",
           equation: "Ek = ½mv²",
+          tex: "E_k = \\tfrac{1}{2}mv^2",
           words: "kinetic energy = half × mass × speed²",
           legend: [{ symbol: "Ek", meaning: "kinetic energy", unit: "J" }, L.m, { symbol: "v", meaning: "speed", unit: "m s⁻¹" }],
           onDataSheet: false,
@@ -592,6 +627,7 @@ const sheet: FormulaSheet = {
           id: "gpe",
           name: "Gravitational potential energy",
           equation: "Ep = mgh",
+          tex: "E_p = mgh",
           words: "energy gained lifting = mass × 9.81 × height lifted",
           legend: [{ symbol: "Ep", meaning: "gravitational potential energy gained", unit: "J" }, L.m, L.g, L.h],
           onDataSheet: false,
@@ -603,6 +639,7 @@ const sheet: FormulaSheet = {
           id: "power",
           name: "Power",
           equation: "P = W ÷ t",
+          tex: "P = \\dfrac{W}{t}",
           words: "power = work done (energy transferred) ÷ time taken",
           legend: [
             { symbol: "P", meaning: "power", unit: "W" },
@@ -617,6 +654,7 @@ const sheet: FormulaSheet = {
           id: "power-fv",
           name: "Power from force and velocity",
           equation: "P = Fv",
+          tex: "P = Fv",
           words: "power = force × velocity",
           legend: [{ symbol: "P", meaning: "power", unit: "W" }, L.F, { symbol: "v", meaning: "velocity (in the direction of the force)", unit: "m s⁻¹" }],
           onDataSheet: true,
@@ -628,6 +666,7 @@ const sheet: FormulaSheet = {
           id: "efficiency",
           name: "Efficiency",
           equation: "efficiency = useful energy output ÷ total energy input × 100%",
+          tex: "\\text{efficiency} = \\dfrac{\\text{useful energy output}}{\\text{total energy input}} \\times 100\\%",
           words: "efficiency = how much of the energy put in comes out as useful energy, as a percentage",
           legend: [
             { symbol: "useful energy output", meaning: "energy in the form you want", unit: "J" },
@@ -645,11 +684,13 @@ const sheet: FormulaSheet = {
     {
       id: "3-4-materials",
       title: "3.4 Materials",
+      short: "3.4 Materials",
       formulas: [
         {
           id: "hooke",
           name: "Hooke's law",
           equation: "F = kx",
+          tex: "F = kx",
           words: "force = force constant × extension",
           legend: [
             L.F,
@@ -665,6 +706,7 @@ const sheet: FormulaSheet = {
           id: "elastic-energy-fx",
           name: "Elastic potential energy (from force)",
           equation: "E = ½Fx",
+          tex: "E = \\tfrac{1}{2}Fx",
           words: "energy stored = half × force × extension",
           legend: [
             { symbol: "E", meaning: "elastic potential energy", unit: "J" },
@@ -680,6 +722,7 @@ const sheet: FormulaSheet = {
           id: "elastic-energy-kx",
           name: "Elastic potential energy (from k)",
           equation: "E = ½kx²",
+          tex: "E = \\tfrac{1}{2}kx^2",
           words: "energy stored = half × force constant × extension²",
           legend: [
             { symbol: "E", meaning: "elastic potential energy", unit: "J" },
@@ -695,6 +738,7 @@ const sheet: FormulaSheet = {
           id: "stress",
           name: "Stress",
           equation: "σ = F ÷ A",
+          tex: "\\sigma = \\dfrac{F}{A}",
           words: "stress = force ÷ cross-sectional area",
           legend: [
             { symbol: "σ", meaning: "tensile stress (sigma)", unit: "Pa" },
@@ -710,6 +754,7 @@ const sheet: FormulaSheet = {
           id: "strain",
           name: "Strain",
           equation: "ε = x ÷ L",
+          tex: "\\varepsilon = \\dfrac{x}{L}",
           words: "strain = extension ÷ original length",
           legend: [
             { symbol: "ε", meaning: "tensile strain (epsilon), no unit", unit: undefined },
@@ -725,6 +770,7 @@ const sheet: FormulaSheet = {
           id: "young-modulus",
           name: "Young modulus",
           equation: "E = σ ÷ ε",
+          tex: "E = \\dfrac{\\sigma}{\\varepsilon}",
           words: "Young modulus = stress ÷ strain",
           legend: [
             { symbol: "E", meaning: "Young modulus (stiffness of the material)", unit: "Pa" },
@@ -743,11 +789,13 @@ const sheet: FormulaSheet = {
     {
       id: "3-5-momentum",
       title: "3.5 Newton's laws and momentum",
+      short: "3.5 Momentum",
       formulas: [
         {
           id: "momentum",
           name: "Momentum",
           equation: "p = mv",
+          tex: "p = mv",
           words: "momentum = mass × velocity",
           legend: [{ symbol: "p", meaning: "momentum", unit: "kg m s⁻¹" }, L.m, { symbol: "v", meaning: "velocity", unit: "m s⁻¹" }],
           onDataSheet: true,
@@ -759,6 +807,7 @@ const sheet: FormulaSheet = {
           id: "force-momentum",
           name: "Force as rate of change of momentum",
           equation: "F = Δp ÷ Δt",
+          tex: "F = \\dfrac{\\Delta p}{\\Delta t}",
           words: "net force = change in momentum ÷ time taken",
           legend: [
             { symbol: "F", meaning: "net force", unit: "N" },
@@ -774,6 +823,7 @@ const sheet: FormulaSheet = {
           id: "impulse",
           name: "Impulse",
           equation: "impulse = FΔt = Δp",
+          tex: "\\text{impulse} = F\\Delta t = \\Delta p",
           words: "impulse = force × time it acts = change in momentum",
           legend: [
             { symbol: "impulse", meaning: "push given over a time", unit: "N s" },
@@ -790,6 +840,7 @@ const sheet: FormulaSheet = {
           id: "conservation-momentum",
           name: "Conservation of momentum",
           equation: "total momentum before = total momentum after",
+          tex: "\\text{total momentum before} = \\text{total momentum after}",
           words: "in a collision or explosion with no outside force, the total momentum doesn't change",
           legend: [{ symbol: "momentum", meaning: "mass × velocity for each object, with signs for direction", unit: "kg m s⁻¹" }],
           onDataSheet: false,

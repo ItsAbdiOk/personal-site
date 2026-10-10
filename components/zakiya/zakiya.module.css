@@ -1722,6 +1722,15 @@
   color: var(--muted);
 }
 
+.eqTex {
+  /* KaTeX block: shrink inside the flex row and scroll sideways rather than widen the page */
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: inherit;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
 .eqGeneral {
   margin-top: 12px;
   padding-top: 10px;

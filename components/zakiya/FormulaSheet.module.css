@@ -1,0 +1,626 @@
+/* Formula sheet (/zakiya/formulas). Used inside zakiya.module.css's .root, so its tokens
+   (--ink, --muted, --card, --r, --ease…) are inherited. */
+
+.sheet {
+  /* Critically damped spring (response ≈ 0.4 s, no overshoot), sampled for CSS. */
+  --fs-spring: cubic-bezier(.2, .8, .2, 1);
+  --fs-dur: 520ms;
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  .sheet {
+    --fs-spring: linear(0, .064 5%, .197 10%, .347 15%, .486 20%, .703 30%, .837 40%, .915 50%, .956 60%, .978 70%, .989 80%, 1);
+  }
+}
+
+/* ---------- Jump index (second row of the sticky header) ---------- */
+.jump {
+  display: flex;
+  gap: 6px;
+  margin: 0 -16px;
+  padding: 0 16px 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-inline: 16px;
+}
+
+.jump::-webkit-scrollbar {
+  display: none;
+}
+
+.jumpLink {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font: 500 13px/1 var(--ui);
+  letter-spacing: -0.003em;
+  color: var(--body);
+  background: rgba(118, 118, 128, .12);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .2s var(--ease), color .2s var(--ease), transform .12s var(--ease);
+}
+
+.jumpLink:active {
+  transform: scale(.96);
+}
+
+.jumpActive {
+  background: var(--ink);
+  color: #FFFFFF;
+}
+
+/* ---------- Controls ---------- */
+.modules {
+  max-width: 420px;
+  margin: 18px 0 0;
+}
+
+.tabSoon {
+  color: #AEAEB2 !important;
+  cursor: default !important;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0 6px;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+  color: var(--ink);
+  font: 500 14px/1 var(--ui);
+  letter-spacing: -0.006em;
+  cursor: pointer;
+  transition: background .2s var(--ease), color .2s var(--ease), transform .12s var(--ease);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.filter:active {
+  transform: scale(.96);
+}
+
+.filter[aria-pressed="true"] {
+  background: var(--ink);
+  color: #FFFFFF;
+}
+
+.filterCount {
+  font-family: var(--num);
+  font-variant-numeric: tabular-nums;
+  opacity: .6;
+}
+
+/* ---------- Groups ---------- */
+.group {
+  margin: 34px 0 0;
+  scroll-margin-top: 104px;
+}
+
+.groupTitle {
+  margin: 0 0 4px;
+}
+
+.groupIntro {
+  font-size: 15px;
+  margin: 0 0 4px !important;
+}
+
+/* ---------- Card ---------- */
+.card {
+  position: relative;
+  margin: 14px 0;
+  border-radius: var(--r);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  scroll-margin-top: 104px;
+  overflow: hidden;
+}
+
+.top {
+  padding: 18px 20px 16px;
+}
+
+.tappable {
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .top {
+    padding: 16px 16px 14px;
+  }
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: 600 11px/1.2 var(--ui);
+  letter-spacing: .02em;
+  padding: 5px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badgeSheet {
+  background: #E9E9EE;
+  color: #3A3A3C;
+}
+
+.badgeLearn {
+  background: #FF9500;
+  color: #FFFFFF;
+}
+
+.badgeDerived {
+  background: #F3E8FB;
+  color: #7B2FA6;
+}
+
+.spec {
+  font: 500 12px/1 var(--num);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.usedIn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font: 600 11px/1 var(--ui);
+  color: var(--accent);
+  background: var(--tag-bg);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.usedIn:active {
+  opacity: .6;
+}
+
+.save {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(118, 118, 128, .1);
+  color: var(--ink);
+  font: 600 12px/1 var(--ui);
+  cursor: pointer;
+  transition: background .2s var(--ease), color .2s var(--ease), transform .12s var(--ease);
+  position: relative;
+}
+
+/* 44 px hit area without changing the look */
+.save::before {
+  content: "";
+  position: absolute;
+  inset: -6px -4px;
+}
+
+.save:active {
+  transform: scale(.95);
+}
+
+.saved {
+  background: var(--tag-bg);
+  color: var(--accent);
+}
+
+/* Head: name + equation + sentence. A <button> when the card has a worked example. */
+.head {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+}
+
+button.head {
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform .14s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.head:active {
+  transform: scale(.985);
+}
+
+.name {
+  display: block;
+  font: 650 1.125rem/1.3 var(--display);
+  letter-spacing: -0.016em;
+  color: var(--ink);
+}
+
+.eq {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 10px 0 8px;
+  padding: 12px 14px;
+  border-radius: var(--r-sm);
+  background: var(--stat-bg);
+  color: var(--ink);
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.words {
+  display: block;
+  color: var(--body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font: 600 14px/1.2 var(--ui);
+  color: var(--accent);
+}
+
+.chev {
+  display: inline-block;
+  transition: transform var(--fs-dur) var(--fs-spring);
+}
+
+.chevOpen {
+  transform: rotate(90deg);
+}
+
+.derived {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--r-xs);
+  background: #FAF5FD;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--body);
+}
+
+.derivedLabel {
+  font-weight: 600;
+  color: #7B2FA6;
+}
+
+/* Legend: symbol · meaning · unit */
+.legend {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.legendRow {
+  display: grid;
+  grid-template-columns: minmax(2.6em, max-content) 1fr auto;
+  gap: 4px 12px;
+  align-items: baseline;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.legendSym {
+  color: var(--ink);
+  font-size: 1rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.legendMeaning {
+  color: var(--body);
+  min-width: 0;
+}
+
+.legendValue {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.legendUnit {
+  font: 500 13px/1.45 var(--num);
+  color: var(--muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+@media (max-width: 400px) {
+  .legendRow {
+    grid-template-columns: minmax(2.2em, max-content) 1fr;
+  }
+
+  .legendUnit {
+    grid-column: 2;
+    text-align: left;
+  }
+}
+
+.notes {
+  margin: 12px 0 0 !important;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.notesLabel {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.coming {
+  margin: 12px 0 0 !important;
+  font-size: 13px;
+  color: var(--muted) !important;
+}
+
+/* ---------- Worked example (unfolds) ---------- */
+.exWrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--fs-dur) var(--fs-spring);
+}
+
+.exOpen {
+  grid-template-rows: 1fr;
+}
+
+.exInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ex {
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--line);
+  background: #FBFBFD;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity .3s var(--ease), transform var(--fs-dur) var(--fs-spring);
+}
+
+.exOpen .ex {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 480px) {
+  .ex {
+    padding: 14px 16px 18px;
+  }
+}
+
+.exTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.exTitle {
+  font: 650 1rem/1.3 var(--display);
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+.exLabel {
+  font: 600 11px/1 var(--ui);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 14px 0 6px;
+}
+
+.question {
+  margin: 0 !important;
+  font-size: 15px;
+}
+
+.given {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.givenItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  padding: 8px 12px;
+  border-radius: var(--r-xs);
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.givenSym {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.givenValue {
+  font: 600 15px/1.3 var(--num);
+  font-variant-numeric: tabular-nums;
+}
+
+.givenMeaning {
+  color: var(--muted);
+  flex-basis: 100%;
+}
+
+.find {
+  margin: 0 !important;
+  font-size: 15px;
+}
+
+.steps {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 0;
+}
+
+.step {
+  counter-increment: step;
+  position: relative;
+  padding: 8px 0 10px 34px;
+  font-size: 15px;
+  color: var(--body);
+}
+
+.step::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 12%, white);
+  color: var(--accent);
+  font: 700 13px/24px var(--num);
+  text-align: center;
+}
+
+.working {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 6px 0 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--ink);
+  font-size: 1.05rem;
+}
+
+.result {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--good-bg);
+  color: var(--good);
+  font: 600 14px/1.4 var(--num);
+  font-variant-numeric: tabular-nums;
+}
+
+.answer {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: var(--r-xs);
+  background: var(--good-bg);
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.exActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.linkBtn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  font: 600 14px/1 var(--ui);
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.linkBtn:active {
+  opacity: .6;
+}
+
+/* Reduced motion: no height spring, no slide. A short cross-fade instead. */
+@media (prefers-reduced-motion: reduce) {
+  .exWrap,
+  .chev {
+    transition: none;
+  }
+
+  .ex {
+    transform: none;
+    transition: opacity .15s linear;
+  }
+
+  button.head:active,
+  .filter:active,
+  .save:active,
+  .jumpLink:active {
+    transform: none;
+  }
+}
+
+/* ---------- My Notes: saved formula ---------- */
+.mini {
+  display: block;
+}
+
+.miniEq {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 6px 0;
+  padding: 10px 12px;
+  border-radius: var(--r-xs);
+  background: var(--stat-bg);
+  color: var(--ink);
+  font-size: 1.1rem;
+}

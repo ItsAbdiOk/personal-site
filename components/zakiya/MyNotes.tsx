@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { OUTLINE, getSubchapter } from "@/content/zakiya";
+import { getFormula } from "@/content/zakiya/formulas";
 import type { Subchapter } from "@/lib/zakiya/types";
 import BookmarkIcon from "./BookmarkIcon";
+import { FormulaMini } from "./FormulaSheet";
 import { BlockView, DefinitionView } from "./Notes";
 import { GlossaryProvider } from "./Rich";
 import { type Resolved, type SavedItem, exportItems, importItems, removeItem, resolve, updateNote, useSaved } from "./saved";
@@ -133,11 +135,45 @@ function ItemView({ e, onRemove }: { e: Entry; onRemove: (id: string) => void })
   );
 }
 
+/** A formula saved from the formula sheet. */
+function FormulaItemView({ it, onRemove }: { it: SavedItem; onRemove: (id: string) => void }) {
+  const found = getFormula(it.sectionId);
+  return (
+    <article className={s.mnItem}>
+      <div className={s.mnKind}>
+        <BookmarkIcon size={9} /> Saved {fmtDate(it.savedAt)}
+      </div>
+      {found ? (
+        <GlossaryProvider definitions={[]} explain={found.sheet.explain}>
+          <FormulaMini x={found.formula} />
+        </GlossaryProvider>
+      ) : (
+        <>
+          <div className={s.mnSnapshot}>{it.text || "(nothing saved)"}</div>
+          <p className={s.mnChanged}>
+            <span aria-hidden>↺</span> This formula is no longer on the sheet, so this is your saved copy.
+          </p>
+        </>
+      )}
+      <NoteField it={it} />
+      <div className={s.mnActions}>
+        <Link href={`/zakiya/formulas#f-${encodeURIComponent(it.sectionId)}`} className={s.mnLink}>
+          Go to formula ›
+        </Link>
+        <button type="button" className={`${s.mnLink} ${s.mnRemove}`} onClick={() => onRemove(it.id)}>
+          Remove
+        </button>
+      </div>
+    </article>
+  );
+}
+
 export default function MyNotes() {
   const items = useSaved();
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   const groups = useMemo(() => group(items), [items]);
+  const formulas = useMemo(() => items.filter((i) => i.kind === "formula").sort((a, b) => b.savedAt - a.savedAt), [items]);
   const { msg, show, hide } = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -192,6 +228,9 @@ export default function MyNotes() {
             <li>
               Or highlight any words in the notes and tap <b>Save highlight</b>.
             </li>
+            <li>
+              On the <Link href="/zakiya/formulas">Formula sheet</Link>, tap <b>Save</b> on any equation.
+            </li>
           </ol>
           <Link href="/zakiya" className={s.btn}>
             Go to sections
@@ -235,6 +274,20 @@ export default function MyNotes() {
           ))}
         </section>
       ))}
+
+      {formulas.length > 0 && (
+        <section className={s.mnModule} aria-label="Formula sheet">
+          <div className={s.eyebrow}>From the formula sheet</div>
+          <h2 className={s.h2} style={{ fontSize: "1.75rem", marginTop: 4 }}>
+            Formula sheet
+          </h2>
+          <section className={s.card}>
+            {formulas.map((it) => (
+              <FormulaItemView key={it.id} it={it} onRemove={onRemove} />
+            ))}
+          </section>
+        </section>
+      )}
 
       {ready && (
         <footer className={s.mnFooter}>
