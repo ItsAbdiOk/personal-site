@@ -120,7 +120,7 @@ export const figShapes = svg(
 // ---------- Textbook p. 23 Figure 2: gradient = 20 m/s ----------
 // t 0..80 s → x 50..310 (3.25 px/s); x 0..1600 m → y 200..40 (0.1 px/m)
 export const figGradient = svg(
-  `${head("f5", 300)}
+  `${head("f5", 318)}
   ${axes("f5", 200, "28")}
   <text x="44" y="22" fill="currentColor" stroke="none" font-size="12">distance x / m</text>
   <line x1="50" y1="200" x2="310" y2="40" stroke-width="2.4" style="stroke:var(--accent)"/>
@@ -136,9 +136,9 @@ export const figGradient = svg(
   </g>
   <g stroke="none" font-weight="600" font-size="12.5">
     <text x="196" y="178" text-anchor="middle" style="fill:var(--vy)">70 − 20 = 50 s</text>
-    <text x="272" y="104" text-anchor="end" style="fill:var(--vx)">1400 − 400</text>
-    <text x="272" y="120" text-anchor="end" style="fill:var(--vx)">= 1000 m</text>
-    <text x="140" y="96" style="fill:var(--accent)">gradient = 20 m/s</text>
+    <text x="270" y="132" text-anchor="end" style="fill:var(--vx)">1400 − 400</text>
+    <text x="270" y="148" text-anchor="end" style="fill:var(--vx)">= 1000 m</text>
+    <text x="64" y="84" style="fill:var(--accent)">gradient = 20 m/s</text>
   </g>
   ${key(256, "var(--vx)", "1000 m · how far it went", "change in distance Δx")}
   ${key(286, "var(--vy)", "50 s · how long it took", "change in time Δt")}
