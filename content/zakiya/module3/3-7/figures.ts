@@ -173,37 +173,27 @@ export const figLightGates: Figure = {
 };
 
 // ---------- s against t² graph from Table 1 (Textbook p. 39) ----------
-const svgGraph = `${head("ff-g", 340, 340)}
-  <line x1="60" y1="250" x2="330" y2="250" stroke-width="1.4"/>
-  <line x1="60" y1="250" x2="60" y2="20" stroke-width="1.4"/>
-  <g stroke-width="1"><line x1="125" y1="250" x2="125" y2="255"/><line x1="190" y1="250" x2="190" y2="255"/><line x1="255" y1="250" x2="255" y2="255"/><line x1="320" y1="250" x2="320" y2="255"/>
-  <line x1="55" y1="206" x2="60" y2="206"/><line x1="55" y1="162" x2="60" y2="162"/><line x1="55" y1="118" x2="60" y2="118"/><line x1="55" y1="74" x2="60" y2="74"/><line x1="55" y1="30" x2="60" y2="30"/></g>
-  <g stroke="none" fill="currentColor" font-size="11">
-    <text x="125" y="268" text-anchor="middle">0.05</text><text x="190" y="268" text-anchor="middle">0.10</text><text x="255" y="268" text-anchor="middle">0.15</text><text x="320" y="268" text-anchor="middle">0.20</text>
-    <text x="52" y="210" text-anchor="end">0.2</text><text x="52" y="166" text-anchor="end">0.4</text><text x="52" y="122" text-anchor="end">0.6</text><text x="52" y="78" text-anchor="end">0.8</text><text x="52" y="34" text-anchor="end">1.0</text>
-    <text x="196" y="284" text-anchor="middle">t² / s²</text>
-    <text x="14" y="140" transform="rotate(-90 14 140)" text-anchor="middle">s / m</text>
-  </g>
-  <line x1="60" y1="250" x2="307" y2="45" stroke-width="1.6" style="stroke:var(--accent)"/>
-  <path d="M60,250 L294,250 L294,55.7" stroke-width="1.4" stroke-dasharray="5 3" style="stroke:var(--vy)"/>
-  <g fill="currentColor" stroke="none">
-    <circle cx="82.7" cy="231.3" r="3.5"/><circle cx="95.4" cy="220.5" r="3.5"/><circle cx="111.0" cy="207.8" r="3.5"/><circle cx="129.4" cy="192.4" r="3.5"/>
-    <circle cx="150.6" cy="169.0" r="3.5"/><circle cx="174.7" cy="154.7" r="3.5"/><circle cx="201.6" cy="132.5" r="3.5"/><circle cx="231.3" cy="107.9" r="3.5"/>
-    <circle cx="263.9" cy="80.8" r="3.5"/><circle cx="299.3" cy="51.3" r="3.5"/>
-  </g>
-  <circle cx="150.6" cy="169.0" r="9" stroke-width="1.4" stroke-dasharray="2 2"/>
-  <line x1="176" y1="186" x2="158" y2="175" stroke-width="1"/>
-  <text x="178" y="196" fill="currentColor" stroke="none" font-size="11.5">anomaly: 0.368 m</text>
-  <g stroke="none" font-weight="600" font-size="12" style="fill:var(--vy)">
-    <text x="177" y="244" text-anchor="middle">Δx = 0.180 s²</text>
-    <text x="300" y="160">Δy</text><text x="300" y="175">0.883</text><text x="300" y="190">m</text>
-  </g>
-  ${key(306, "var(--accent)", "0.883 ÷ 0.180 = 4.906 m/s² · slope", "gradient = g/2, so g = 2 × 4.906 = 9.81 m s⁻²")}
-</svg>`;
-
+// Declarative graph (components/zakiya/Graph.tsx). Data points = Table 1 (t² = t × t, s as measured).
+// The best-fit line is s = ½ g t² = 4.905 t² through the origin; drawn as two points (0, 0) to (0.27, 1.3246)
+// using the book's gradient 4.906. Axis runs to 0.27 s² so the tangent triangle (at 0.09, ±range/3) spans
+// exactly 0 to 0.180 s², matching the worked example.
 export const figGraph: Figure = {
-  kind: "svg",
-  svg: svgGraph,
-  alt: "Graph of distance fallen s in metres against time squared t² in seconds squared, for the ten points of Table 1. Nine points lie on a straight line through the origin; the point at t² = 0.0697 s², s = 0.368 m sits above the line and is circled as an anomaly. A large triangle under the line has a base of 0.180 s² and a height of 0.883 m, giving a gradient of 4.906 m/s² and g = 9.81 m/s².",
+  kind: "graph",
+  alt: "Graph of distance fallen s in metres against time squared t² in seconds squared, for the ten points of Table 1. Nine points lie on a straight line through the origin; the point at t² = 0.0697 s², s = 0.368 m sits above the line and is labelled as an anomaly. A large triangle under the line has a base of 0.180 s² and a height of 0.883 m, giving a gradient of 4.906 m/s² and g = 9.81 m/s².",
   caption: "Textbook p. 39 Table 1 plotted. Straight line through the origin; one point off the line is ignored. A **large** triangle: 0.883 ÷ 0.180 = 4.906, so g = 2 × 4.906 = **9.81 m s⁻²**.",
+  x: { label: "time squared", symbol: "t^2", unit: "s²", min: 0, max: 0.27, step: 0.1 },
+  y: { label: "distance fallen", symbol: "s", unit: "m", min: 0, max: 1.4, step: 0.2 },
+  series: [{ id: "fit", label: "line of best fit", points: [[0, 0], [0.27, 1.3246]], colour: "accent" }],
+  tangent: {
+    series: "fit",
+    at: 0.09,
+    draggable: false,
+    showTriangle: true,
+    readout: { quantity: "gradient", unit: "m s⁻²", decimals: 3 },
+  },
+  points: [
+    { x: 0.0174, y: 0.085 }, { x: 0.0272, y: 0.134 }, { x: 0.0392, y: 0.192 }, { x: 0.0534, y: 0.262 },
+    { x: 0.0697, y: 0.368, label: "anomaly: 0.368 m" },
+    { x: 0.0882, y: 0.433 }, { x: 0.1089, y: 0.534 }, { x: 0.1318, y: 0.646 }, { x: 0.1568, y: 0.769 }, { x: 0.1840, y: 0.903 },
+  ],
 };

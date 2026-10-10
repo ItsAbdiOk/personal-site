@@ -1,7 +1,6 @@
 import type { Subchapter } from "@/lib/zakiya/types";
 import sections from "./3-6/sections";
 import explain from "./3-6/explain";
-import { vtSvg } from "./3-6/figures";
 
 // All numbers rechecked in Python (see sections/figures headers).
 const AS1 = (s: string, t: "QP" | "MS") =>
@@ -99,8 +98,11 @@ const sub: Subchapter = {
       basedOn: "Modelled on H156/01 June 2018 Q10",
       stem: "The graph shows the velocity of a car from the moment the driver sees a hazard. The velocity is constant until 0.60 s, then decreases uniformly to zero at 3.1 s. The {{thinking}} is 12 m.",
       figure: {
-        kind: "svg",
-        svg: vtSvg({ id: "sd-q1", tMax: 3.5, vMax: 25, tTicks: [0, 0.6, 1, 2, 3.1], vTicks: [0], u: 20, tReact: 0.6, tStop: 3.1, uLabel: "?", thinking: "12 m" }),
+        kind: "graph",
+        x: { label: "time", symbol: "t", unit: "s", min: 0, max: 3.5, step: 0.5 },
+        y: { label: "velocity", symbol: "v", unit: "m s⁻¹", min: 0, max: 25, step: 25 },
+        series: [{ id: "car", points: [[0, 20], [0.6, 20], [3.1, 0]], colour: "accent" }],
+        points: [{ x: 0.6, y: 20, label: "0.60 s" }, { x: 3.1, y: 0 }],
         alt: "Velocity against time. Flat at an unknown velocity until 0.6 seconds, then a straight line down to zero at 3.1 seconds. The area under the flat part is labelled 12 metres.",
       },
       parts: [
@@ -180,8 +182,11 @@ const sub: Subchapter = {
       basedOn: "Modelled on H156/02 June 2023 Q1",
       stem: "A car of mass 1100 kg is moving at 16 m s⁻¹ when the driver sees a hazard. The velocity stays at 16 m s⁻¹ until t = 0.80 s, then decreases uniformly to zero at t = 3.3 s.",
       figure: {
-        kind: "svg",
-        svg: vtSvg({ id: "sd-q4", tMax: 3.6, vMax: 20, tTicks: [0, 0.8, 2, 3.3], vTicks: [0, 5, 10, 20], u: 16, tReact: 0.8, tStop: 3.3, uLabel: "16" }),
+        kind: "graph",
+        x: { label: "time", symbol: "t", unit: "s", min: 0, max: 3.6, step: 0.4 },
+        y: { label: "velocity", symbol: "v", unit: "m s⁻¹", min: 0, max: 20, step: 5 },
+        series: [{ id: "car", points: [[0, 16], [0.8, 16], [3.3, 0]], colour: "accent" }],
+        points: [{ x: 0.8, y: 16, label: "0.80 s" }, { x: 3.3, y: 0 }],
         alt: "Velocity against time. Flat at 16 metres per second until 0.8 seconds, then a straight line down to zero at 3.3 seconds.",
       },
       parts: [

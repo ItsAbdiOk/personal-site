@@ -138,32 +138,38 @@ v("grad-g", f"{SE} graph-method worked step 3 / {FG} figGraph key", "g = 2 x 4.9
 v("grad-pctdiff", f"{SE} graph-method worked step 3", "(9.81 - 9.81) / 9.81 x 100 = 0%", lambda: (9.81 - 9.81) / 9.81 * 100, 0, dp=0,
   note="g = 2 x 4.906 = 9.812 -> 9.81, so 0%")
 
-# figGraph pixel geometry (x = 60 + 1300 t^2 ; y = 250 - 220 s ; origin (60,250))
-def fig_circles():
-    seg = fig_src[fig_src.index("const svgGraph"):]
-    return [(float(a), float(c)) for a, c in re.findall(r'<circle cx="([\d.]+)" cy="([\d.]+)" r="3.5"', seg)]
+# figGraph is a declarative graph (components/zakiya/Graph.tsx): re-read its own points / tangent / axes from figures.ts.
+def graph_block(name):
+    m = re.search(r"export const " + name + r": Figure = \{(.*?)\n\};", fig_src, re.S)
+    return m.group(1)
 
 
-def graph_points_ok():
-    pts = fig_circles()
-    if len(pts) != 10:
-        return False
-    for (cx, cy), t, s in zip(pts, T1_t, T1_s):
-        if abs(cx - (60 + 1300 * t * t)) > 0.15 or abs(cy - (250 - 220 * s)) > 0.15:
-            return False
-    return True
+GG = graph_block("figGraph")
+gg_line = [tuple(map(float, p)) for p in re.findall(r"\[([\d.]+), ([\d.]+)\]", re.search(r"points: \[(\[.*?\])\]", GG).group(1).join(["[", "]"]))]
+gg_at = float(re.search(r"tangent: \{[^}]*?at: ([\d.]+)", GG, re.S).group(1))
+gg_xmin, gg_xmax = map(float, re.search(r'x: \{[^}]*min: ([\d.]+), max: ([\d.]+)', GG).groups())
+gg_ymin, gg_ymax = map(float, re.search(r'y: \{[^}]*min: ([\d.]+), max: ([\d.]+)', GG).groups())
+gg_dots = [(float(a), float(c)) for a, c in re.findall(r"\{ x: ([\d.]+), y: ([\d.]+)", GG)]
+gg_slope = (gg_line[1][1] - gg_line[0][1]) / (gg_line[1][0] - gg_line[0][0])
+gg_snap = 10 ** math.floor(math.log10((gg_xmax - gg_xmin) / 20))  # Graph.tsx
+gg_span = max(gg_snap, round((gg_xmax - gg_xmin) / 3 / gg_snap) * gg_snap)
+gg_x1, gg_x2 = max(gg_xmin, gg_at - gg_span), min(gg_xmax, gg_at + gg_span)
+gg_y = lambda t2: gg_line[0][1] + gg_slope * (t2 - gg_line[0][0])
 
-
-b("fig-graph-points", f"{FG} figGraph", "10 data points drawn at (60 + 1300 t^2, 250 - 220 s)", graph_points_ok)
-b("fig-graph-ticks", f"{FG} figGraph", "x ticks 0.05..0.20 at 125,190,255,320; y ticks 0.2..1.0 at 206,162,118,74,30",
-  lambda: all(f'x1="{x}" y1="250" x2="{x}" y2="255"' in fig_src for x in (125, 190, 255, 320)) and
-  all(f'x1="55" y1="{y}" x2="60" y2="{y}"' in fig_src for y in (206, 162, 118, 74, 30)))
-b("fig-graph-line", f"{FG} figGraph", "best-fit line ends at (307,45): t^2=0.19, s=0.932 = 1/2 g t^2",
-  lambda: abs(((307 - 60) / 1300) * G / 2 - (250 - 45) / 220) < 0.002)
-b("fig-graph-triangle", f"{FG} figGraph", "triangle corner x=294 -> 0.180 s^2; y=55.7 -> 0.883 m",
-  lambda: abs((294 - 60) / 1300 - 0.180) < 1e-3 and abs((250 - 55.7) / 220 - 0.883) < 1e-3)
-b("fig-graph-anomaly", f"{FG} figGraph", "anomaly circle at (150.6,169.0) is the t=0.264 s, s=0.368 m point",
-  lambda: 'cx="150.6" cy="169.0" r="9"' in fig_src)
+b("fig-graph-line", f"{FG} figGraph series", "best-fit line is a straight line through the origin", lambda: gg_line[0] == (0.0, 0.0) and len(gg_line) == 2)
+v("fig-graph-grad", f"{FG} figGraph readout / caption", "gradient = 4.906 m s^-2", lambda: gg_slope, 4.906, sf=4)
+v("fig-graph-at", f"{FG} figGraph tangent.at", "triangle starts at the origin: at - span = 0 s^2", lambda: gg_x1, 0.0, dp=3)
+v("fig-graph-dx", f"{FG} figGraph triangle / caption", "triangle base 0.180 s^2", lambda: gg_x2 - gg_x1, 0.180, sf=3)
+v("fig-graph-dy", f"{FG} figGraph triangle / caption", "triangle height 0.883 m", lambda: gg_y(gg_x2) - gg_y(gg_x1), 0.883, sf=3)
+v("fig-graph-g", f"{FG} figGraph caption", "g = 2 x gradient = 9.81 m s^-2", lambda: 2 * gg_slope, 9.81, sf=3)
+b("fig-graph-fits", f"{FG} figGraph axes", "whole line and tangent triangle fit inside the axes", lambda: gg_y(gg_xmax) <= gg_ymax and gg_y(gg_x2) <= gg_ymax and gg_line[1][0] <= gg_xmax)
+b("fig-graph-points", f"{FG} figGraph points", "10 data dots at (t^2, s) from Table 1",
+  lambda: len(gg_dots) == 10 and all(abs(x - t * t) < 6e-5 and abs(y - s) < 1e-9 for (x, y), t, s in zip(gg_dots, T1_t, T1_s)))
+b("fig-graph-good9", f"{FG} figGraph points", "nine dots lie on the line within 0.01 m",
+  lambda: sum(abs(y - gg_y(x)) < 0.01 for x, y in gg_dots) == 9)
+v("fig-graph-anom", f"{FG} figGraph anomaly label", "anomaly dot is (0.0697 s^2, 0.368 m)", lambda: gg_dots[4][1], 0.368, sf=3)
+v("fig-graph-anom-x", f"{FG} figGraph anomaly label", "anomaly dot t^2 = 0.0697", lambda: gg_dots[4][0], 0.0697, sf=3)
+v("fig-graph-anom-off", f"{FG} figGraph anomaly", "anomaly sits above the line (line gives 0.342 m)", lambda: gg_y(gg_dots[4][0]), 0.342, sf=3)
 
 # ====================================================================
 # Section 6 accuracy / uncertainty

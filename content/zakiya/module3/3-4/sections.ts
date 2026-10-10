@@ -154,8 +154,8 @@ const sections: Section[] = [
         origin: { kind: "ours" },
         question: "A car's v–t graph curves up from rest towards 12 m s⁻¹ over 12 s. Grid squares are 2 s × 2 m s⁻¹. Estimate the distance travelled in 12 s.",
         steps: [
-          "**Count full or nearly full squares:** 1 + 3 + 4 + 5 + 5 + 5 = **23** (column by column).",
-          "**Mostly-under squares:** just **1** more (top right). Total **24**.",
+          "**Count the whole squares** under the curve, column by column: 0 + 2 + 3 + 4 + 5 + 5 = **19**.",
+          "**Part squares:** count only those **more than half** under the curve (there are **5**, one near the top of most columns) and ignore the rest. Total 19 + 5 = **24**.",
           "**One square:** 2 s × 2 m s⁻¹ = **4 m**.",
           "**Distance** ≈ 24 × 4 = **96 m**.",
         ],

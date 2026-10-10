@@ -8,12 +8,14 @@ Official past-paper answers are from "11 Sorted by topic (generated)/Chapter 3 M
 """
 import math
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import physics as P  # noqa: E402
 
 G = P.G
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
 Q = "content/zakiya/module3/3-4-more-on-velocity-time-graphs.ts"
 S = "content/zakiya/module3/3-4/sections.ts"
 F = "content/zakiya/module3/3-4/figures.ts"
@@ -48,12 +50,73 @@ tri = lambda base, h: 0.5 * base * h
 trap = lambda a, b_, h: 0.5 * (a + b_) * h
 
 
+# ============ Graph figures: parse each `kind: "graph"` block and re-evaluate it (as the 3.1 checks do) ============
+FIG = open(os.path.join(ROOT, F)).read()
+
+
+def expr_fn(expr, var):
+    """Same tiny language as lib/zakiya/graph-expr.ts, evaluated with no builtins."""
+    assert re.fullmatch(r"[0-9.+\-*/^() a-z]*", expr), expr
+    py = re.sub(r"(\d)\s*([a-z(])", r"\1*\2", expr).replace("^", "**")
+    names = {var: 0.0, "pi": math.pi, "sqrt": math.sqrt, "exp": math.exp, "ln": math.log,
+             "sin": lambda d: math.sin(math.radians(d)), "cos": lambda d: math.cos(math.radians(d)),
+             "tan": lambda d: math.tan(math.radians(d))}
+    code = compile(py, "<expr>", "eval")
+    assert set(code.co_names) <= set(names), code.co_names
+    return lambda x: eval(code, {"__builtins__": {}}, {**names, var: x})  # noqa: S307 (repo content, names whitelisted)
+
+
+def poly_area(pts, a, b2):
+    tot = 0.0
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        lo, hi = max(x0, a), min(x1, b2)
+        if hi <= lo or x1 == x0:
+            continue
+        yl = y0 + (y1 - y0) * (lo - x0) / (x1 - x0)
+        yh = y0 + (y1 - y0) * (hi - x0) / (x1 - x0)
+        tot += (yl + yh) / 2 * (hi - lo)
+    return tot
+
+
+def poly_fn(pts):
+    def f(x):
+        for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+            if x0 <= x <= x1:
+                return y1 if x1 == x0 else y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+        raise ValueError(x)
+    return f
+
+
+def simpson(f, a, b2, n=2000):
+    h = (b2 - a) / n
+    return h / 3 * (f(a) + f(b2) + sum((4 if i % 2 else 2) * f(a + i * h) for i in range(1, n)))
+
+
+G_ALL, G_FN, G_AREA = {}, {}, {}
+for m in re.finditer(r"export const (\w+): Figure = \{(.*?)\n\};", FIG, re.S):
+    name, body = m.groups()
+    if 'kind: "graph"' not in body:
+        continue
+    series = {}
+    for sm in re.finditer(r'\{ id: "(\w+)"[^{}]*?(?:expr: "([^"]+)"|points: (\[\[.*?\]\]))', body):
+        sid, ex, pts = sm.groups()
+        series[sid] = expr_fn(ex, "t") if ex else [tuple(map(float, p)) for p in re.findall(r"\[([-\d.]+), ([-\d.]+)\]", pts)]
+    area = re.search(r'area: \{ series: "(\w+)", from: ([-\d.]+), to: ([-\d.]+)', body)
+    G_ALL[name] = dict(series=series, area=area.groups() if area else None, body=body)
+    first = next(iter(series.values()))
+    G_FN[name] = first if callable(first) else poly_fn(first)
+    if area:
+        sid, a0, a1 = area.groups()
+        sr = series[sid]
+        G_AREA[name] = poly_area(sr, float(a0), float(a1)) if not callable(sr) else simpson(sr, float(a0), float(a1))
+
+
 # ============ Section 1: strip (figStrip) ============
 v("strip", f"{S} area-is-displacement / {F} figStrip", "6.0 x 0.5 = 3.0 m", lambda: 6.0 * 0.5, 3.0, sf=2)
-b("strip-curve", f"{F} figStrip", "curve 8(1-exp(-t/3.6)) at t=5 is about 6.0 m/s (strip height 6.0)",
-  lambda: abs(8 * (1 - math.exp(-5 / 3.6)) - 6.0) < 0.15, note=f"computed {8 * (1 - math.exp(-5 / 3.6)):.3f}")
-b("strip-top", f"{F} figStrip", "curve at 5.5 s still ~6.0 (strip top flat enough)",
-  lambda: abs(8 * (1 - math.exp(-5.5 / 3.6)) - 6.0) < 0.35, note=f"{8 * (1 - math.exp(-5.5 / 3.6)):.3f}")
+b("strip-curve", f"{F} figStrip", "graph expr at t=5 is about 6.0 m/s (strip height 6.0)",
+  lambda: abs(G_FN["figStrip"](5) - 6.0) < 0.15, note="re-evaluated from figStrip expr")
+b("strip-top", f"{F} figStrip", "graph expr at 5.5 s still ~6.0 (strip top flat enough)",
+  lambda: abs(G_FN["figStrip"](5.5) - 6.0) < 0.35, note="re-evaluated from figStrip expr")
 
 # ============ Section 2: cyclist (textbook p.30) ============
 cA = lambda: tri(10, 4.0)
@@ -160,8 +223,8 @@ v("r2-D", f"{Q} vt-r2 modelAnswer", "D: 1/2 x (2 + 10) x 10 = 60 m", D_, 60, sf=
 mcq("r2-mcq", f"{Q} vt-r2 options/correctIndex", "key C = greatest area", lambda: max(A_(), B_(), C_(), D_()), [60, 55, 70, 60], 2, dp=0)
 b("r2-unique", f"{Q} vt-r2", "C strictly greater than every other area (unique key)", lambda: C_() > max(A_(), B_(), D_()))
 b("r2-Bsmallest", f"{Q} vt-r2 commonMistakes", "B has the smallest area", lambda: B_() < min(A_(), C_(), D_()))
-b("r2-figlines", f"{F} figQFour", "figure lines match text: A 6 flat; B 0->11; C 10->4; D 2->10", lambda: True,
-  note="checked by reading source: pts [0,6]-[10,6]; [0,0]-[10,11]; [0,10]-[10,4]; [0,2]-[10,10]")
+b("r2-figlines", f"{F} figQFour", "figure lines match text: A 6 flat; B 0->11; C 10->4; D 2->10",
+  lambda: [G_ALL["figQFour"]["series"][k] for k in "ABCD"] == [[(0, 6), (10, 6)], [(0, 0), (10, 11)], [(0, 10), (10, 4)], [(0, 2), (10, 10)]])
 
 # vt-r3 tram
 v("r3a", f"{Q} vt-r3(a) modelAnswer", "(0-20)/(45-5.0) = -0.50", lambda: (0 - 20) / (45 - 5.0), -0.50, sf=2)
@@ -192,7 +255,7 @@ v("r5-misc-avg", f"{Q} vt-r5 commonMistakes", "(3.0 + 9.0)/2 = 6.0", lambda: (3.
 # vt-r6 curve (squares 1 s x 2 m/s)
 fall = lambda t: 10 * (1 - math.exp(-t / 3))
 fall_area = lambda: 10 * 10 - 30 * (1 - math.exp(-10 / 3))
-v("r6-v10", f"{F} figQCurve alt text", "reaches about 9.6 m/s at 10 s", lambda: fall(10), 9.6, sf=2)
+v("r6-v10", f"{F} figQCurve alt text", "reaches about 9.6 m/s at 10 s", lambda: G_FN["figQCurve"](10), 9.6, sf=2)
 v("r6-one", f"{Q} vt-r6 modelAnswer / {F} figQCurve", "1 s x 2 m/s = 2 m", lambda: 1 * 2, 2, sf=1)
 v("r6-exact", f"{Q} vt-r6(b)", "exact area under curve = 71.07 m (claimed estimate 72)", fall_area, 72, sf=2,
   note="claimed 72 is the estimate, 71 exact; ROUNDING expected, acceptable as an estimate")
@@ -218,7 +281,7 @@ v("r7c-below", f"{Q} vt-r7(c) modelAnswer", "1/2 x 0.388 x 3.81 = 0.74 m", below
 v("r7c-up", f"{Q} vt-r7(c) modelAnswer", "upper area quoted as 1.83, matching (b)", lambda: tri(t_top(), 6.0), 1.83, sf=3)
 v("r7c-disp", f"{Q} vt-r7(c) modelAnswer", "1.83 - 0.74 = 1.1 m", lambda: P.suvat_s(6.0, -G, 1.0), 1.1, sf=2)
 v("r7c-dist", f"{Q} vt-r7(c) modelAnswer", "1.83 + 0.74 = 2.6 m", lambda: tri(t_top(), 6.0) + below(), 2.6, sf=2)
-v("r7-fig", f"{F} figQThrow alt", "v at 1.2 s = -5.8 m/s", lambda: P.suvat_v(6.0, -G, 1.2), -5.8, sf=2)
+v("r7-fig", f"{F} figQThrow alt", "v at 1.2 s = -5.8 m/s", lambda: G_FN["figQThrow"](1.2), -5.8, sf=2)
 
 # vt-r8: no numbers (qualitative) - nothing to compute
 u("r8", f"{Q} vt-r8", "wet road / distracted driver graph changes", "qualitative; matches H156/02 June 2023 Q1(c) mark scheme (viewed)")
@@ -242,3 +305,51 @@ b("tb-fig5", "data/textbook-marker/pages/book-p030 (PDF p42 image)", "Fig 5: 0 t
 b("tb-fig6", "book p30", "Fig 6: 10.0 at 4 s, flat to 9 s, 5.0 at 13 s, dashed 'End of race' at 13", lambda: True, note="viewed")
 b("tb-fig7", "book p30", "Fig 7: +4.0 at 0 to -4.0 at 8.0, zero at 4.0", lambda: True, note="viewed")
 b("tb-fig3", "book p29-30 text", "cyclist 20 + 80 + 40 = 140; trapezium 1/2(50+20)x4.0 = 140", lambda: True, note="text of book-p030.md")
+
+
+# ============ Graph figures re-read from figures.ts (expr / points / area) ============
+def gp(name, sid):
+    return G_ALL[name]["series"][sid]
+
+
+b("g-strip-expr", f"{F} figStrip expr", "graph is v = 8(1-exp(-t/3.6)) (same curve as the old sketch)",
+  lambda: all(abs(G_FN["figStrip"](t_) - 8 * (1 - math.exp(-t_ / 3.6))) < 1e-9 for t_ in (0, 5, 10)))
+v("g-strip-area", f"{F} figStrip area readout", "whole area under the curve (readout 53 m, Simpson)", lambda: G_AREA["figStrip"], 53, dp=0)
+v("g-strip-strip", f"{F} figStrip caption", "6.0 x 0.5 = 3.0 m", lambda: 6.0 * 0.5, 3.0, sf=2)
+for nm, tot in (("figCyclist", 140), ("figCyclistTrap", 140)):
+    b(f"g-{nm}-pts", f"{F} {nm} points", "0->4.0 at 10 s, flat to 30 s, down to 0 at 50 s", lambda nm=nm: gp(nm, "cyc") == [(0, 0), (10, 4), (30, 4), (50, 0)])
+    v(f"g-{nm}-area", f"{F} {nm} area / caption", "area = 140 m", lambda nm=nm: G_AREA[nm], tot, dp=0)
+b("g-car-pts", f"{F} figCar points", "0 -> 15 m/s at 75 s, flat to 100 s", lambda: gp("figCar", "car") == [(0, 0), (75, 15), (100, 15)])
+v("g-car-area", f"{F} figCar area / caption", "area = 937.5 m", lambda: G_AREA["figCar"], 937.5, dp=1)
+v("g-car-avg", f"{F} figCar caption", "937.5 / 100 = 9.4 m/s", lambda: G_AREA["figCar"] / 100, 9.4, sf=2)
+b("g-spr-pts", f"{F} figSprinter points", "0 -> 10.0 at 4 s, flat to 9 s, 5.0 at 13 s", lambda: gp("figSprinter", "spr") == [(0, 0), (4, 10), (9, 10), (13, 5)])
+v("g-spr-area", f"{F} figSprinter area / caption", "area = 100 m", lambda: G_AREA["figSprinter"], 100, dp=0)
+v("g-spr-avg", f"{F} figSprinter caption", "100 / 13 = 7.7 m/s", lambda: G_AREA["figSprinter"] / 13, 7.7, sf=2)
+b("g-ramp-pts", f"{F} figRamp points", "+4.0 at 0 s to -4.0 at 8.0 s", lambda: gp("figRamp", "ball") == [(0, 4), (8, -4)])
+v("g-ramp-up", f"{F} figRamp caption", "area 0-4 s = +8.0 m", lambda: poly_area(gp("figRamp", "ball"), 0, 4), 8.0, sf=2)
+v("g-ramp-down", f"{F} figRamp caption", "area 4-8 s = -8.0 m", lambda: poly_area(gp("figRamp", "ball"), 4, 8), -8.0, sf=2)
+v("g-ramp-net", f"{F} figRamp area readout", "net area 0-8 s = 0 m", lambda: G_AREA["figRamp"], 0, dp=0)
+b("g-sq-expr", f"{F} figSquares expr", "graph is v = 12(1-exp(-t/4)), same curve as the counting claims",
+  lambda: all(abs(G_FN["figSquares"](t_) - pull(t_)) < 1e-9 for t_ in (0, 4, 12)))
+v("g-sq-area", f"{F} figSquares area readout / caption", "exact area 98 m (Simpson)", lambda: G_AREA["figSquares"], 98, sf=2)
+b("g-sq-axes", f"{F} figSquares axes", "squares 2 s x 2 m/s = 4 m (x step 2, y step 2)",
+  lambda: 'x: t(12, 2)' in G_ALL["figSquares"]["body"] and 'y: vAx(0, 12, 2)' in G_ALL["figSquares"]["body"])
+b("g-stop-pts", f"{F} figStopping points", "15 m/s to 0.60 s, then down to 0 at 3.6 s", lambda: gp("figStopping", "stop") == [(0, 15), (0.6, 15), (3.6, 0)])
+v("g-stop-area", f"{F} figStopping area readout / caption", "31.5 m", lambda: G_AREA["figStopping"], 31.5, dp=1)
+v("g-stop-think", f"{F} figStopping caption", "rectangle 0-0.6 s = 9.0 m", lambda: poly_area(gp("figStopping", "stop"), 0, 0.6), 9.0, sf=2)
+v("g-stop-brake", f"{F} figStopping caption", "triangle 0.6-3.6 s = 22.5 m", lambda: poly_area(gp("figStopping", "stop"), 0.6, 3.6), 22.5, sf=3)
+b("g-shape-pts", f"{F} figShapeChanges", "normal / tired (1.2 s flat, reaches 0 at 4.2 s) / wet (reaches 0 at 5.6 s)",
+  lambda: gp("figShapeChanges", "normal") == [(0, 15), (0.6, 15), (3.6, 0)] and gp("figShapeChanges", "tired") == [(0, 15), (1.2, 15), (4.2, 0)]
+  and gp("figShapeChanges", "wet") == [(0, 15), (0.6, 15), (5.6, 0)])
+b("g-shape-area", f"{F} figShapeChanges caption", "tired and wet both have more area than normal",
+  lambda: poly_area(gp("figShapeChanges", "tired"), 0, 6) > poly_area(gp("figShapeChanges", "normal"), 0, 6)
+  and poly_area(gp("figShapeChanges", "wet"), 0, 6) > poly_area(gp("figShapeChanges", "normal"), 0, 6))
+b("g-tram-pts", f"{F} figQTram", "20 m/s to 5.0 s, then to 0 at 45 s", lambda: gp("figQTram", "tram") == [(0, 20), (5, 20), (45, 0)])
+b("g-qstop-pts", f"{F} figQStopLine", "12 m/s to 0.50 s, then to 0 at 3.5 s", lambda: gp("figQStopLine", "car") == [(0, 12), (0.5, 12), (3.5, 0)])
+b("g-qcyc-pts", f"{F} figQCyclist", "3.0 at 0 s, 9.0 at 4.0 s, flat to 10.0 s", lambda: gp("figQCyclist", "cyc") == [(0, 3), (4, 9), (10, 9)])
+b("g-qcurve-expr", f"{F} figQCurve expr", "graph is v = 10(1-exp(-t/3)) (matches the fall claims)",
+  lambda: all(abs(G_FN["figQCurve"](t_) - fall(t_)) < 1e-9 for t_ in (0, 3, 10)))
+v("g-qcurve-area", f"{F} figQCurve", "exact area 71 m (claimed estimate 72)", lambda: simpson(gp("figQCurve", "para"), 0, 10), 71, sf=2)
+v("g-qthrow-v0", f"{F} figQThrow expr", "v(0) = 6.0 m/s", lambda: G_FN["figQThrow"](0), 6.0, sf=2)
+v("g-qthrow-zero", f"{F} figQThrow alt", "crosses zero at about 0.61 s", lambda: 6.0 / 9.81, 0.61, sf=2)
+v("g-qthrow-grad", f"{F} figQThrow caption", "gradient -9.81 m s^-2", lambda: (G_FN["figQThrow"](1.0) - G_FN["figQThrow"](0.0)) / 1.0, -9.81, sf=3)

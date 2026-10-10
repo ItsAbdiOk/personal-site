@@ -53,38 +53,24 @@ export const figCar: Figure = {
 };
 
 // ---------- Derivation graph (Textbook p. 31–32), drawn with the particle numbers (p. 33) ----------
-// u = 4.0, v = 12, t = 2.0 s, a = 4.0, s = 8 + 8 = 16 m. Scale: x 0..2 s → 50..290; y 0..12 → 210..30 (15 px per m/s)
-const svgDerive = `${head("em-dv", 420)}
-  <line x1="50" y1="210" x2="310" y2="210" stroke-width="1.5" marker-end="url(#em-dv-c)"/>
-  <line x1="50" y1="210" x2="50" y2="18" stroke-width="1.5" marker-end="url(#em-dv-c)"/>
-  <text x="310" y="246" fill="currentColor" stroke="none" font-size="12" text-anchor="end">time / s</text>
-  <text x="56" y="20" fill="currentColor" stroke="none" font-size="12">velocity / m s⁻¹</text>
-  <rect x="50" y="150" width="240" height="60" stroke="none" style="fill:var(--accent)" fill-opacity="0.22"/>
-  <path d="M50,150 L290,30 L290,150 z" stroke="none" style="fill:var(--accent)" fill-opacity="0.42"/>
-  <line x1="50" y1="150" x2="290" y2="30" stroke-width="2.6" style="stroke:var(--vx)"/>
-  <line x1="290" y1="30" x2="290" y2="210" stroke-width="1" stroke-dasharray="4 4"/>
-  <g stroke="none" font-weight="600">
-    <text x="44" y="154" text-anchor="end" style="fill:var(--vx)">4.0</text>
-    <text x="44" y="34" text-anchor="end" style="fill:var(--vx)">12</text>
-    <text x="44" y="214" text-anchor="end" fill="currentColor">0</text>
-    <text x="290" y="226" text-anchor="middle" fill="currentColor">2.0</text>
-    <text x="170" y="186" text-anchor="middle" style="fill:var(--accent)">ut = 4.0 × 2.0 = 8 m</text>
-    <text x="232" y="132" text-anchor="middle" style="fill:var(--accent)">½(v − u)t = 8 m</text>
-    <text x="112" y="70" text-anchor="middle" style="fill:var(--vy)">slope = 4.0 m/s²</text>
-  </g>
-  <line x1="112" y1="75" x2="130" y2="106" stroke-width="1" style="stroke:var(--vy)"/>
-  ${key(262, "var(--vx)", "4.0 m/s · speed at the start", "initial velocity u (where the line starts)")}
-  ${key(292, "var(--vx)", "12 m/s · speed at the end", "final velocity v (where the line ends)")}
-  ${key(322, "currentColor", "2.0 s · how long it took", "time t (width of the shape)")}
-  ${key(352, "var(--vy)", "4.0 m/s² · gains 4 m/s every second", "acceleration a = gradient of the line")}
-  ${key(382, "var(--accent)", "8 m + 8 m = 16 m · distance covered", "displacement s = area under the line")}
-</svg>`;
-
+// u = 4.0, v = 12, t = 2.0 s, a = 4.0, s = 8 + 8 = 16 m. Straight line, so points are exact and area is exact.
 export const figDerive: Figure = {
-  kind: "svg",
-  svg: svgDerive,
-  alt: "Velocity-time graph. A straight line rises from 4.0 metres per second at time 0 to 12 metres per second at 2.0 seconds. The area under it is split into a rectangle of height 4.0 and width 2.0, area 8 metres, labelled u t, and a triangle on top of height 8 and width 2.0, area 8 metres, labelled one half of v minus u times t. The slope is 4.0 metres per second squared.",
-  caption: "Our numbers on the textbook particle (p. 33): 4.0 → 12 m s⁻¹ over 16 m; we worked out that it takes 2.0 s. The {{gradient}} is {{a}}; the {{area}} is {{s}}: rectangle {{ut}} + triangle {{half-v-u-t}}.",
+  kind: "graph",
+  alt: "Velocity-time graph. A straight line rises from 4.0 metres per second at time 0 to 12 metres per second at 2.0 seconds, so the slope is 4.0 metres per second squared. The area under it is shaded and equals 16 metres: a rectangle of 4.0 times 2.0, 8 metres, plus a triangle of one half of 8.0 times 2.0, 8 metres.",
+  caption: "Our numbers on the textbook particle (p. 33): 4.0 → 12 m s⁻¹ over 16 m; we worked out that it takes 2.0 s. The {{gradient}} is {{a}} = 8.0 ÷ 2.0 = 4.0 m s⁻²; the {{area}} is {{s}}: rectangle {{ut}} = 4.0 × 2.0 = 8 m + triangle {{half-v-u-t}} = ½ × 8.0 × 2.0 = 8 m.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 2, step: 0.5 },
+  y: { label: "velocity", symbol: "v", unit: "m s⁻¹", min: 0, max: 16, step: 4 },
+  series: [{ id: "particle", points: [[0, 4], [2, 12]], colour: "vx" }],
+  area: {
+    series: "particle",
+    from: 0,
+    to: 2,
+    readout: { quantity: "displacement", unit: "m", decimals: 0 },
+  },
+  points: [
+    { x: 0, y: 4 },
+    { x: 2, y: 12 },
+  ],
 };
 
 // ---------- Which equation? Each equation leaves out one letter ----------

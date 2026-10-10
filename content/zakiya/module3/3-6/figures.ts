@@ -157,87 +157,36 @@ export const figTable: Figure = {
   caption: "Table 1 of the textbook (p. 36) drawn to scale. Orange (thinking) grows steadily; purple (braking) takes over at high speed.",
 };
 
-// ---------- Velocity–time graph builder ----------
-type Vt = {
-  id: string;
-  tMax: number; vMax: number;
-  tTicks: number[]; vTicks: number[];
-  u: number; tReact: number; tStop: number;
-  uLabel?: string;             // label at the speed tick, e.g. "15" or "?"
-  thinking?: string; braking?: string; slope?: string;
-  keyItems?: [string, string, string][];
-};
-const X0 = 50, Y0 = 200, W = 270, H = 160;
-export function vtSvg(o: Vt): string {
-  const x = (t: number) => +(X0 + (t / o.tMax) * W).toFixed(1);
-  const y = (v: number) => +(Y0 - (v / o.vMax) * H).toFixed(1);
-  const keyH = (o.keyItems?.length ?? 0) * 31;
-  const h = 262 + keyH;
-  return `${head(o.id, 340, h)}
-  <line x1="${X0}" y1="${Y0}" x2="${X0 + W + 10}" y2="${Y0}" stroke-width="1.4" marker-end="url(#${o.id}-c)"/>
-  <line x1="${X0}" y1="${Y0}" x2="${X0}" y2="${Y0 - H - 14}" stroke-width="1.4" marker-end="url(#${o.id}-c)"/>
-  <text x="${X0 + W}" y="${Y0 + 34}" text-anchor="end" fill="currentColor" stroke="none" font-size="12">time / s</text>
-  <text x="${X0 - 40}" y="${Y0 - H - 20}" fill="currentColor" stroke="none" font-size="12">velocity / m s⁻¹</text>
-  ${o.tTicks.map((t) => `<line x1="${x(t)}" y1="${Y0}" x2="${x(t)}" y2="${Y0 + 5}" stroke-width="1"/><text x="${x(t)}" y="${Y0 + 18}" text-anchor="middle" fill="currentColor" stroke="none" font-size="11.5">${t}</text>`).join("")}
-  ${o.vTicks.map((v) => `<line x1="${X0 - 5}" y1="${y(v)}" x2="${X0}" y2="${y(v)}" stroke-width="1"/><text x="${X0 - 8}" y="${y(v) + 4}" text-anchor="end" fill="currentColor" stroke="none" font-size="11.5">${v}</text>`).join("")}
-  ${o.uLabel ? `<text x="${X0 - 8}" y="${y(o.u) + 4}" text-anchor="end" fill="currentColor" stroke="none" font-size="12" font-weight="600">${o.uLabel}</text>` : ""}
-  <rect x="${X0}" y="${y(o.u)}" width="${(x(o.tReact) - X0).toFixed(1)}" height="${(Y0 - y(o.u)).toFixed(1)}" stroke="none" style="fill:var(--vx)" fill-opacity="0.28"/>
-  <path d="M${x(o.tReact)},${y(o.u)} L${x(o.tStop)},${Y0} L${x(o.tReact)},${Y0} Z" stroke="none" style="fill:var(--vy)" fill-opacity="0.28"/>
-  <path d="M${X0},${y(o.u)} L${x(o.tReact)},${y(o.u)} L${x(o.tStop)},${Y0}" stroke-width="2.4"/>
-  ${o.thinking ? `<text x="${((X0 + x(o.tReact)) / 2).toFixed(1)}" y="${(Y0 - 10).toFixed(1)}" text-anchor="middle" stroke="none" font-weight="600" font-size="12" style="fill:var(--vx)">${o.thinking}</text>` : ""}
-  ${o.braking ? `<text x="${(x(o.tReact) + (x(o.tStop) - x(o.tReact)) / 3).toFixed(1)}" y="${(Y0 - 12).toFixed(1)}" text-anchor="middle" stroke="none" font-weight="600" font-size="12" style="fill:var(--vy)">${o.braking}</text>` : ""}
-  ${o.slope ? `<text x="${((x(o.tReact) + x(o.tStop)) / 2 + 8).toFixed(1)}" y="${((y(o.u) + Y0) / 2 - 6).toFixed(1)}" stroke="none" font-weight="600" font-size="12" style="fill:var(--accent)">${o.slope}</text>` : ""}
-  ${o.keyItems ? keys(262, o.keyItems) : ""}
-</svg>`;
-}
-
 // ---------- Section 5: v–t worked example (ours): 15 m/s, reacts 0.60 s, stopped at 3.6 s ----------
+// Graph figure; points are exact. Area 0 to 3.6 s = 9.0 + 22.5 = 31.5 m. Checked in claims_3_6_car_stopping_distances.py.
 export const figVtWorked: Figure = {
-  kind: "svg",
-  svg: vtSvg({
-    id: "sd-vt1", tMax: 4, vMax: 20, tTicks: [0, 0.6, 2, 3.6], vTicks: [0, 5, 10, 20], u: 15, uLabel: "15",
-    tReact: 0.6, tStop: 3.6, thinking: "9.0 m", braking: "? → 22.5 m", slope: "slope: a = ? → −5.0",
-    keyItems: [
-      ["currentColor", "15 m/s · speed when the hazard appears", "initial velocity u"],
-      ["var(--vx)", "0.60 s, 9.0 m · flat part: still at full speed", "reaction time; thinking distance = rectangle area"],
-      ["var(--vy)", "3.0 s, 22.5 m · sloping part: slowing down", "braking time; braking distance = triangle area"],
-      ["var(--accent)", "5.0 m/s² · speed lost per second", "deceleration = −gradient"],
-    ],
-  }),
-  alt: "Velocity against time. The line is flat at 15 metres per second from 0 to 0.60 seconds, then slopes straight down to zero at 3.6 seconds. The rectangle under the flat part is shaded orange and labelled 9.0 metres, thinking distance. The triangle under the slope is shaded purple and labelled 22.5 metres, braking distance. The slope gives an acceleration of minus 5.0 metres per second squared.",
-  caption: "Area = distance; gradient = acceleration. Stopping distance = 9.0 + 22.5 = 31.5 m.",
+  kind: "graph",
+  alt: "Velocity against time. The line is flat at 15 metres per second from 0 to 0.60 seconds, then slopes straight down to zero at 3.6 seconds. The area under the whole line is shaded and equals 31.5 metres: 9.0 metres under the flat part (thinking distance) and 22.5 metres under the sloping part (braking distance). The slope is minus 5.0 metres per second squared.",
+  caption: "Area = distance; gradient = acceleration. Flat part: 15 × 0.60 = 9.0 m (thinking). Sloping part: ½ × 3.0 × 15 = 22.5 m (braking), with gradient (0 − 15) ÷ 3.0 = −5.0 m s⁻². Stopping distance = 9.0 + 22.5 = 31.5 m.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 4.2, step: 0.6 },
+  y: { label: "velocity", symbol: "v", unit: "m s⁻¹", min: 0, max: 20, step: 5 },
+  series: [{ id: "car", points: [[0, 15], [0.6, 15], [3.6, 0]], colour: "accent" }],
+  area: { series: "car", from: 0, to: 3.6, readout: { quantity: "stopping distance", unit: "m", decimals: 1 } },
+  points: [
+    { x: 0, y: 15, label: "15" },
+    { x: 0.6, y: 15 },
+    { x: 3.6, y: 0 },
+  ],
 };
 
 // ---------- Section 5: how the graph changes (ours, built on the 15 m/s example) ----------
-// Scale: x 34 px per s (0–7 s), y 8 px per m/s (0–20).
-const px = (t: number) => +(50 + 34 * t).toFixed(1);
-const py = (v: number) => +(200 - 8 * v).toFixed(1);
-const line = (pts: [number, number][], colour: string, dash = "") =>
-  `<path d="M${pts.map(([t, v]) => `${px(t)},${py(v)}`).join(" L")}" stroke-width="2.2" ${dash ? `stroke-dasharray="${dash}"` : ""} style="stroke:${colour}"/>`;
-const svgVtChanges = `${head("sd-vt2", 340, 386)}
-  <line x1="50" y1="200" x2="300" y2="200" stroke-width="1.4" marker-end="url(#sd-vt2-c)"/>
-  <line x1="50" y1="200" x2="50" y2="26" stroke-width="1.4" marker-end="url(#sd-vt2-c)"/>
-  <text x="300" y="234" text-anchor="end" fill="currentColor" stroke="none" font-size="12">time / s</text>
-  <text x="10" y="20" fill="currentColor" stroke="none" font-size="12">velocity / m s⁻¹</text>
-  ${[0, 1, 2, 3, 4, 5, 6, 7].map((t) => `<line x1="${px(t)}" y1="200" x2="${px(t)}" y2="205" stroke-width="1"/><text x="${px(t)}" y="218" text-anchor="middle" fill="currentColor" stroke="none" font-size="11.5">${t}</text>`).join("")}
-  ${[0, 7.5, 15].map((v) => `<line x1="45" y1="${py(v)}" x2="50" y2="${py(v)}" stroke-width="1"/><text x="42" y="${py(v) + 4}" text-anchor="end" fill="currentColor" stroke="none" font-size="11.5">${v}</text>`).join("")}
-  ${line([[0, 15], [0.6, 15], [5.6, 0]], "var(--vy)", "6 4")}
-  ${line([[0, 15], [1.2, 15], [4.2, 0]], "var(--vx)", "6 4")}
-  ${line([[0, 7.5], [0.6, 7.5], [2.1, 0]], "var(--good)", "2 3")}
-  ${line([[0, 15], [0.6, 15], [3.6, 0]], "currentColor")}
-  ${keys(262, [
-    ["currentColor", "15 m/s, 0.60 s, stops at 3.6 s · normal", "the worked example above"],
-    ["var(--vx)", "0.60 s → 1.2 s · tired driver", "longer reaction time: longer flat part, same slope"],
-    ["var(--vy)", "5.0 → 3.0 m/s² · wet road", "smaller deceleration: shallower slope"],
-    ["var(--good)", "15 → 7.5 m/s · half the speed", "same flat time and slope, stops at 2.1 s"],
-  ])}
-</svg>`;
-
 export const figVtChanges: Figure = {
-  kind: "svg",
-  svg: svgVtChanges,
+  kind: "graph",
   alt: "Four velocity-time lines. Normal: flat at 15 metres per second until 0.6 seconds, then straight down to zero at 3.6 seconds. Tired driver: flat until 1.2 seconds, then the same slope down to zero at 4.2 seconds. Wet road: flat until 0.6 seconds, then a shallower slope reaching zero at 5.6 seconds. Half speed: flat at 7.5 metres per second until 0.6 seconds, then the same slope as normal, reaching zero at 2.1 seconds.",
   caption: "Reaction time changes the **flat part**; road, tyres and brakes change the **slope**.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 7, step: 1 },
+  y: { label: "velocity", symbol: "v", unit: "m s⁻¹", min: 0, max: 20, step: 5 },
+  series: [
+    { id: "normal", label: "normal: 15 m s⁻¹, 0.60 s, stops at 3.6 s", points: [[0, 15], [0.6, 15], [3.6, 0]], colour: "accent" },
+    { id: "tired", label: "tired driver: reaction time 1.2 s, same slope", points: [[0, 15], [1.2, 15], [4.2, 0]], colour: "vx" },
+    { id: "wet", label: "wet road: 3.0 m s⁻² instead of 5.0, stops at 5.6 s", points: [[0, 15], [0.6, 15], [5.6, 0]], colour: "vy" },
+    { id: "half", label: "half speed: 7.5 m s⁻¹, stops at 2.1 s", points: [[0, 7.5], [0.6, 7.5], [2.1, 0]], colour: "muted" },
+  ],
 };
 
 // ---------- Section 6: braking force and energy (ours): 950 kg, 20 m/s, 6000 N ----------

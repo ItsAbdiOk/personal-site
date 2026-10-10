@@ -18,6 +18,49 @@ S = "content/zakiya/module3/3-2/sections.ts"
 F = "content/zakiya/module3/3-2/figures.ts"
 C = []
 
+import re  # noqa: E402
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+FIG = open(os.path.join(ROOT, F)).read()
+
+
+def graph_block(name):
+    m = re.search(r"export const " + name + r": Figure = \{(.*?)\n\};", FIG, re.S)
+    return m.group(1)
+
+
+def expr_fn(expr, var):
+    """Same tiny language as lib/zakiya/graph-expr.ts, evaluated with no builtins."""
+    assert re.fullmatch(r"[0-9.+\-*/^() a-z]*", expr), expr
+    py = re.sub(r"(\d)\s*([a-z(])", r"\1*\2", expr).replace("^", "**")
+    names = {var: 0.0, "pi": math.pi, "sqrt": math.sqrt, "exp": math.exp, "ln": math.log,
+             "sin": lambda d: math.sin(math.radians(d)), "cos": lambda d: math.cos(math.radians(d)),
+             "tan": lambda d: math.tan(math.radians(d))}
+    code = compile(py, "<expr>", "eval")
+    assert set(code.co_names) <= set(names), code.co_names
+    return lambda v: eval(code, {"__builtins__": {}}, {**names, var: v})  # noqa: S307
+
+
+def gpoints(block):
+    body = re.search(r"series: \[\{.*?points: \[(.*?)\],\s*colour", block, re.S).group(1)
+    return [tuple(map(float, p)) for p in re.findall(r"\[(-?[\d.]+), (-?[\d.]+)\]", body)]
+
+
+def gexpr(block):
+    return re.search(r'expr: "([^"]+)"', block).group(1)
+
+
+def interp(pts, x):
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        if x0 <= x <= x1 and x1 > x0:
+            return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+    raise ValueError(x)
+
+
+def ax(block, which):
+    return tuple(map(float, re.search(which + r": \{[^}]*min: ([\d.]+), max: ([\d.]+)", block).groups()))
+
+
 
 def v(id, where, quote, fn, claimed, sf=None, dp=None, alt=None, note=""):
     C.append(dict(kind="value", id=id, where=where, quote=quote, fn=fn, claimed=claimed,
@@ -75,32 +118,42 @@ v("car-intro", f"{S} st-graphs text", "120 m in 20 s = 6.0 m/s", lambda: 120 / 2
 v("car-v10", f"{S} st-graphs worked; {F} figCar", "(120-0)/(20-0) = 6.0 m/s", lambda: (120 - 0) / (20 - 0), 6.0, sf=2)
 v("car-v40", f"{S} st-graphs worked; {F} figCar", "(0-120)/(60-30) = -4.0 m/s", lambda: (0 - 120) / (60 - 30), -4.0, sf=2)
 v("car-v40-b", f"{S} st-graphs worked", "-120 / 30 = -4.0", lambda: -120 / 30, -4.0, sf=2)
-# figCar pixel geometry: x px = 50 + 4.5 t, y px = 200 - s
-b("car-fig-px", f"{F} figCar polyline M50,200 L140,80 L185,80 L320,200",
-  "pixels map to (0,0),(20,120),(30,120),(60,0)",
-  lambda: [(50 + 4.5 * t, 200 - s) for t, s in [(0, 0), (20, 120), (30, 120), (60, 0)]] == [(50, 200), (140, 80), (185, 80), (320, 200)])
-b("car-fig-ticks", f"{F} figCar axes ticks", "x ticks 50..320 step 45 = 0..60 s; y 50 px per 50 m",
-  lambda: [50 + 4.5 * t for t in (0, 10, 20, 30, 40, 50, 60)] == [50, 95, 140, 185, 230, 275, 320])
+# figCar is a declarative graph: re-read its own points.
+GC = graph_block("figCar")
+car_pts = gpoints(GC)
+b("car-fig-pts", f"{F} figCar points", "graph points (0,0),(20,120),(30,120),(60,0)", lambda: car_pts == [(0, 0), (20, 120), (30, 120), (60, 0)])
+v("car-g-v1", f"{F} figCar caption", "gradient 0-20 s = 6.0 m/s", lambda: (car_pts[1][1] - car_pts[0][1]) / (car_pts[1][0] - car_pts[0][0]), 6.0, sf=2)
+v("car-g-v2", f"{F} figCar caption", "gradient 20-30 s = 0", lambda: (car_pts[2][1] - car_pts[1][1]) / (car_pts[2][0] - car_pts[1][0]), 0, dp=0)
+v("car-g-v3", f"{F} figCar caption", "gradient 30-60 s = -4.0 m/s", lambda: (car_pts[3][1] - car_pts[2][1]) / (car_pts[3][0] - car_pts[2][0]), -4.0, sf=2)
+b("car-g-fits", f"{F} figCar axes", "graph fits axes 0-60 s, 0-150 m",
+  lambda: ax(GC, "x") == (0, 60) and ax(GC, "y") == (0, 150) and max(p[1] for p in car_pts) <= 150)
 
 # ====================================================================
 # Section: tangents (cyclist, ours): s = 0.75 t^2 (consistent with s(4) = 12, tangent through (2,0))
 # ====================================================================
+GT = graph_block("figTangent")
+gt_expr = gexpr(GT)
+gt_at = float(re.search(r"tangent: \{[^}]*?at: ([\d.]+)", GT, re.S).group(1))
+gt_xmin, gt_xmax = ax(GT, "x")
+gt_ymax = ax(GT, "y")[1]
+fx = expr_fn(gt_expr, "t")
+dfx = lambda t, h=1e-5: (fx(t + h) - fx(t - h)) / (2 * h)
+span = (gt_xmax - gt_xmin) / 3  # Graph.tsx: triangle runs +/- range/3 either side of the touch point
+tl = lambda t: fx(gt_at) + dfx(gt_at) * (t - gt_at)
 cyc_s = lambda t: 0.75 * t * t
 v("cyc-avg-text", f"{S} tangents text", "12 / 4 = 3.0 m/s average", lambda: 12 / 4, 3.0, sf=2)
-v("cyc-tan", f"{S} tangents worked; {F} figTangent", "24 / 4.0 = 6.0 m/s", lambda: (24 - 0) / (6.0 - 2.0), 6.0, sf=2)
-v("cyc-chord", f"{S} tangents worked; {F} figTangent", "12 / 4.0 = 3.0 m/s", lambda: 12 / 4.0, 3.0, sf=2)
+v("cyc-tan", f"{S} tangents worked", "24 / 4.0 = 6.0 m/s", lambda: (24 - 0) / (6.0 - 2.0), 6.0, sf=2)
+v("cyc-chord", f"{S} tangents worked; {F} figTangent caption", "12 / 4.0 = 3.0 m/s", lambda: 12 / 4.0, 3.0, sf=2)
 v("cyc-ratio", f"{S} tangents worked", "velocity at 4.0 s is twice the average", lambda: 6.0 / 3.0, 2.0, sf=2)
-b("cyc-curve-s4", f"{F} figTangent polyline", "curve passes through (t=4 s, s=12 m): pixel (230,140)",
-  lambda: (50 + 45 * 4, 200 - 5 * cyc_s(4)) == (230, 140))
-b("cyc-tangent-touch", f"{F} figTangent", "tangent (2,0)->(6,24) has slope 6 = ds/dt of 0.75t^2 at t=4 and passes through (4,12)",
-  lambda: abs(2 * 0.75 * 4 - 6) < 1e-9 and abs(12 + 6 * (2 - 4)) < 1e-9)
-b("cyc-tangent-px", f"{F} figTangent tangent line 140,200 -> 320,80", "= (2 s,0) -> (6 s,24 m)",
-  lambda: [(50 + 45 * 2, 200 - 5 * 0), (50 + 45 * 6, 200 - 5 * 24)] == [(140, 200), (320, 80)])
-b("cyc-polyline", f"{F} figTangent polyline points", "13 points follow s = 0.75 t^2 (t every 0.5 s)",
-  lambda: all(abs((50 + 45 * t) - x) < 0.06 and abs((200 - 5 * cyc_s(t)) - y) < 0.06 for t, x, y in zip(
-      [i * 0.5 for i in range(13)],
-      [50, 72.5, 95, 117.5, 140, 162.5, 185, 207.5, 230, 252.5, 275, 297.5, 320],
-      [200, 199.1, 196.2, 191.6, 185, 176.6, 166.2, 154.1, 140, 124.1, 106.2, 86.6, 65])))
+b("cyc-g-expr", f"{F} figTangent expr", "graph expr is s = 0.75 t^2", lambda: all(abs(fx(t) - cyc_s(t)) < 1e-9 for t in (0, 1.5, 4, 6)))
+v("cyc-g-at", f"{F} figTangent tangent.at", "tangent starts at t = 4 s", lambda: gt_at, 4, dp=1)
+v("cyc-g-s4", f"{F} figTangent alt", "touch point (4 s, 12 m)", lambda: fx(gt_at), 12, dp=0)
+v("cyc-g-grad", f"{F} figTangent readout / caption", "gradient = 6.0 m s^-1 at t = 4.0 s", lambda: dfx(gt_at), 6.0, dp=1)
+v("cyc-g-dt", f"{F} figTangent triangle", "triangle run 6.0 - 2.0 = 4.0 s", lambda: min(gt_xmax, gt_at + span) - max(gt_xmin, gt_at - span), 4.0, dp=1)
+v("cyc-g-x1", f"{F} figTangent triangle", "tangent at t = 2.0 s is 0 m", lambda: tl(gt_at - span), 0, dp=1)
+v("cyc-g-ds", f"{F} figTangent triangle / alt", "triangle rise 24 m", lambda: tl(gt_at + span) - tl(gt_at - span), 24.0, dp=1)
+v("cyc-g-avg", f"{F} figTangent caption", "average over 0-4 s = 12 / 4 = 3.0 m/s", lambda: (fx(gt_at) - fx(0)) / gt_at, 3.0, dp=1)
+b("cyc-g-fits", f"{F} figTangent y axis", "whole curve fits the 0-30 m axis (s(6) = 27)", lambda: fx(gt_xmax) <= gt_ymax)
 
 # ====================================================================
 # Section: velocity is a vector (bounce, ours)
@@ -123,8 +176,9 @@ u("r2-mcq", f"{Q} dv-r2", "all scalars key C (distance, power, work)", "non-nume
 
 # dv-r3 segments (figSegments px: x = 50 + 30 t, y = 200 - 12.5 s)
 seg = [(0, 0), (2, 4), (4, 4), (5, 10), (9, 0)]
-b("r3-fig-px", f"{F} figSegments path M50,200 L110,150 L170,150 L200,75 L320,200", "vertices (0,0),(2,4),(4,4),(5,10),(9,0)",
-  lambda: [(50 + 30 * t, 200 - 12.5 * s) for t, s in seg] == [(50, 200), (110, 150), (170, 150), (200, 75), (320, 200)])
+GS = graph_block("figSegments")
+seg_pts = gpoints(GS)
+b("r3-fig-pts", f"{F} figSegments points", "vertices (0,0),(2,4),(4,4),(5,10),(9,0)", lambda: seg_pts == [tuple(map(float, q)) for q in seg])
 r3_speeds = lambda: [abs(seg[i + 1][1] - seg[i][1]) / (seg[i + 1][0] - seg[i][0]) for i in range(4)]
 v("r3-A", f"{Q} dv-r3 modelAnswer", "A: 4 / 2 = 2.0 m/s", lambda: r3_speeds()[0], 2.0, sf=2)
 v("r3-B", f"{Q} dv-r3 modelAnswer", "B: 0", lambda: r3_speeds()[1], 0, dp=0)
@@ -132,6 +186,8 @@ v("r3-C", f"{Q} dv-r3 modelAnswer", "C: 6 / 1 = 6.0 m/s", lambda: r3_speeds()[2]
 v("r3-D", f"{Q} dv-r3 modelAnswer", "D: 10 / 4 = 2.5 m/s", lambda: r3_speeds()[3], 2.5, sf=2)
 b("r3-key", f"{Q} dv-r3 correctIndex 2 (C)", "C is the steepest section", lambda: r3_speeds().index(max(r3_speeds())) == 2)
 b("r3-alt-text", f"{F} figSegments alt", "alt text: A 0-4 m 0-2 s; C 4-10 m 4-5 s; D 10-0 m 5-9 s", lambda: seg[1] == (2, 4) and seg[3] == (5, 10) and seg[4] == (9, 0))
+b("r3-labels-on-line", f"{F} figSegments labelled points", "A, B, C, D dots sit on their sections",
+  lambda: all(abs(interp(seg_pts, float(x)) - float(y)) < 1e-9 for x, y in re.findall(r"\{ x: ([\d.]+), y: ([\d.]+), label: \"[A-D]\"", GS)))
 
 # dv-r4 half lap
 r4_arc = lambda: math.pi * 30
@@ -157,23 +213,22 @@ b("s1c-speed", f"{Q} dv-s1(c) commonMistakes", "round-trip average speed unchang
 b("s1-km-min", f"{Q} dv-s1(a) commonMistakes", "6.3 km / 25 min nonsense 'km per minute' conversions: 25 min = 0.4167 h not 0.25",
   lambda: abs(25 / 60 - 0.4167) < 1e-4)
 
-# dv-s2 trolley (figTrolley px: x = 50 + 225 t, y = 200 - 125 s)
-tr_s = lambda s: 200 - 125 * s
+# dv-s2 trolley: figTrolley is a points graph (hand-sketched curve, no formula)
+GR = graph_block("figTrolley")
+tr_pts = gpoints(GR)
 v("s2a", f"{Q} dv-s2(a) modelAnswer/markScheme", "0.60 / 0.40 = 1.5 m/s", lambda: 0.60 / 0.40, 1.5, sf=2)
-b("s2-fig-straight", f"{F} figTrolley polyline start 50,200 -> 140,125", "straight section (0,0)->(0.40 s, 0.60 m)",
-  lambda: (50 + 225 * 0.40, tr_s(0.60)) == (140, 125))
-b("s2-fig-1.05", f"{F} figTrolley polyline: 1.05 m at 1.0 s", "pixel (275, 68.75~68.8)",
-  lambda: (50 + 225 * 1.0, round(tr_s(1.05), 1)) == (275, 68.8))
-b("s2-fig-end", f"{F} figTrolley end 320,68.8", "flat to 1.2 s", lambda: 50 + 225 * 1.2 == 320)
-b("s2-fig-axis", f"{F} figTrolley y ticks 0/0.3/0.6/0.9/1.2 -> 200/162.5/125/87.5/50", "125 px per metre",
-  lambda: [tr_s(s) for s in (0, 0.3, 0.6, 0.9, 1.2)] == [200, 162.5, 125, 87.5, 50])
+b("s2-fig-straight", f"{F} figTrolley points", "straight section (0,0)->(0.40 s, 0.60 m)", lambda: tr_pts[0] == (0, 0) and tr_pts[1] == (0.4, 0.6))
+v("s2-g-1.05", f"{F} figTrolley", "s = 1.05 m at t = 1.0 s", lambda: interp(tr_pts, 1.0), 1.05, dp=2)
+v("s2-g-end", f"{F} figTrolley", "flat at 1.05 m to 1.2 s", lambda: interp(tr_pts, 1.2), 1.05, dp=2)
+b("s2-g-fits", f"{F} figTrolley axes", "fits axes 0-1.2 s, 0-1.2 m", lambda: ax(GR, "x") == (0, 1.2) and ax(GR, "y") == (0, 1.2) and max(p[1] for p in tr_pts) <= 1.2)
+b("s2-g-flattening", f"{F} figTrolley", "gradient after 0.40 s decreases to 0 (decelerating)",
+  lambda: (lambda g: all(g2 <= g1 + 1e-9 for g1, g2 in zip(g, g[1:])) and g[-1] == 0)(
+      [(q[1] - p[1]) / (q[0] - p[0]) for p, q in zip(tr_pts[1:], tr_pts[2:])]))
 s2c = lambda: 1.05 / 1.2
 v("s2c", f"{Q} dv-s2(c) answer/modelAnswer", "1.05 / 1.2 = 0.875 -> 0.88 m/s", s2c, 0.875, sf=3)
 v("s2c-2dp", f"{Q} dv-s2(c) modelAnswer", "0.88 m/s", s2c, 0.88, dp=2, note="0.875 rounds half-up to 0.88")
 w("s2c-tol", f"{Q} dv-s2(c) answer", "0.875 +/- 3% includes allow 0.87-0.88", 0.875, 3, [("0.87", 0.87), ("0.88", 0.88), ("computed", s2c)])
 v("s2c-mistake", f"{Q} dv-s2(c) commonMistakes", "(1.5 + 0)/2 = 0.75", lambda: (1.5 + 0) / 2, 0.75, sf=2)
-b("s2-curve-slope", f"{F} figTrolley", "curve starts with gradient (1.5 m/s) continuous with straight section: first segment slope 9px/11.2px*(0.5556)",
-  lambda: abs((125 - 116) / 11.2 * (225 / 125) - 1.5) < 0.2, note="visual continuity only")
 
 # dv-s3 dropped ball, s = 1/2 g t^2
 drop_s = lambda t: 0.5 * G * t * t
@@ -195,15 +250,13 @@ b("s3b-less", f"{Q} dv-s3(b)", "average (1.96) is half the final velocity (3.92)
 v("s3c", f"{Q} dv-s3(c) answer/modelAnswer", "-2.8 - 3.92 = -6.72 -> 6.7 m/s", lambda: abs(-2.8 - drop_v(0.40)), 6.7, sf=2)
 w("s3c-tol", f"{Q} dv-s3(c) answer", "6.7 +/- 3%", 6.7, 3, [("computed", lambda: abs(-2.8 - drop_v(0.40))), ("ECF 3.9+2.8", lambda: 3.9 + 2.8)])
 v("s3c-mistake", f"{Q} dv-s3(c) commonMistakes", "3.9 - 2.8 = 1.1", lambda: 3.9 - 2.8, 1.1, sf=2)
-b("s3-fig-P", f"{F} figDrop point P", "pixel (266, 105.8) = (0.40 s, 0.785 m): x = 50 + 540 t, y = 200 - 120 s",
-  lambda: (50 + 540 * 0.40, round(200 - 120 * drop_s(0.40), 1)) == (266, 105.8))
-b("s3-fig-end", f"{F} figDrop end (320, 52.8); alt text 'about 1.23 m at 0.5 s'", "s(0.5) = 1.226 m",
-  lambda: abs(drop_s(0.5) - 1.23) < 0.005 and abs((200 - 120 * drop_s(0.5)) - 52.8) < 0.15)
-b("s3-fig-polyline", f"{F} figDrop polyline (21 points every 0.025 s)", "points follow y = 200 - 120 * 4.905 t^2",
-  lambda: all(abs((50 + 540 * t) - x) < 0.06 and abs((200 - 120 * drop_s(t)) - y) < 0.06 for t, x, y in zip(
-      [i * 0.025 for i in range(21)],
-      [50, 63.5, 77, 90.5, 104, 117.5, 131, 144.5, 158, 171.5, 185, 198.5, 212, 225.5, 239, 252.5, 266, 279.5, 293, 306.5, 320],
-      [200, 199.6, 198.5, 196.7, 194.1, 190.8, 186.8, 182, 176.5, 170.2, 163.2, 155.5, 147, 137.8, 127.9, 117.2, 105.8, 93.7, 80.8, 67.2, 52.8])))
+GD = graph_block("figDrop")
+gd = expr_fn(gexpr(GD), "t")
+b("s3-g-expr", f"{F} figDrop expr", "graph expr is s = 1/2 g t^2 (4.905 t^2)", lambda: all(abs(gd(t) - drop_s(t)) < 2e-3 for t in (0.1, 0.25, 0.4, 0.5)))
+v("s3-g-P", f"{F} figDrop point P", "P = (0.40 s, 0.785 m)", lambda: gd(0.40), 0.785, sf=3)
+b("s3-g-Pdot", f"{F} figDrop point P", "marked point is (0.40, 0.7848)", lambda: re.search(r"x: 0\.4, y: 0\.7848", GD) is not None and abs(0.7848 - gd(0.4)) < 1e-4)
+v("s3-g-end", f"{F} figDrop alt", "s(0.5) = 1.23 m", lambda: gd(0.5), 1.23, sf=3)
+b("s3-g-fits", f"{F} figDrop axes", "fits 0-0.5 s, 0-1.25 m", lambda: ax(GD, "x") == (0, 0.5) and ax(GD, "y") == (0, 1.25) and gd(0.5) <= 1.25)
 
 # ====================================================================
 # Past papers: answers vs official (summary.md section 8 / mark schemes via show_source.sh --ms)

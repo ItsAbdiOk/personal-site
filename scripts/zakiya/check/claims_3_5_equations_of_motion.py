@@ -5,6 +5,7 @@ Same record kinds as claims_3_8.py. Run:
 Plain arithmetic (differences, ratios, areas, gradients) is inline; physics goes through physics.py.
 """
 import math
+import re
 import os
 import sys
 
@@ -69,10 +70,30 @@ v("d-avg", f"{S} where-from step 3 / {EX} average-velocity", "average velocity 8
 b("d-eq4", f"{S} where-from step 4 / eq 4", "12^2 = 144 and 4.0^2 + 2 x 4.0 x 16 = 16 + 128 = 144",
   lambda: abs(12 ** 2 - 144) < 1e-9 and abs(4.0 ** 2 + 2 * 4.0 * 16 - 144) < 1e-9 and 4.0 ** 2 == 16 and 2 * 4.0 * 16 == 128)
 b("d-sum", f"{S} where-from step 2", "total 8 + 8 = 16 m", lambda: 8 + 8 == 16)
-b("d-fig-scale", f"{F} figDerive geometry", "y = 210 - 15 v: 4.0 -> 150, 12 -> 30; x 0..2 s -> 50..290",
-  lambda: 210 - 15 * 4.0 == 150 and 210 - 15 * 12 == 30 and 50 + 120 * 2 == 290)
-b("d-fig-rect", f"{F} figDerive geometry", "rect x50 y150 w240 h60 -> 4.0 x 2.0 tall/wide", lambda: 60 / 15 == 4.0 and 240 / 120 == 2.0)
-b("d-fig-slope-px", f"{F} figDerive geometry", "line (50,150)->(290,30) slope = 8.0 m/s over 2.0 s", lambda: (150 - 30) / 15 / ((290 - 50) / 120) == 4.0)
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+FIG = open(os.path.join(ROOT, F)).read()
+GD = re.search(r"export const figDerive: Figure = \{(.*?)\n\};", FIG, re.S).group(1)
+gd_pts = [tuple(map(float, p)) for p in re.findall(r"\[([\d.]+), ([\d.]+)\]", re.search(r"points: \[(.*?)\]\s*,\s*colour", GD, re.S).group(1))]
+gd_from, gd_to = map(float, re.search(r"from: ([\d.]+),\s*to: ([\d.]+)", GD).groups())
+
+
+def poly_area(pts, a, b2):
+    tot = 0.0
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        lo, hi = max(x0, a), min(x1, b2)
+        if hi <= lo or x1 == x0:
+            continue
+        yl = y0 + (y1 - y0) * (lo - x0) / (x1 - x0)
+        yh = y0 + (y1 - y0) * (hi - x0) / (x1 - x0)
+        tot += (yl + yh) / 2 * (hi - lo)
+    return tot
+
+
+b("d-g-pts", f"{F} figDerive points", "line from (0, 4.0) to (2.0, 12)", lambda: gd_pts == [(0, 4), (2, 12)])
+v("d-g-grad", f"{F} figDerive caption", "gradient = 8.0 / 2.0 = 4.0 m s^-2", lambda: (gd_pts[1][1] - gd_pts[0][1]) / (gd_pts[1][0] - gd_pts[0][0]), 4.0, sf=2)
+v("d-g-area", f"{F} figDerive readout / caption", "area = 16 m", lambda: poly_area(gd_pts, gd_from, gd_to), 16, dp=0)
+v("d-g-rect", f"{F} figDerive caption", "rectangle 4.0 x 2.0 = 8 m", lambda: gd_pts[0][1] * (gd_to - gd_from), 8, dp=0)
+v("d-g-tri", f"{F} figDerive caption", "triangle 1/2 x 8.0 x 2.0 = 8 m", lambda: poly_area(gd_pts, gd_from, gd_to) - gd_pts[0][1] * (gd_to - gd_from), 8, dp=0)
 v("d-par-a", f"{S} choosing worked 2", "a = (144 - 16) / 32 = 4.0", lambda: (12 ** 2 - 4.0 ** 2) / (2 * 16), 4.0, sf=2)
 v("d-par-eq", f"{S} choosing worked 2", "144 = 16 + 32 a -> check v from a", lambda: P.suvat_v_from_s(4.0, 4.0, 16), 12, sf=2)
 v("d-par-t", f"{S} choosing worked 2 answer", "the graph is this particle: it takes 2.0 s", lambda: (12 - 4.0) / 4.0, 2.0, sf=2)

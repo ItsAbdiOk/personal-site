@@ -69,8 +69,6 @@ b("ct-svg-len", f"{F} figCyclistTrain", "caption 'Arrow length = velocity': 8.0-
 # ---------------- Section 3: Figure 5, tangent ----------------
 v("f5-s1", f"{S} two straight sections / figFig5", "2.0/1.0 = 2.0", lambda: acc(2.0 - 0, 1.0), 2.0, sf=2)
 v("f5-s2", f"{S} two straight sections / figFig5", "1.0/2.0 = 0.50", lambda: acc(3.0 - 2.0, 3.0 - 1.0), 0.50, sf=2)
-b("f5-px", f"{F} figFig5", "points (130,120)=2.0 m/s at 1.0 s, (290,80)=3.0 m/s at 3.0 s at 80px/s, 40px/(m/s), origin (50,200)",
-  lambda: (50 + 80 * 1.0 == 130 and 200 - 40 * 2.0 == 120 and 50 + 80 * 3.0 == 290 and 200 - 40 * 3.0 == 80))
 v("tan-v4", f"{S} tangent / figTangent", "v(4)=4*4-0.25*16=12", lambda: 4 * 4 - 0.25 * 4 ** 2, 12, sf=2)
 v("tan-grad", f"{S} tangent / figTangent", "gradient at 4 s of v=4t-0.25t^2 = 4-0.5*4 = 2.0", lambda: 4 - 0.5 * 4, 2.0, sf=2)
 v("tan-rise", f"{S} tangent step", "24-4 = 20", lambda: 24 - 4, 20, sf=2)
@@ -78,25 +76,120 @@ v("tan-run", f"{S} tangent step", "10.0-0 = 10.0", lambda: 10.0 - 0, 10.0, sf=3)
 v("tan-a", f"{S} tangent / figTangent", "20/10.0 = 2.0", lambda: acc(20, 10.0), 2.0, sf=2)
 b("tan-line", f"{S} tangent question", "tangent through (4,12) gradient 2 passes (0,4) and (10,24)",
   lambda: 12 - 2 * 4 == 4 and 12 + 2 * 6 == 24)
-b("tan-px", f"{F} figTangent", "origin(50,210) 24px/s 7px/(m/s): tangent (50,182)->(290,42), touch point (146,126)",
-  lambda: (210 - 7 * 4 == 182 and 50 + 24 * 10 == 290 and 210 - 7 * 24 == 42 and 50 + 24 * 4 == 146 and 210 - 7 * 12 == 126))
-_CURVE = [(50,210),(62,196.4),(74,183.8),(86,171.9),(98,161),(110,150.9),(122,141.8),(134,133.4),(146,126),(158,119.4),(170,113.8),(182,108.9),(194,105),(206,101.9),(218,99.8),(230,98.4),(242,98)]
-b("tan-curve-pts", f"{F} figTangent", "all 17 plotted curve points (x=50+24t, y=210-7v) lie on v=4t-0.25t^2 (0.1 px)",
-  lambda: all(abs((210 - 7 * (4 * ((x - 50) / 24) - 0.25 * ((x - 50) / 24) ** 2)) - y) < 0.1 for x, y in _CURVE))
 v("avg-wrong", f"{S} warning / ac-r6 mistake", "12/4.0 = 3.0 (v/t off a curve) differs from 2.0", lambda: 12 / 4.0, 3.0, sf=2)
 
 # ---------- Section 5: a-t graph ----------
-b("at-px-scale", f"{F} figAT", "y-axis linear through 0: 2.0 at y=80 and 0.50 at y=170 (origin y=200)",
-  lambda: abs((200 - 170) / 0.50 - (200 - 80) / 2.0) < 1e-6,
-  note="60 px per m/s^2")
+# ---------------- Declarative graphs (components/zakiya/Graph.tsx): re-evaluate their own expr / points ----------
+import math  # noqa: E402
+import re  # noqa: E402
+
+FIG = open(os.path.join(ROOT, F)).read()
+
+
+def graph_block(name):
+    m = re.search(r"export const " + name + r": Figure = \{(.*?)\n\};", FIG, re.S)
+    return m.group(1)
+
+
+def expr_fn(expr, var):
+    """Same tiny language as lib/zakiya/graph-expr.ts, evaluated with no builtins."""
+    assert re.fullmatch(r"[0-9.+\-*/^() a-z]*", expr), expr
+    py = re.sub(r"(\d)\s*([a-z(])", r"\1*\2", expr).replace("^", "**")
+    names = {var: 0.0, "pi": math.pi, "sqrt": math.sqrt, "exp": math.exp, "ln": math.log,
+             "sin": lambda d: math.sin(math.radians(d)), "cos": lambda d: math.cos(math.radians(d)),
+             "tan": lambda d: math.tan(math.radians(d))}
+    code = compile(py, "<expr>", "eval")
+    assert set(code.co_names) <= set(names), code.co_names
+    return lambda val: eval(code, {"__builtins__": {}}, {**names, var: val})  # noqa: S307
+
+
+def g_pts(block):
+    sec = re.search(r"series: \[\{.*?points: \[(.*?)\]\s*,\s*colour", block, re.S).group(1)
+    return [tuple(map(float, p)) for p in re.findall(r"\[([\d.\-]+), ([\d.\-]+)\]", sec)]
+
+
+def g_axes(block):
+    xmin, xmax = map(float, re.search(r"x: \{[^}]*min: ([\d.\-]+), max: ([\d.\-]+)", block).groups())
+    ymin, ymax = map(float, re.search(r"y: \{[^}]*min: ([\d.\-]+), max: ([\d.\-]+)", block).groups())
+    return xmin, xmax, ymin, ymax
+
+
+def interp(pts, t):
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        if x0 <= t <= x1 and x1 > x0:
+            return y0 + (y1 - y0) * (t - x0) / (x1 - x0)
+    raise ValueError(t)
+
+
+def g_tri(block, fy, dfy):
+    """Graph.tsx triangle: +/- range/3 (rounded to the snap step) either side of tangent.at, clipped to x and y axes."""
+    xmin, xmax, ymin, ymax = g_axes(block)
+    at = float(re.search(r"tangent: \{[^}]*?at: ([\d.]+)", block, re.S).group(1))
+    snap = 10 ** math.floor(math.log10((xmax - xmin) / 20))
+    span = max(snap, round((xmax - xmin) / 3 / snap) * snap)
+    y0, m = fy(at), dfy(at)
+    x1, x2 = max(xmin, at - span), min(xmax, at + span)
+    if m:
+        xa, xb = at + (ymin - y0) / m, at + (ymax - y0) / m
+        x1 = max(x1, math.ceil((min(xa, xb) - 1e-9) / snap) * snap)
+        x2 = min(x2, math.floor((max(xa, xb) + 1e-9) / snap) * snap)
+    line = lambda t: y0 + m * (t - at)
+    return at, m, x1, x2, line(x1), line(x2)
+
+
+# --- figFig5: points (0,0) (1,2) (3,3); tangent default at 2.0 s on the second section ---
+G5 = graph_block("figFig5")
+f5 = g_pts(G5)
+f5y = lambda t: interp(f5, t)
+f5d = lambda t, h=1e-4: (f5y(t + h) - f5y(t - h)) / (2 * h)
+b("f5-g-pts", f"{F} figFig5 points", "v-t points (0,0) (1.0,2.0) (3.0,3.0)", lambda: f5 == [(0, 0), (1, 2), (3, 3)])
+f5at, f5m, f5x1, f5x2, f5y1, f5y2 = g_tri(G5, f5y, f5d)
+v("f5-g-at", f"{F} figFig5 tangent.at", "default tangent in the second section (2.0 s)", lambda: f5at, 2.0, dp=1)
+v("f5-g-grad", f"{F} figFig5 readout / caption", "gradient 0.50 m s-2 at default", lambda: f5m, 0.50, sf=2)
+v("f5-g-rise", f"{F} figFig5 triangle / caption", "triangle rise 1.0 m s-1", lambda: f5y2 - f5y1, 1.0, dp=1)
+v("f5-g-run", f"{F} figFig5 triangle / caption", "triangle run 2.0 s", lambda: f5x2 - f5x1, 2.0, dp=1)
+v("f5-g-first", f"{F} figFig5 caption", "first-section gradient (drag) = 2.0 m s-2", lambda: f5d(0.5), 2.0, sf=2)
+b("f5-g-max", f"{F} figFig5 / sections", "max acceleration is in the first second", lambda: f5d(0.5) > f5d(2.0))
+
+# --- figTangent: v = 36t/(8+t) (hand-sketched curve, same labelled numbers) ---
+GT = graph_block("figTangent")
+gt_expr = re.search(r'expr: "([^"]+)"', GT).group(1)
+fv = expr_fn(gt_expr, "t")
+dfv = lambda t, h=1e-5: (fv(t + h) - fv(t - h)) / (2 * h)
+b("tan-g-expr", f"{F} figTangent expr", "graph expr is v = 36t/(8+t)", lambda: all(abs(fv(t) - 36 * t / (8 + t)) < 1e-9 for t in (0, 1.5, 4, 10)))
+tat, tm, tx1, tx2, ty1, ty2 = g_tri(GT, fv, dfv)
+v("tan-g-at", f"{F} figTangent tangent.at", "tangent starts at t = 4.0 s", lambda: tat, 4.0, dp=1)
+v("tan-g-v4", f"{F} figTangent point / worked example", "v(4.0) = 12 m s-1", lambda: fv(tat), 12, sf=2)
+v("tan-g-grad", f"{F} figTangent readout / caption", "gradient 2.0 m s-2 at t = 4.0 s", lambda: dfv(tat), 2.0, sf=2)
+v("tan-g-y0", f"{F} figTangent triangle", "tangent value at t = 0 is 4 m s-1", lambda: ty1, 4, sf=2)
+v("tan-g-y10", f"{F} figTangent triangle", "tangent value at t = 10.0 s is 24 m s-1", lambda: ty2, 24, sf=2)
+v("tan-g-rise", f"{F} figTangent triangle / caption", "triangle rise 20 m s-1", lambda: ty2 - ty1, 20, sf=2)
+v("tan-g-run", f"{F} figTangent triangle / caption", "triangle run 10.0 s", lambda: tx2 - tx1, 10.0, dp=1)
+b("tan-g-below", f"{F} figTangent", "curve lies below its tangent (concave) so the tangent only touches at 4.0 s",
+  lambda: all(fv(t) <= tat * 0 + (fv(4) + dfv(4) * (t - 4)) + 1e-9 for t in [i / 10 for i in range(0, 181)]))
+b("tan-g-fits", f"{F} figTangent y axis", "whole curve fits the 0-30 axis (v(18) = 24.9)", lambda: fv(g_axes(GT)[1]) <= g_axes(GT)[3])
+
+# --- figAT: a-t steps from the v-t gradients ---
+GAT = graph_block("figAT")
+at_pts = g_pts(GAT)
+b("at-g-pts", f"{F} figAT points", "a-t steps (0,2.0) (1.0,2.0) (1.0,0.50) (3.0,0.50)", lambda: at_pts == [(0, 2), (1, 2), (1, 0.5), (3, 0.5)])
+b("at-g-from-vt", f"{F} figAT vs figFig5", "each flat a-t step equals the gradient of the matching v-t section",
+  lambda: abs(f5d(0.5) - 2.0) < 1e-9 and abs(f5d(2.0) - 0.5) < 1e-9 and at_pts[0][1] == 2 and at_pts[2][1] == 0.5)
+
+# --- figTram: tram v-t points ---
+GTR = graph_block("figTram")
+tr = g_pts(GTR)
+b("r4-g-pts", f"{F} figTram points", "(0,0) (20,12) (80,12) (104,0)", lambda: tr == [(0, 0), (20, 12), (80, 12), (104, 0)])
+trd = lambda t, h=1e-4: (interp(tr, t + h) - interp(tr, t - h)) / (2 * h)
+v("r4-g-a", f"{Q} ac-r4 a / figTram", "gradient of first section 0.60 m s-2", lambda: trd(10), 0.60, sf=2)
+v("r4-g-b", f"{Q} ac-r4 b / figTram", "gradient of last section -0.50 m s-2", lambda: trd(90), -0.50, sf=2)
+v("r4-g-flat", f"{Q} figTram", "middle section flat (0 m s-2)", lambda: trd(50), 0.0, dp=1)
 
 # ---------------- Questions ----------------
 v("r4a", f"{Q} ac-r4 a", "12/20 = 0.60", lambda: acc(12 - 0, 20), 0.60, sf=2)
 v("r4b-dt", f"{Q} ac-r4 b", "104-80 = 24", lambda: 104 - 80, 24, sf=2)
 v("r4b", f"{Q} ac-r4 b", "-12/24 = -0.50", lambda: acc(-12, 24), -0.50, sf=2)
 v("r4b-mistake", f"{Q} ac-r4 b commonMistakes", "12/104 = 0.115", lambda: 12 / 104, 0.115, sf=3)
-b("r4-px", f"{F} figTram", "origin(50,190) 2.4px/s 10px/(m/s): corners (98,70),(242,70),(299.6,190)",
-  lambda: (50 + 2.4 * 20 == 98 and 190 - 10 * 12 == 70 and 50 + 2.4 * 80 == 242 and abs(50 + 2.4 * 104 - 299.6) < 1e-9))
 w("r4a-tol", f"{Q} ac-r4 a tolerance", 0.6, 2, [("answer 0.60", 0.60), ("answer 0.6", 0.6)])
 w("r4b-tol", f"{Q} ac-r4 b tolerance", 0.5, 2, [("answer 0.50", 0.50)])
 v("r5-dt", f"{Q} ac-r5 b", "3.80-0.80 = 3.00", lambda: 3.80 - 0.80, 3.00, sf=3)

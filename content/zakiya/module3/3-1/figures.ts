@@ -33,7 +33,7 @@ export const figFine = svg(
     <rect x="306" y="34" width="22" height="16" rx="3"/><line x1="317" y1="50" x2="317" y2="74"/>
   </g>
   <g stroke="none" font-size="11.5" style="fill:var(--muted)">
-    <text x="23" y="26" text-anchor="middle">camera 1</text><text x="317" y="26" text-anchor="middle">camera 2</text>
+    <text x="30" y="26" text-anchor="middle">camera 1</text><text x="310" y="26" text-anchor="middle">camera 2</text>
   </g>
   <line x1="25" y1="104" x2="315" y2="104" stroke-width="1.8" style="stroke:var(--vx)" marker-start="url(#f1-d)" marker-end="url(#f1-d)"/>
   <g stroke="none" font-weight="600">
@@ -51,7 +51,7 @@ export const figFine = svg(
 
 // ---------- Ours: 72 km/h → 20 m/s ----------
 export const figConvert = svg(
-  `${head("f2", 214)}
+  `${head("f2", 224)}
   <g stroke-width="1.4">
     <rect x="20" y="20" width="110" height="34" rx="8"/><rect x="210" y="20" width="110" height="34" rx="8"/>
     <rect x="20" y="70" width="110" height="34" rx="8"/><rect x="210" y="70" width="110" height="34" rx="8"/>

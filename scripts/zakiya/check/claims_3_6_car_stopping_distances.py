@@ -158,8 +158,86 @@ v("chg-wet", f"{F} figVtChanges alt", "wet: slope 3.0 m/s^2, zero at 5.6 s", lam
 v("chg-half", f"{F} figVtChanges alt/key", "half speed 7.5, same slope 5.0, zero at 2.1 s", lambda: 0.6 + 7.5 / 5.0, 2.1, sf=2)
 b("chg-half-time", f"{S} vt-graph examiners", "same braking force -> same gradient -> braking time halves (3.0 -> 1.5 s)",
   lambda: abs(7.5 / 5.0 - (15 / 5.0) / 2) < 1e-12)
-b("chg-ticks", f"{F} figVtChanges", "y tick 7.5 and 15 plotted at 8 px per m/s; x 34 px/s covers 0-7 s (<= 250 px axis)",
-  lambda: 50 + 34 * 7 <= 300 and 50 + 34 * 5.6 < 300)
+
+
+# ====================================================================
+# Declarative graph figures: re-read points / area from the content files themselves
+# ====================================================================
+import re  # noqa: E402
+
+_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+FIG_SRC = open(os.path.join(_ROOT, F)).read()
+Q_SRC = open(os.path.join(_ROOT, Q)).read()
+
+
+def graph_block(name):
+    m = re.search(r"export const " + name + r": Figure = \{(.*?)\n\};", FIG_SRC, re.S)
+    return m.group(1)
+
+
+def pts_of(text):
+    return [tuple(map(float, p)) for p in re.findall(r"\[(-?[\d.]+), (-?[\d.]+)\]", text)]
+
+
+def series_pts(block):
+    """{id: points} for every points-series in a graph block."""
+    return {m.group(1): pts_of(m.group(2)) for m in re.finditer(r'id: "(\w+)"[^\n]*?points: \[(.*?\]\])\s*,', block)}
+
+
+def poly_area(pts, a, b2):
+    tot = 0.0
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        lo, hi = max(x0, a), min(x1, b2)
+        if hi <= lo or x1 == x0:
+            continue
+        yl = y0 + (y1 - y0) * (lo - x0) / (x1 - x0)
+        yh = y0 + (y1 - y0) * (hi - x0) / (x1 - x0)
+        tot += (yl + yh) / 2 * (hi - lo)
+    return tot
+
+
+def slope(pts, x):  # gradient of the straight piece containing x
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        if x0 <= x < x1:
+            return (y1 - y0) / (x1 - x0)
+    return 0.0
+
+
+GW = graph_block("figVtWorked")
+gw = series_pts(GW)["car"]
+gw_from, gw_to = map(float, re.search(r"from: ([\d.]+), to: ([\d.]+)", GW).groups())
+b("g-worked-pts", f"{F} figVtWorked points", "flat 15 m/s to 0.60 s, then to zero at 3.6 s", lambda: gw == [(0, 15), (0.6, 15), (3.6, 0)])
+v("g-worked-area", f"{F} figVtWorked area readout / caption", "stopping distance 31.5 m", lambda: poly_area(gw, gw_from, gw_to), 31.5, dp=1)
+v("g-worked-think", f"{F} figVtWorked caption", "flat part 15 x 0.60 = 9.0 m", lambda: poly_area(gw, 0, 0.6), 9.0, dp=1)
+v("g-worked-brake", f"{F} figVtWorked caption", "sloping part 22.5 m", lambda: poly_area(gw, 0.6, 3.6), 22.5, dp=1)
+v("g-worked-grad", f"{F} figVtWorked caption", "gradient -5.0 m s^-2", lambda: slope(gw, 1.0), -5.0, dp=1)
+
+GC = graph_block("figVtChanges")
+gc = series_pts(GC)
+b("g-chg-normal", f"{F} figVtChanges normal", "15 m/s, 0.60 s, zero at 3.6 s", lambda: gc["normal"] == [(0, 15), (0.6, 15), (3.6, 0)])
+b("g-chg-tired", f"{F} figVtChanges tired", "flat to 1.2 s, same slope, zero at 4.2 s",
+  lambda: gc["tired"] == [(0, 15), (1.2, 15), (4.2, 0)] and abs(slope(gc["tired"], 2) - slope(gc["normal"], 2)) < 1e-9)
+b("g-chg-wet", f"{F} figVtChanges wet", "slope -3.0, zero at 5.6 s", lambda: gc["wet"] == [(0, 15), (0.6, 15), (5.6, 0)] and abs(slope(gc["wet"], 2) + 3.0) < 1e-9)
+b("g-chg-half", f"{F} figVtChanges half", "7.5 m/s, same slope -5.0, zero at 2.1 s",
+  lambda: gc["half"] == [(0, 7.5), (0.6, 7.5), (2.1, 0)] and abs(slope(gc["half"], 1) + 5.0) < 1e-9)
+b("g-chg-normal-slope", f"{F} figVtChanges", "normal slope -5.0", lambda: abs(slope(gc["normal"], 2) + 5.0) < 1e-9)
+
+# past-paper style questions (graphs in the questions file)
+def q_graph(qid):
+    i = Q_SRC.index(qid)
+    j = Q_SRC.index('kind: "graph"', i)
+    blk = Q_SRC[j:j + 700]
+    return pts_of(re.search(r"points: \[(\[.*?\])\], colour", blk, re.S).group(1))
+
+
+g1 = q_graph('id: "sd-r1"')
+b("g-r1-pts", f"{Q} sd-r1 figure", "flat until 0.60 s, zero at 3.1 s, flat part area = 12 m (u = 20)",
+  lambda: g1 == [(0, 20), (0.6, 20), (3.1, 0)] and abs(poly_area(g1, 0, 0.6) - 12) < 1e-9)
+v("g-r1-total", f"{Q} sd-r1 figure", "area under whole graph = 37 m", lambda: poly_area(g1, 0, 3.1), 37, sf=2)
+g4 = q_graph('id: "sd-r4"')
+b("g-r4-pts", f"{Q} sd-r4 figure", "16 m/s until 0.80 s, zero at 3.3 s", lambda: g4 == [(0, 16), (0.8, 16), (3.3, 0)])
+v("g-r4-total", f"{Q} sd-r4 figure", "area = 32.8 m", lambda: poly_area(g4, 0, 3.3), 32.8, sf=3)
+v("g-r4-grad", f"{Q} sd-r4 figure", "gradient -6.4", lambda: slope(g4, 2), -6.4, sf=2)
 
 # ====================================================================
 # Section 6 forces and energy (950 kg, 20 m/s, 6000 N)
@@ -202,8 +280,6 @@ v("r1-stop", f"{Q} sd-r1 modelAnswer", "12 + 25 = 37 m", r1_stop, 37, sf=2)
 mcq("r1-mcq", f"{Q} sd-r1 options/correctIndex", "13/25/37/62, key C", r1_stop, [13, 25, 37, 62], 2, dp=0)
 v("r1-A", f"{Q} sd-r1 commonMistakes", "A 13 m = braking minus thinking", lambda: r1_brk() - 12, 13, sf=2)
 v("r1-D", f"{Q} sd-r1 commonMistakes", "D 62 m = 20 x 3.1", lambda: r1_u() * 3.1, 62, sf=2)
-b("r1-fig", f"{Q} sd-r1 figure/alt", "tTicks 0,0.6,1,2,3.1 (tMax 3.5); thinking '12 m' label; u '?'",
-  lambda: 0.6 < 1 < 2 < 3.1 < 3.5 and abs(1 - 0.6) / 3.5 * 270 > 20)
 
 # sd-r2: 15.0 m/s, thinking 10.5, braking 18.0, stopping 28.5
 r2_a = lambda: decel(15.0, 18.0)
@@ -251,10 +327,6 @@ v("r4d-W2", f"{Q} sd-r4(d) modelAnswer", "1.4 x 10^5 J", r4_W, 1.4e5, sf=2)
 v("r4d-KE", f"{Q} sd-r4(d) modelAnswer", "1/2 x 1100 x 16^2 = 140 800 J", lambda: P.kinetic_energy(1100, 16), 140800, sf=6)
 w("r4d-tol", f"{Q} sd-r4(d) answer", "140 800 J +/- 3%", 140800, 3, [("computed", r4_W), ("KE route", lambda: P.kinetic_energy(1100, 16))])
 v("r4d-wrong", f"{Q} sd-r4(d) markScheme", "7040 x 32.8 = 2.3 x 10^5 J", lambda: 7040 * 32.8, 2.3e5, sf=2)
-b("r4-fig", f"{Q} sd-r4 figure", "vMax 20 with ticks 0,5,10,20 and u=16; tTicks 0,0.8,2,3.3 (tMax 3.6)",
-  lambda: 0 < 0.8 < 2 < 3.3 < 3.6 and 16 < 20)
-b("r4-fig-ticks", f"{Q} sd-r4 figure", "label '16' not overlapping tick '20' or '10' (>= 14 px)",
-  lambda: min(abs(16 - 20), abs(16 - 10)) / 20 * 160 >= 14)
 
 # sd-r5: 60 mph, 1609 m, reaction 0.70 s, a = 6.5, gap 90 m
 r5_v = lambda: mph(60)
@@ -344,7 +416,7 @@ b("pp-count", f"{Q} pastPapers", "6 past papers, marks 1,1,1,5,10,11", lambda: T
 # ====================================================================
 # Unchecked (non-numeric)
 # ====================================================================
-u("fig-labels", f"{F} all SVGs", "label overlaps / readability", "visual check done in the browser, not computable")
+u("fig-labels", f"{F} remaining SVGs", "label overlaps / readability", "visual check done in the browser, not computable")
 u("mcq-conceptual", f"{Q} pastPapers explanation text", "non-numeric explanations", "prose")
 
 

@@ -118,61 +118,36 @@ export const figShapes: Figure = {
 };
 
 // ---------- Car journey s–t graph (Textbook p. 25–26, Figure 3) ----------
-const svgCar = `${head("d2-car", 352)}
-  ${axes("time t / s", "displacement s / m", [[50, "0"], [95, "10"], [140, "20"], [185, "30"], [230, "40"], [275, "50"], [320, "60"]], [[200, "0"], [150, "50"], [100, "100"], [50, "150"]])}
-  <path d="M50,200 L140,80 L185,80 L320,200" stroke-width="2.6" style="stroke:var(--accent)"/>
-  <g stroke-width="1.4" stroke-dasharray="4 3">
-    <line x1="50" y1="196" x2="140" y2="196"/><line x1="140" y1="196" x2="140" y2="82"/>
-    <line x1="185" y1="82" x2="185" y2="196"/><line x1="185" y1="196" x2="320" y2="196"/>
-  </g>
-  <g fill="currentColor" stroke="none" font-size="11.5" font-weight="600">
-    <text x="95" y="190" text-anchor="middle">Δt = 20 s</text>
-    <text x="134" y="140" text-anchor="middle" transform="rotate(-90 134 140)">Δs = 120 m</text>
-    <text x="199" y="140" text-anchor="middle" transform="rotate(-90 199 140)">Δs = −120 m</text>
-    <text x="252" y="190" text-anchor="middle">Δt = 30 s</text>
-  </g>
-  <g stroke="none" style="fill:var(--accent)" font-size="12.5" font-weight="700">
-    <text x="58" y="84">6.0 m/s</text>
-    <text x="162" y="72" text-anchor="middle">0</text>
-    <text x="262" y="128">−4.0 m/s</text>
-  </g>
-  ${key(262, "var(--accent)", "6.0 m/s · 120 ÷ 20, driving away", "velocity = gradient (0–20 s)")}
-  ${key(294, "var(--accent)", "0 · flat, parked", "stationary (20–30 s)")}
-  ${key(326, "var(--accent)", "−4.0 m/s · −120 ÷ 30, driving back", "negative velocity (30–60 s)")}
-</svg>`;
-
 export const figCar: Figure = {
-  kind: "svg",
-  svg: svgCar,
+  kind: "graph",
   alt: "Displacement-time graph. A straight line rises from 0 to 120 m between 0 and 20 s (gradient 6.0 m/s), stays flat at 120 m from 20 to 30 s (stationary), then falls straight back to 0 at 60 s (gradient −4.0 m/s).",
-  caption: "Textbook p. 25–26, Figure 3. Each straight piece has one {{gradient}}, so one {{velocity}}.",
+  caption: "Textbook p. 25–26, Figure 3. Each straight piece has one {{gradient}}, so one {{velocity}}: 120 ÷ 20 = 6.0 m/s, 0 while parked, −120 ÷ 30 = −4.0 m/s.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 60, step: 10 },
+  y: { label: "displacement", symbol: "s", unit: "m", min: 0, max: 150, step: 50 },
+  series: [{ id: "car", points: [[0, 0], [20, 120], [30, 120], [60, 0]], colour: "accent" }],
+  points: [
+    { x: 20, y: 120, label: "6.0 m/s up to here" },
+    { x: 30, y: 120, label: "0 (parked)" },
+    { x: 60, y: 0 },
+  ],
 };
 
 // ---------- Tangent on a curved s–t graph (ours) ----------
-const svgTangent = `${head("d2-tan", 352)}
-  ${axes("time t / s", "displacement s / m", [[50, "0"], [95, "1"], [140, "2"], [185, "3"], [230, "4"], [275, "5"], [320, "6"]], [[200, "0"], [150, "10"], [100, "20"], [50, "30"]])}
-  <polyline points="50,200 72.5,199.1 95,196.2 117.5,191.6 140,185 162.5,176.6 185,166.2 207.5,154.1 230,140 252.5,124.1 275,106.2 297.5,86.6 320,65" stroke-width="2.6" style="stroke:var(--accent)"/>
-  <line x1="140" y1="200" x2="320" y2="80" stroke-width="1.8"/>
-  <line x1="50" y1="200" x2="230" y2="140" stroke-width="1.6" stroke-dasharray="5 4" style="stroke:var(--vy)"/>
-  <g stroke-width="1.2" stroke-dasharray="3 3"><line x1="320" y1="80" x2="320" y2="200"/></g>
-  <circle cx="230" cy="140" r="5" fill="currentColor" stroke="none"/>
-  <g fill="currentColor" stroke="none" font-size="11.5" font-weight="600">
-    <text x="236" y="156">t = 4 s, s = 12 m</text>
-    <text x="230" y="194" text-anchor="middle">Δt = 6 − 2 = 4 s</text>
-    <text x="316" y="140" text-anchor="end">Δs = 24 m</text>
-    <text x="150" y="104">tangent</text>
-  </g>
-  <text x="78" y="172" stroke="none" font-size="11.5" font-weight="600" style="fill:var(--vy)">average</text>
-  ${key(262, "currentColor", "6.0 m/s · 24 ÷ 4, slope of the tangent", "instantaneous velocity at t = 4 s")}
-  ${key(294, "var(--vy)", "3.0 m/s · 12 ÷ 4, start to t = 4 s", "average velocity (0–4 s)")}
-  ${key(326, "var(--accent)", "12 m · where she is at 4 s", "displacement s")}
-</svg>`;
-
+// The old SVG was drawn from s = 0.75 t² (s(4) = 12 m, tangent through (2, 0) and (6, 24)); same formula here.
 export const figTangent: Figure = {
-  kind: "svg",
-  svg: svgTangent,
-  alt: "A displacement-time curve that gets steeper. At t = 4 s, s = 12 m, a tangent line touches the curve. It runs from (2 s, 0) to (6 s, 24 m), so its gradient is 24 ÷ 4 = 6.0 m/s, the instantaneous velocity. A dashed line from the origin to the point has gradient 3.0 m/s, the average velocity.",
-  caption: "Our example. The tangent's slope (6.0 m/s) is the velocity **at** 4 s; the dashed chord (3.0 m/s) is only the average.",
+  kind: "graph",
+  alt: "A displacement-time curve that gets steeper, s = 0.75t², on axes from 0 to 6 s. At t = 4 s, s = 12 m, a tangent touches the curve. A triangle on it runs from 2 s to 6 s (4 s) and up from 0 to 24 m, so its gradient is 24 ÷ 4 = 6.0 m/s, the instantaneous velocity. The touching point can be dragged along the curve.",
+  caption: "Our example. The tangent's slope (24 ÷ 4 = 6.0 m/s) is the velocity **at** 4 s; the average over 0–4 s is only 12 ÷ 4 = 3.0 m/s. Drag the dot: the steeper the curve, the greater the velocity.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 6, step: 1 },
+  y: { label: "displacement", symbol: "s", unit: "m", min: 0, max: 30, step: 10 },
+  series: [{ id: "cyclist", label: "s = 0.75t²", expr: "0.75*t^2", colour: "accent" }],
+  tangent: {
+    series: "cyclist",
+    at: 4,
+    draggable: true,
+    showTriangle: true,
+    readout: { quantity: "velocity", unit: "m s⁻¹", decimals: 1 },
+  },
 };
 
 // ---------- Bounce: change in velocity (ours) ----------
@@ -202,44 +177,44 @@ export const figBounce: Figure = {
 // ====================== Question figures ======================
 
 // Greatest-speed MCQ: segments A–D.
-const svgSegments = `${head("d2-seg", 240)}
-  ${axes("time t / s", "displacement s / m", [[50, "0"], [80, "1"], [110, "2"], [140, "3"], [170, "4"], [200, "5"], [230, "6"], [260, "7"], [290, "8"], [320, "9"]], [[200, "0"], [175, "2"], [150, "4"], [125, "6"], [100, "8"], [75, "10"], [50, "12"]])}
-  <path d="M50,200 L110,150 L170,150 L200,75 L320,200" stroke-width="2.6" style="stroke:var(--accent)"/>
-  <g fill="currentColor" stroke="none" font-weight="700" font-size="13">
-    <text x="72" y="168">A</text><text x="136" y="143">B</text><text x="176" y="110">C</text><text x="262" y="130">D</text>
-  </g>
-</svg>`;
-
 export const figSegments: Figure = {
-  kind: "svg",
-  svg: svgSegments,
+  kind: "graph",
   alt: "Displacement-time graph made of four straight sections. A: 0 to 4 m from 0 to 2 s. B: flat at 4 m from 2 to 4 s. C: 4 m to 10 m from 4 to 5 s. D: 10 m down to 0 from 5 to 9 s.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 9, step: 1 },
+  y: { label: "displacement", symbol: "s", unit: "m", min: 0, max: 12, step: 2 },
+  series: [{ id: "seg", points: [[0, 0], [2, 4], [4, 4], [5, 10], [9, 0]], colour: "accent" }],
+  points: [
+    { x: 1, y: 2, label: "A" },
+    { x: 3, y: 4, label: "B" },
+    { x: 4.5, y: 7, label: "C" },
+    { x: 7, y: 5, label: "D" },
+  ],
 };
 
-// Trolley and buffer (motion sensor).
-const svgTrolley = `${head("d2-tr", 240)}
-  ${axes("time t / s", "displacement s / m", [[50, "0"], [95, "0.2"], [140, "0.4"], [185, "0.6"], [230, "0.8"], [275, "1.0"], [320, "1.2"]], [[200, "0"], [162.5, "0.3"], [125, "0.6"], [87.5, "0.9"], [50, "1.2"]])}
-  <polyline points="50,200 140,125 151.2,116 162.5,107.8 173.8,100.4 185,93.8 196.2,87.9 207.5,82.8 218.8,78.5 230,75 241.2,72.3 252.5,70.3 263.8,69.1 275,68.8 320,68.8" stroke-width="2.6" style="stroke:var(--accent)"/>
-  ${t(146, 140, "hits buffer", 'font-size="11"')}
-  ${t(250, 60, "1.05 m", 'font-size="11"')}
-</svg>`;
-
+// Trolley and buffer (motion sensor). Hand-sketched with no formula: straight to (0.40 s, 0.60 m),
+// then a flattening curve to 1.05 m at 1.0 s, then flat. The old curve's points are kept as data.
 export const figTrolley: Figure = {
-  kind: "svg",
-  svg: svgTrolley,
+  kind: "graph",
   alt: "Displacement-time graph for a trolley. A straight line from 0 to 0.60 m between 0 and 0.40 s, then a curve that flattens out reaching 1.05 m at 1.0 s, then a flat line at 1.05 m to 1.2 s.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 1.2, step: 0.2 },
+  y: { label: "displacement", symbol: "s", unit: "m", min: 0, max: 1.2, step: 0.3 },
+  series: [{
+    id: "trolley",
+    points: [[0, 0], [0.4, 0.6], [0.45, 0.672], [0.5, 0.738], [0.55, 0.797], [0.6, 0.85], [0.65, 0.897], [0.7, 0.938], [0.75, 0.972], [0.8, 1.0], [0.85, 1.022], [0.9, 1.038], [0.95, 1.047], [1.0, 1.05], [1.2, 1.05]],
+    colour: "accent",
+  }],
+  points: [
+    { x: 0.4, y: 0.6, label: "hits buffer" },
+    { x: 1.0, y: 1.05, label: "1.05 m" },
+  ],
 };
 
-// Dropped ball: curve, point at 0.40 s, no tangent drawn.
-const svgDrop = `${head("d2-dr", 240)}
-  ${axes("time t / s", "distance fallen s / m", [[50, "0"], [104, "0.1"], [158, "0.2"], [212, "0.3"], [266, "0.4"], [320, "0.5"]], [[200, "0"], [170, "0.25"], [140, "0.50"], [110, "0.75"], [80, "1.00"], [50, "1.25"]])}
-  <polyline points="50,200 63.5,199.6 77,198.5 90.5,196.7 104,194.1 117.5,190.8 131,186.8 144.5,182 158,176.5 171.5,170.2 185,163.2 198.5,155.5 212,147 225.5,137.8 239,127.9 252.5,117.2 266,105.8 279.5,93.7 293,80.8 306.5,67.2 320,52.8" stroke-width="2.6" style="stroke:var(--accent)"/>
-  <circle cx="266" cy="105.8" r="5" fill="currentColor" stroke="none"/>
-  ${t(258, 100, "P", 'text-anchor="end" font-weight="700"')}
-</svg>`;
-
+// Dropped ball: curve s = 4.905 t², point P at 0.40 s, no tangent drawn.
 export const figDrop: Figure = {
-  kind: "svg",
-  svg: svgDrop,
+  kind: "graph",
   alt: "Distance fallen against time for a dropped ball: a curve getting steeper from 0 at 0 s to about 1.23 m at 0.5 s. Point P is on the curve at 0.40 s, 0.785 m.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 0.5, step: 0.1 },
+  y: { label: "distance fallen", symbol: "s", unit: "m", min: 0, max: 1.25, step: 0.25 },
+  series: [{ id: "ball", expr: "4.905*t^2", colour: "accent" }],
+  points: [{ x: 0.4, y: 0.7848, label: "P" }],
 };

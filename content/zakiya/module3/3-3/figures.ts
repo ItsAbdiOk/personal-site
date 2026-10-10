@@ -96,77 +96,43 @@ export const figCyclistTrain: Figure = {
 
 // ---------- Figure 5 graph with two gradient triangles (Textbook p. 28) ----------
 // origin (50,200); 1.0 s = 80 px; 1.0 m/s = 40 px.
-const svgFig5 = `${head("ac-f5", 340)}
-  <g stroke-width="0.6" opacity="0.25">
-    <line x1="50" y1="160" x2="290" y2="160"/><line x1="50" y1="120" x2="290" y2="120"/><line x1="50" y1="80" x2="290" y2="80"/><line x1="50" y1="40" x2="290" y2="40"/>
-    <line x1="130" y1="40" x2="130" y2="200"/><line x1="210" y1="40" x2="210" y2="200"/><line x1="290" y1="40" x2="290" y2="200"/>
-  </g>
-  <line x1="50" y1="200" x2="300" y2="200" stroke-width="1.5" marker-end="url(#ac-f5-c)"/>
-  <line x1="50" y1="200" x2="50" y2="28" stroke-width="1.5" marker-end="url(#ac-f5-c)"/>
-  <g stroke="none" fill="currentColor" font-size="11.5">
-    <text x="50" y="216" text-anchor="middle">0</text><text x="130" y="216" text-anchor="middle">1.0</text><text x="210" y="216" text-anchor="middle">2.0</text><text x="290" y="216" text-anchor="middle">3.0</text>
-    <text x="42" y="204" text-anchor="end">0</text><text x="42" y="124" text-anchor="end">2.0</text><text x="42" y="44" text-anchor="end">4.0</text>
-    <text x="300" y="232" text-anchor="end">t / s</text><text x="8" y="22">v / m s⁻¹</text>
-  </g>
-  <path d="M50,200 L130,120 L290,80" stroke-width="2.5"/>
-  <line x1="52" y1="200" x2="128" y2="200" stroke-width="2" style="stroke:var(--vx)"/>
-  <line x1="130" y1="198" x2="130" y2="122" stroke-width="2" style="stroke:var(--vy)"/>
-  <line x1="132" y1="120" x2="288" y2="120" stroke-width="2" stroke-dasharray="5 3" style="stroke:var(--vx)"/>
-  <line x1="290" y1="118" x2="290" y2="82" stroke-width="2" stroke-dasharray="5 3" style="stroke:var(--vy)"/>
-  <g stroke="none" font-weight="600" font-size="12">
-    <text x="90" y="194" text-anchor="middle" style="fill:var(--vx)">1.0 s</text>
-    <text x="136" y="164" style="fill:var(--vy)">2.0 m/s</text>
-    <text x="210" y="136" text-anchor="middle" style="fill:var(--vx)">2.0 s</text>
-    <text x="284" y="104" text-anchor="end" style="fill:var(--vy)">1.0 m/s</text>
-    <text x="64" y="128" style="fill:var(--accent)">2.0 m s⁻²</text>
-    <text x="196" y="72" text-anchor="middle" style="fill:var(--accent)">0.50 m s⁻²</text>
-  </g>
-  ${key(254, "var(--vy)", "2.0, 1.0 m/s · how much faster it got", "change in velocity Δv (rise)")}
-  ${key(288, "var(--vx)", "1.0, 2.0 s · how long that took", "time taken Δt (run)")}
-  ${key(322, "var(--accent)", "2.0, 0.50 m s⁻² · rise ÷ run", "gradient = acceleration a")}
-</svg>`;
 
 export const figFig5: Figure = {
-  kind: "svg",
-  svg: svgFig5,
-  alt: "Velocity–time graph. A straight line rises from 0 to 2.0 metres per second between 0 and 1.0 seconds: gradient triangle with rise 2.0 and run 1.0 gives 2.0 metres per second squared. A shallower straight line rises from 2.0 to 3.0 metres per second between 1.0 and 3.0 seconds: rise 1.0, run 2.0, gradient 0.50 metres per second squared.",
-  caption: "Textbook Figure 5 (p. 28) with gradient triangles. Steeper line = bigger {{a}}. Maximum acceleration = 2.0 m s⁻², in the first second.",
+  kind: "graph",
+  alt: "Velocity–time graph. A straight line rises from 0 to 2.0 metres per second between 0 and 1.0 seconds, then a shallower straight line rises to 3.0 metres per second at 3.0 seconds. A dashed tangent triangle on the second line has rise 1.0 metres per second and run 2.0 seconds, so its gradient is 0.50 metres per second squared. Dragging the dot into the first second gives a gradient of 2.0 metres per second squared.",
+  caption: "Textbook Figure 5 (p. 28) with gradient triangles. Second section: 1.0 ÷ 2.0 = 0.50 m s⁻². Drag the dot into the first second: the line is steeper and the gradient reads 2.0 m s⁻² (rise 2.0 per 1.0 s). Steeper line = bigger {{a}}. Maximum acceleration = 2.0 m s⁻², in the first second.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 3, step: 0.5 },
+  y: { label: "velocity", symbol: "v", unit: "m s⁻¹", min: 0, max: 4, step: 1 },
+  series: [{ id: "v", label: "v–t", points: [[0, 0], [1, 2], [3, 3]], colour: "vy" }],
+  points: [{ x: 1, y: 2, label: "2.0 m s⁻¹ at 1.0 s" }, { x: 3, y: 3, label: "3.0 m s⁻¹ at 3.0 s" }],
+  tangent: {
+    series: "v",
+    at: 2,
+    draggable: true,
+    showTriangle: true,
+    readout: { quantity: "acceleration", unit: "m s⁻²", decimals: 2 },
+  },
 };
 
-// ---------- Tangent on a curve (ours: v = 4t − 0.25t², tangent at t = 4.0 s) ----------
-// origin (50,210); 1 s = 24 px; 1 m/s = 7 px.
-const svgTangent = `${head("ac-tg", 366)}
-  <line x1="50" y1="210" x2="305" y2="210" stroke-width="1.5" marker-end="url(#ac-tg-c)"/>
-  <line x1="50" y1="210" x2="50" y2="30" stroke-width="1.5" marker-end="url(#ac-tg-c)"/>
-  <g stroke="none" fill="currentColor" font-size="11.5">
-    <text x="50" y="226" text-anchor="middle">0</text><text x="146" y="226" text-anchor="middle">4.0</text><text x="290" y="226" text-anchor="middle">10.0</text>
-    <text x="42" y="214" text-anchor="end">0</text><text x="42" y="186" text-anchor="end">4</text><text x="42" y="130" text-anchor="end">12</text><text x="42" y="46" text-anchor="end">24</text>
-    <text x="305" y="242" text-anchor="end">t / s</text><text x="8" y="22">v / m s⁻¹</text>
-  </g>
-  <path d="M50,210 L62,196.4 L74,183.8 L86,171.9 L98,161 L110,150.9 L122,141.8 L134,133.4 L146,126 L158,119.4 L170,113.8 L182,108.9 L194,105 L206,101.9 L218,99.8 L230,98.4 L242,98" stroke-width="2.5" stroke-linejoin="round"/>
-  <line x1="50" y1="182" x2="290" y2="42" stroke-width="1.8" style="stroke:var(--accent)"/>
-  <line x1="146" y1="210" x2="146" y2="126" stroke-width="1" stroke-dasharray="3 3"/>
-  <line x1="50" y1="126" x2="146" y2="126" stroke-width="1" stroke-dasharray="3 3"/>
-  <circle cx="146" cy="126" r="5" fill="currentColor" stroke="none"/>
-  <line x1="52" y1="182" x2="288" y2="182" stroke-width="2" stroke-dasharray="5 3" style="stroke:var(--vx)"/>
-  <line x1="290" y1="180" x2="290" y2="44" stroke-width="2" stroke-dasharray="5 3" style="stroke:var(--vy)"/>
-  <g stroke="none" font-weight="600" font-size="12">
-    <text x="210" y="198" text-anchor="middle" style="fill:var(--vx)">10.0 s</text>
-    <text x="284" y="120" text-anchor="end" style="fill:var(--vy)">20 m/s</text>
-    <text x="154" y="146" fill="currentColor">t = 4.0 s</text>
-    <text x="154" y="162" fill="currentColor">v = 12 m/s</text>
-    <text x="186" y="66" text-anchor="end" style="fill:var(--accent)">tangent</text>
-  </g>
-  ${key(268, "var(--vy)", "24 − 4 = 20 m/s · rise of the tangent", "change in velocity Δv")}
-  ${key(302, "var(--vx)", "10.0 − 0 = 10.0 s · run of the tangent", "time interval Δt")}
-  ${key(336, "var(--accent)", "? → 2.0 m s⁻² · steepness at t = 4.0 s", "instantaneous acceleration = gradient of tangent")}
-</svg>`;
-
+// ---------- Tangent on a curve (ours, hand-sketched: tangent at t = 4.0 s) ----------
+// The old hand-drawn curve was a sketch (v = 4t − 0.25t²). That parabola turns over at 8 s, so it cannot carry the
+// 10.0 s run in the worked example on a clipped axis. Same labelled points instead: v(4.0) = 12 m s⁻¹, tangent
+// gradient 2.0 m s⁻² (through (0, 4) and (10.0, 24)) from the simple formula v = 36t ÷ (8 + t).
 export const figTangent: Figure = {
-  kind: "svg",
-  svg: svgTangent,
-  alt: "A curved velocity–time graph rising steeply then levelling off. A straight tangent touches it at t = 4.0 seconds, where v = 12 metres per second. The tangent runs from 4 metres per second at 0 seconds to 24 metres per second at 10.0 seconds. Big triangle: rise 20 metres per second, run 10.0 seconds, gradient 2.0 metres per second squared.",
-  caption: "Our example. The {{tangent}} touches the curve at t = 4.0 s. Use a **big** triangle on the tangent, not on the curve: 20 ÷ 10.0 = 2.0 m s⁻².",
+  kind: "graph",
+  alt: "A curved velocity–time graph rising steeply then levelling off. A straight tangent touches it at t = 4.0 seconds, where v = 12 metres per second. The tangent runs from 4 metres per second at 0 seconds to 24 metres per second at 10.0 seconds. Big triangle: rise 20 metres per second, run 10.0 seconds, gradient 2.0 metres per second squared. The touching point can be dragged along the curve.",
+  caption: "Our example. The {{tangent}} touches the curve at t = 4.0 s. Use a **big** triangle on the tangent, not on the curve: 20 ÷ 10.0 = 2.0 m s⁻². Drag the dot: the flatter the curve, the smaller the acceleration.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 18, step: 2 },
+  y: { label: "velocity", symbol: "v", unit: "m s⁻¹", min: 0, max: 30, step: 5 },
+  series: [{ id: "v", label: "v–t", expr: "36*t/(8+t)", colour: "vy" }],
+  points: [{ x: 4, y: 12, label: "t = 4.0 s, v = 12 m s⁻¹" }],
+  tangent: {
+    series: "v",
+    at: 4,
+    draggable: true,
+    showTriangle: true,
+    readout: { quantity: "acceleration", unit: "m s⁻²", decimals: 1 },
+  },
 };
 
 // ---------- Four v–t shapes (Textbook p. 28 Figure 4) ----------
@@ -194,53 +160,25 @@ export const figShapes: Figure = {
 };
 
 // ---------- Acceleration–time graph for Figure 5 (Textbook p. 28 Q4b) ----------
-const svgAT = `${head("ac-at", 290)}
-  <g stroke-width="0.6" opacity="0.25">
-    <line x1="50" y1="170" x2="290" y2="170"/><line x1="50" y1="140" x2="290" y2="140"/><line x1="50" y1="110" x2="290" y2="110"/><line x1="50" y1="80" x2="290" y2="80"/>
-    <line x1="130" y1="60" x2="130" y2="200"/><line x1="210" y1="60" x2="210" y2="200"/><line x1="290" y1="60" x2="290" y2="200"/>
-  </g>
-  <line x1="50" y1="200" x2="300" y2="200" stroke-width="1.5" marker-end="url(#ac-at-c)"/>
-  <line x1="50" y1="200" x2="50" y2="48" stroke-width="1.5" marker-end="url(#ac-at-c)"/>
-  <g stroke="none" fill="currentColor" font-size="11.5">
-    <text x="50" y="216" text-anchor="middle">0</text><text x="130" y="216" text-anchor="middle">1.0</text><text x="210" y="216" text-anchor="middle">2.0</text><text x="290" y="216" text-anchor="middle">3.0</text>
-    <text x="42" y="204" text-anchor="end">0</text><text x="42" y="174" text-anchor="end">0.50</text><text x="42" y="144" text-anchor="end">1.0</text><text x="42" y="84" text-anchor="end">2.0</text>
-    <text x="300" y="232" text-anchor="end">t / s</text><text x="8" y="42">a / m s⁻²</text>
-  </g>
-  <path d="M50,80 L130,80 L130,170 L290,170" stroke-width="2.5" style="stroke:var(--accent)"/>
-  <g stroke="none" font-weight="600" font-size="12" style="fill:var(--accent)">
-    <text x="90" y="72" text-anchor="middle">2.0 m s⁻²</text>
-    <text x="210" y="162" text-anchor="middle">0.50 m s⁻²</text>
-  </g>
-  ${key(262, "var(--accent)", "2.0 then 0.50 · gradients from the v–t graph", "acceleration a (each flat step)")}
-</svg>`;
 
 export const figAT: Figure = {
-  kind: "svg",
-  svg: svgAT,
+  kind: "graph",
   alt: "Acceleration–time graph. A flat line at 2.0 metres per second squared from 0 to 1.0 seconds, then a step down to a flat line at 0.50 metres per second squared from 1.0 to 3.0 seconds.",
   caption: "Each straight section of the v–t graph becomes a **flat** step on the {{atgraph}}.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 3, step: 0.5 },
+  y: { label: "acceleration", symbol: "a", unit: "m s⁻²", min: 0, max: 2.5, step: 0.5 },
+  series: [{ id: "a", label: "a–t", points: [[0, 2], [1, 2], [1, 0.5], [3, 0.5]], colour: "accent" }],
+  points: [{ x: 0.5, y: 2, label: "2.0 m s⁻²" }, { x: 2, y: 0.5, label: "0.50 m s⁻²" }],
 };
 
 // ---------- Question figure: tram v–t graph (ours) ----------
 // origin (50,190); 1 s = 2.4 px; 1 m/s = 10 px.
-const svgTram = `${head("ac-tr", 236)}
-  <g stroke-width="0.6" opacity="0.25">
-    <line x1="50" y1="150" x2="314" y2="150"/><line x1="50" y1="110" x2="314" y2="110"/><line x1="50" y1="70" x2="314" y2="70"/>
-    <line x1="98" y1="60" x2="98" y2="190"/><line x1="146" y1="60" x2="146" y2="190"/><line x1="194" y1="60" x2="194" y2="190"/><line x1="242" y1="60" x2="242" y2="190"/><line x1="290" y1="60" x2="290" y2="190"/>
-  </g>
-  <line x1="50" y1="190" x2="320" y2="190" stroke-width="1.5" marker-end="url(#ac-tr-c)"/>
-  <line x1="50" y1="190" x2="50" y2="40" stroke-width="1.5" marker-end="url(#ac-tr-c)"/>
-  <g stroke="none" fill="currentColor" font-size="11.5">
-    <text x="50" y="206" text-anchor="middle">0</text><text x="98" y="206" text-anchor="middle">20</text><text x="146" y="206" text-anchor="middle">40</text><text x="194" y="206" text-anchor="middle">60</text><text x="242" y="206" text-anchor="middle">80</text><text x="290" y="206" text-anchor="middle">100</text>
-    <text x="42" y="194" text-anchor="end">0</text><text x="42" y="154" text-anchor="end">4</text><text x="42" y="114" text-anchor="end">8</text><text x="42" y="74" text-anchor="end">12</text>
-    <text x="320" y="224" text-anchor="end">t / s</text><text x="8" y="34">v / m s⁻¹</text>
-  </g>
-  <path d="M50,190 L98,70 L242,70 L299.6,190" stroke-width="2.5" style="stroke:var(--vy)"/>
-</svg>`;
 
 export const figTram: Figure = {
-  kind: "svg",
-  svg: svgTram,
+  kind: "graph",
   alt: "Velocity–time graph for a tram. Straight line from 0 to 12 metres per second between 0 and 20 seconds, flat at 12 metres per second until 80 seconds, then a straight line down to 0 at 104 seconds.",
   caption: "Velocity–time graph for the tram.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 120, step: 20 },
+  y: { label: "velocity", symbol: "v", unit: "m s⁻¹", min: 0, max: 16, step: 4 },
+  series: [{ id: "tram", points: [[0, 0], [20, 12], [80, 12], [104, 0]], colour: "vy" }],
 };
