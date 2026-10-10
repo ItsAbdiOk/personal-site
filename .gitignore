@@ -36,3 +36,6 @@ next-env.d.ts
 
 # Valhalla map-match cache (per Strava activity ID)
 /.map-match-cache/
+
+# Zakiya Anki export intermediate JSON (npm run zakiya:anki)
+/.zakiya-anki/

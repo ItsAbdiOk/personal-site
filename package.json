@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "zakiya:anki": "bun scripts/zakiya/export-cards.ts && ~/.venvs/zakiya-anki/bin/python scripts/zakiya/build_apkg.py"
   },
   "dependencies": {
+    "@lucasmarkes/hairline": "^0.5.0",
     "gray-matter": "^4.0.3",
     "next": "^14.2.29",
     "next-mdx-remote": "^6.0.0",

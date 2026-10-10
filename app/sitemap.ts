@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/posts";
 
+// /zakiya (private study guide) is deliberately left out of the sitemap.
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.abdirahmanmohamed.dev";
   const posts = getAllPosts();
