@@ -76,4 +76,18 @@ v("angle-theta-exact", f"{F} proj-angle", "theta = 26.0 deg (unrounded)", lambda
 # explain-map numbers
 v("ex-tan", f"{F} explain.tan-inv", "tan^-1(0.488) = 26.0", lambda: P.angle_to_horizontal_deg(1, 0.488), 26.0, sf=3)
 
+# Group 3.1 worked examples (textbook p. 22, 27, 35-36)
+v("speed-fine-t", f"{F} speed", "1 min 22 s = 82 s", lambda: 60 + 22, 82, sf=2)
+v("speed-fine-v", f"{F} speed", "v = 2500 / 82 = 30.5 m/s", lambda: 2500 / 82, 30.5, sf=3)
+v("speed-fine-v2sf", f"{F} speed", "30 m/s (2 s.f.)", lambda: 2500 / 82, 30, sf=2)
+b("speed-fine-over", f"{F} speed", "30.5 > 22 m/s limit so fined", lambda: 2500 / 82 > 22)
+v("accel-dv", f"{F} acceleration", "a = -27.8 / 2.34 = -11.9", lambda: (0 - 27.8) / 2.34, -11.9, sf=3)
+v("accel-misprint", f"{F} acceleration", "27.8 / 2.46 = 11.3 (book says 13.3)", lambda: 27.8 / 2.46, 11.3, sf=3)
+b("accel-misprint-differs", f"{F} acceleration", "book 13.3 is wrong", lambda: round(27.8 / 2.46, 1) != 13.3)
+v("think-d", f"{F} thinking-distance", "31.1 x 0.67 = 20.8 m", lambda: 31.1 * 0.67, 20.8, sf=3)
+v("think-d-21", f"{F} thinking-distance", "about 21 m", lambda: 31.1 * 0.67, 21, sf=2)
+v("think-rt", f"{F} thinking-distance", "9.0 / 13.4 = 0.67 s", lambda: 9.0 / 13.4, 0.67, sf=2)
+v("stop-d", f"{F} stopping-distance", "9.0 + 14.0 = 23.0 m", lambda: 9.0 + 14.0, 23.0, sf=3)
+b("stop-braking-over-half", f"{F} stopping-distance", "more than half is braking", lambda: 14.0 / 23.0 > 0.5)
+
 CLAIMS = C

@@ -53,6 +53,25 @@ const sheet: FormulaSheet = {
           specRef: "3.1.1(a)",
           topic: "3.1 Motion",
           notes: "Also the **gradient** of a displacement–time graph.",
+          subchapters: ["3-1-distance-and-speed", "3-2-displacement-and-velocity"],
+          example: {
+            title: "Average speed camera: fine or not?",
+            source: { kind: "textbook", ref: "p. 22" },
+            subchapter: "3-1-distance-and-speed",
+            question:
+              "A car travels 2.5 km between two speed cameras in 1 minute 22 seconds. The average speed limit is 22 m s⁻¹ (50 mph). Has the driver broken it?",
+            given: [
+              { symbol: "Δs", value: "2500 m", meaning: "distance between the cameras (2.5 km × 1000)" },
+              { symbol: "Δt", value: "82 s", meaning: "time between the cameras (60 s + 22 s)" },
+            ],
+            find: "the average speed {{v}}, to compare with 22 m s⁻¹",
+            steps: [
+              { say: "Change to metres and seconds first", working: "2.5 km = 2500 m;  1 min 22 s = 60 + 22 = 82 s" },
+              { say: "Speed = distance ÷ time", working: "v = Δs ÷ Δt", tex: "v = \\dfrac{\\Delta s}{\\Delta t}" },
+              { say: "Put the numbers in", working: "v = 2500 ÷ 82", tex: "v = \\dfrac{\\given{Δs}{2500}}{\\given{Δt}{82}}", result: "v = 30.5 m s⁻¹" },
+            ],
+            answer: "**30.5 m s⁻¹** (about 30 m s⁻¹ to 2 s.f.), more than the 22 m s⁻¹ limit, so **yes**, the driver gets fined.",
+          },
         },
         {
           id: "acceleration",
@@ -69,6 +88,25 @@ const sheet: FormulaSheet = {
           specRef: "3.1.1(a)",
           topic: "3.1 Motion",
           notes: "Also the **gradient** of a velocity–time graph. The **area** under a velocity–time graph is the displacement.",
+          subchapters: ["3-3-acceleration"],
+          example: {
+            title: "Bugatti: slam the brakes on",
+            source: { kind: "textbook", ref: "p. 27" },
+            subchapter: "3-3-acceleration",
+            question:
+              "A Bugatti Veyron travelling at 27.8 m s⁻¹ (100 km/h) brakes to a stop in 2.34 s. What is its acceleration, assuming it stays constant?",
+            given: [
+              { symbol: "Δv", value: "0 − 27.8 m s⁻¹", meaning: "change in velocity: final (0) minus starting (27.8)" },
+              { symbol: "Δt", value: "2.34 s", meaning: "time taken to stop" },
+            ],
+            find: "the acceleration {{a}}",
+            steps: [
+              { say: "Change in velocity ÷ time", working: "a = Δv ÷ Δt", tex: "a = \\dfrac{\\Delta v}{\\Delta t}" },
+              { say: "Change = final − starting, so put the 0 first", working: "a = (0 − 27.8) ÷ 2.34", tex: "a = \\dfrac{\\given{Δv}{0 - 27.8}}{\\given{Δt}{2.34}}" },
+              { say: "Work it out", working: "a = −27.8 ÷ 2.34", tex: "a = \\dfrac{-27.8}{2.34}", result: "a = −11.9 m s⁻²" },
+            ],
+            answer: "**−11.9 m s⁻²**. The minus sign means it is slowing down (decelerating). (Speeding up 0 → 27.8 in 2.46 s gives 11.3 m s⁻²; the book misprints that one as 13.3.)",
+          },
         },
         {
           id: "suvat-v-u-at",
@@ -213,6 +251,24 @@ const sheet: FormulaSheet = {
           onDataSheet: false,
           specRef: "3.1.2(c)",
           topic: "3.1 Motion",
+          subchapters: ["3-6-car-stopping-distances"],
+          example: {
+            title: "Thinking distance at 70 mph",
+            source: { kind: "textbook", ref: "p. 35" },
+            subchapter: "3-6-car-stopping-distances",
+            question:
+              "The Highway Code assumes a reaction time of 0.67 s. How far does a car at 70 mph (31.1 m s⁻¹) travel before the driver even touches the brake?",
+            given: [
+              { symbol: "speed", value: "31.1 m s⁻¹", meaning: "speed of the car (70 mph), steady while the driver reacts" },
+              { symbol: "reaction time", value: "0.67 s", meaning: "time from seeing the hazard to braking" },
+            ],
+            find: "the thinking distance",
+            steps: [
+              { say: "Speed is steady while reacting, so distance = speed × time", working: "thinking distance = speed × reaction time", tex: "\\text{thinking distance} = \\text{speed} \\times \\text{reaction time}" },
+              { say: "Put the numbers in", working: "thinking distance = 31.1 × 0.67", tex: "\\text{thinking distance} = \\given{speed}{31.1} \\times \\given{reaction time}{0.67}", result: "thinking distance = 20.8 m" },
+            ],
+            answer: "About **21 m** before braking even starts: five car lengths. (The book's own worked example runs it backwards: 9.0 m ÷ 13.4 m s⁻¹ = 0.67 s.)",
+          },
         },
         {
           id: "stopping-distance",
@@ -228,6 +284,24 @@ const sheet: FormulaSheet = {
           specRef: "3.1.2(c)",
           topic: "3.1 Motion",
           notes: "Double the speed: thinking distance doubles, braking distance goes up **4×** (it depends on u²).",
+          subchapters: ["3-6-car-stopping-distances"],
+          example: {
+            title: "Stopping from 30 mph",
+            source: { kind: "textbook", ref: "p. 35–36" },
+            subchapter: "3-6-car-stopping-distances",
+            question:
+              "At 30 mph (13.4 m s⁻¹) the Highway Code gives a thinking distance of 9.0 m and a braking distance of 14.0 m. What is the total stopping distance?",
+            given: [
+              { symbol: "thinking distance", value: "9.0 m", meaning: "distance while the driver reacts" },
+              { symbol: "braking distance", value: "14.0 m", meaning: "distance once the brakes are on" },
+            ],
+            find: "the total stopping distance",
+            steps: [
+              { say: "Add the two parts", working: "stopping distance = thinking distance + braking distance", tex: "\\text{stopping distance} = \\text{thinking distance} + \\text{braking distance}" },
+              { say: "Put the numbers in", working: "stopping distance = 9.0 + 14.0", tex: "\\text{stopping distance} = \\given{thinking distance}{9.0} + \\given{braking distance}{14.0}", result: "stopping distance = 23.0 m" },
+            ],
+            answer: "**23 m** in total, matching Table 1 on p. 36. More than half of it is braking.",
+          },
         },
       ],
     },
