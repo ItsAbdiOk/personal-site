@@ -290,7 +290,21 @@ const sub: Subchapter = {
       difficulty: 3,
       origin: { kind: "ours" },
       basedOn: "Modelled on H156/01 June 2023 Q25(a)–(c)",
-      stem: "A ball-bearing falls through oil. Distance fallen {{x}} at time {{t}}: {{t}} = 0, 0.20, 0.40, 0.60, 0.80, 1.00 s; x = 0, 0.030, 0.086, 0.142, 0.198, 0.254 m.",
+      stem: "A ball-bearing falls through oil. The table shows the distance fallen {{x}} at time {{t}}.",
+      table: {
+        columns: [
+          { header: "time t", unit: "s" },
+          { header: "distance fallen x", unit: "m", highlight: true },
+        ],
+        rows: [
+          ["0", "0"],
+          ["0.20", "0.030"],
+          ["0.40", "0.086"],
+          ["0.60", "0.142"],
+          ["0.80", "0.198"],
+          ["1.00", "0.254"],
+        ],
+      },
       parts: [
         {
           label: "a",

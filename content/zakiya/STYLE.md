@@ -58,3 +58,24 @@ Reader: a Year 12 student who is new to the topic. Aim for "I could explain this
 - If something reads fine and makes sense, carry on.
 - If it's odd — a number that doesn't fit, a mark scheme that doesn't match its question, garbled symbols, a comment that seems to belong elsewhere, a claim that surprises you — look at the original before using it: `scripts/zakiya/papers/show_source.sh "<question id>"` (add `--ms` for the mark scheme) gives an image of just that question; textbook pages: `data/textbook-marker/page-images/` or render the page.
 - Log every check (what looked odd, what the source showed, what you changed) in the output you hand on. Never pass an unresolved oddity up the chain silently — fix it or flag it.
+
+## Graphs and tables
+- **Any graph with numbers on it is a `graph` figure, not a hand-drawn SVG** (`Figure` kind `"graph"`,
+  rendered by `components/zakiya/Graph.tsx`). Keep `svg` for pictures (cliffs, cars, drips) and sketches with no scale.
+  - Axes: `x`/`y` = `{ label: "time", symbol: "t", unit: "s", min, max, step }` → shown OCR style, "time _t_ / s".
+  - Curves: `expr` in the x-axis symbol (`"12*t - t^2"`; `+ - * / ^ ( )`, `sqrt`, `sin/cos/tan` in degrees, `exp`, `ln`, `pi`),
+    or `points` for straight-line pieces and data (`[[0, 25], [120, 25], [120, 16], [170, 16]]`; a repeated x is a vertical step).
+  - `points` marks labelled dots; `colour` is `accent` (default), `vx`, `vy` or `muted`.
+- **Tangent mode** (`tangent`): use wherever she finds a gradient at a point on a curve. `at` = where it starts (the number the
+  text uses), `draggable: true` so she can feel the gradient change, `showTriangle: true` shows the Δy ÷ Δx triangle
+  (it spans a third of the x-range either side), and `readout` names what the gradient means (`quantity: "speed"`, `unit: "m s⁻¹"`).
+- **Area mode** (`area`): use for "distance = area under a speed–time graph" and similar. `from`/`to` set the shading, `readout`
+  names the quantity, `squares: true` shows the counted grid squares (full and part-filled) for "estimate by counting squares".
+  Areas under `points` are exact; under `expr` they use Simpson's rule.
+- **Tables**: any data with 3+ values is a `table` (a block in Notes, or `table` on a `Question` / `QuestionPart`), not a list
+  or a sentence of numbers. Columns are `{ header: "time t", unit: "s" }` → "time t / s". Write measured values as **strings**
+  so trailing zeros survive (`"0.030"`, `"1.00"`). `highlight: true` tints the column being asked about; `null` cells (or a
+  `blank: true` column) are empty boxes for "complete the table".
+- **Checkable**: every graph `expr` / `points` and every table row must be recomputed in the subchapter's
+  `scripts/zakiya/check/claims_*.py` (re-evaluate the same expr string, e.g. the gradient at `tangent.at`, the triangle's Δy and Δx,
+  the area). Numbers in the caption, alt text and readout must match what the checker gets.

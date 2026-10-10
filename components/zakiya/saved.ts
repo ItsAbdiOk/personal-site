@@ -156,6 +156,7 @@ const FIGURE_NAME: Record<string, string> = {
   "shadow-sim": "Interactive shadows simulator",
   hairline: "Diagram",
   svg: "Diagram",
+  graph: "Graph",
 };
 
 export function blockText(sub: Subchapter, b: Block): string {
@@ -176,13 +177,18 @@ export function blockText(sub: Subchapter, b: Block): string {
     case "figure": {
       const f = b.figure;
       const cap = t(sub, f.caption);
-      const name = f.kind === "svg" ? f.alt : FIGURE_NAME[f.kind];
+      const name = f.kind === "svg" || f.kind === "graph" ? f.alt : FIGURE_NAME[f.kind];
       return [name, cap].filter(Boolean).join(": ");
     }
     case "worked":
       return `Worked example: ${b.title}\n${t(sub, b.question)}\nAnswer: ${t(sub, b.answer)}`;
     case "sayIt":
       return b.say.map((x) => `✓ ${t(sub, x)}`).join("\n");
+    case "table": {
+      const head = b.columns.map((c) => `${t(sub, c.header)}${c.unit ? ` / ${c.unit}` : ""}`).join(" | ");
+      const rows = b.rows.map((r) => r.map((v) => (v === null ? "…" : String(v))).join(" | "));
+      return [t(sub, b.caption), `Table: ${head}`, ...rows].filter(Boolean).join("\n");
+    }
   }
 }
 

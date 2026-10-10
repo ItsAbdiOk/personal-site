@@ -147,34 +147,41 @@ export const figGradient = svg(
   "Textbook p. 23, Figure 2. Rise ÷ run of a big triangle: 1000 m ÷ 50 s = 20 m/s.",
 );
 
-// ---------- Ours: tangent on x = 2t² at t = 4 s ----------
-// t 0..6 → x 50..300; x 0..80 m → y 210..30 (2.25 px/m)
-export const figTangent = svg(
-  `${head("f6", 320)}
-  ${axes("f6", 210, "26")}
-  <text x="44" y="20" fill="currentColor" stroke="none" font-size="12">distance x / m</text>
-  <path d="M50.0,210.0 L60.4,209.7 L70.8,208.9 L81.2,207.5 L91.7,205.5 L102.1,203.0 L112.5,199.9 L122.9,196.2 L133.3,192.0 L143.8,187.2 L154.2,181.9 L164.6,176.0 L175.0,169.5 L185.4,162.5 L195.8,154.9 L206.2,146.7 L216.7,138.0 L227.1,128.7 L237.5,118.9 L247.9,108.5 L258.3,97.5 L268.8,86.0 L279.2,73.9 L289.6,61.2 L300.0,48.0" stroke-width="2.4" style="stroke:var(--accent)"/>
-  <line x1="133.3" y1="210" x2="300" y2="66" stroke-width="1.8" stroke-dasharray="6 4"/>
-  <line x1="300" y1="208" x2="300" y2="68" stroke-width="2" style="stroke:var(--vx)" marker-start="url(#f6-d)" marker-end="url(#f6-d)"/>
-  <line x1="135.3" y1="196" x2="298" y2="196" stroke-width="2" style="stroke:var(--vy)" marker-start="url(#f6-t)" marker-end="url(#f6-t)"/>
-  <circle cx="216.7" cy="138" r="5" fill="currentColor" stroke="none"/>
-  <g stroke="none" font-size="11.5" style="fill:var(--muted)">
-    <text x="133.3" y="224" text-anchor="middle">2</text><text x="216.7" y="224" text-anchor="middle">4</text><text x="300" y="224" text-anchor="middle">6</text>
-    <text x="44" y="70" text-anchor="end">64</text><text x="44" y="214" text-anchor="end">0</text>
-  </g>
-  <g stroke="none" font-weight="600" font-size="12.5">
-    <text x="216" y="190" text-anchor="middle" style="fill:var(--vy)">6 − 2 = 4 s</text>
-    <text x="294" y="130" text-anchor="end" style="fill:var(--vx)">64 − 0</text>
-    <text x="294" y="146" text-anchor="end" style="fill:var(--vx)">= 64 m</text>
-    <text x="70" y="60" style="fill:var(--accent)">speed at 4 s = ? → 16 m/s</text>
-    <text x="70" y="78" font-weight="400" fill="currentColor">dashed = tangent at t = 4 s</text>
-  </g>
-  ${key(256, "var(--vx)", "64 m · rise of the tangent", "Δx read from the tangent, not the curve")}
-  ${key(290, "var(--vy)", "4 s · run of the tangent", "Δt  (gradient 16 m s⁻¹ · instantaneous speed)")}
-</svg>`,
-  "A curve getting steeper, on distance–time axes from 0 to 6 s. A dashed straight line touches the curve at t = 4 s. A triangle on the dashed line runs from 2 s to 6 s (4 s) and up from 0 to 64 m. Label: speed at 4 s = 16 m/s.",
-  "Ours. The dashed {{tangent}} just touches the curve at 4 s. Its gradient, 64 m ÷ 4 s = 16 m/s, is the {{inst|instantaneous speed}} there.",
-);
+// ---------- Ours: tangent on x = 2t² at t = 4 s (interactive graph) ----------
+// Checked in scripts/zakiya/check/claims_3_1_distance_and_speed.py by re-evaluating `expr`.
+export const figTangent: Figure = {
+  kind: "graph",
+  alt: "A curve getting steeper, x = 2t², on distance–time axes from 0 to 6 s. A dashed tangent touches the curve at t = 4 s. A triangle on the tangent runs from 2 s to 6 s (4 s) and up from 0 to 64 m, so the gradient is 16 m/s. The touching point can be dragged along the curve.",
+  caption: "Ours. The dashed {{tangent}} just touches the curve at 4 s. Its gradient, 64 m ÷ 4 s = 16 m/s, is the {{inst|instantaneous speed}} there. Drag the dot: the steeper the curve, the faster the car.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 6, step: 1 },
+  y: { label: "distance", symbol: "x", unit: "m", min: 0, max: 80, step: 10 },
+  series: [{ id: "car", label: "x = 2t²", expr: "2*t^2", colour: "accent" }],
+  tangent: {
+    series: "car",
+    at: 4,
+    draggable: true,
+    showTriangle: true,
+    readout: { quantity: "speed", unit: "m s⁻¹", decimals: 1 },
+  },
+};
+
+// ---------- Ours: the lorry on a speed–time graph (area = distance) ----------
+// 25 m/s for 120 s, then 16 m/s for 50 s. Area = 3000 + 800 = 3800 m (exact for straight lines).
+export const figLorryArea: Figure = {
+  kind: "graph",
+  alt: "Speed–time graph of the lorry: a flat line at 25 m/s from 0 to 120 s, a drop to 16 m/s, then flat at 16 m/s until 170 s. The area under the line is shaded and equals 3800 m.",
+  caption: "Ours. The same lorry as a speed–time graph. Each rectangle is speed × time, so the shaded area is the distance: 25 × 120 + 16 × 50 = 3800 m.",
+  x: { label: "time", symbol: "t", unit: "s", min: 0, max: 180, step: 20 },
+  y: { label: "speed", symbol: "v", unit: "m s⁻¹", min: 0, max: 30, step: 5 },
+  series: [{ id: "lorry", points: [[0, 25], [120, 25], [120, 16], [170, 16]], colour: "accent" }],
+  area: {
+    series: "lorry",
+    from: 0,
+    to: 170,
+    readout: { quantity: "distance travelled", unit: "m", decimals: 0 },
+    squares: true,
+  },
+};
 
 // ---------- Ours: drips every 0.5 s ----------
 const dots = (y: number, xs: number[]) => xs.map((x) => `<circle cx="${x}" cy="${y}" r="4"/>`).join("");

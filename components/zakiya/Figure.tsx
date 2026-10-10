@@ -4,6 +4,7 @@ import { Elevator, Plot, Terrain, Turntable } from "@lucasmarkes/hairline/react"
 import type { Figure as FigureT } from "@/lib/zakiya/types";
 import ProjectileSim from "./ProjectileSim";
 import ShadowSim from "./ShadowSim";
+import Graph from "./Graph";
 import { Rich } from "./Rich";
 import s from "./zakiya.module.css";
 
@@ -20,6 +21,8 @@ export default function Figure({ figure }: { figure: FigureT }) {
         <C play theme="light" />
       </div>
     ) : null;
+  } else if (figure.kind === "graph") {
+    body = <Graph fig={figure} />;
   } else if (figure.kind === "svg") {
     // Content is authored in this repo (content/zakiya), not user input.
     body = <div className={s.svgWrap} role="img" aria-label={figure.alt} dangerouslySetInnerHTML={{ __html: figure.svg }} />;

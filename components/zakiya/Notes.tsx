@@ -3,6 +3,7 @@
 import { type MouseEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Block, Definition, Subchapter } from "@/lib/zakiya/types";
 import Figure from "./Figure";
+import DataTable from "./DataTable";
 import { blockRichFields } from "@/lib/zakiya/rich";
 import { ExplainScope, Rich } from "./Rich";
 import { Tex } from "./Tex";
@@ -165,6 +166,8 @@ export function BlockView({ block, at }: { block: Block; at: string }) {
       );
     case "worked":
       return <Worked block={block} at={at} />;
+    case "table":
+      return <DataTable table={block} at={at} />;
     case "sayIt":
       return (
         <div className={s.sayIt} role="note">

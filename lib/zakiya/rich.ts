@@ -241,6 +241,12 @@ export function blockRichFields(b: Block): [path: string, text: Rich][] {
       return [["question", b.question], ...b.steps.map((t, i): [string, string] => [`steps.${i}`, t]), ["answer", b.answer]];
     case "sayIt":
       return [...b.say.map((t, i): [string, string] => [`say.${i}`, t]), ...(b.reject ?? []).map((t, i): [string, string] => [`reject.${i}`, t])];
+    case "table":
+      return [
+        ["caption", b.caption],
+        ...b.columns.map((c, i): [string, string | undefined] => [`columns.${i}`, c.header]),
+        ["note", b.note],
+      ].filter((f): f is [string, string] => !!f[1]);
   }
 }
 

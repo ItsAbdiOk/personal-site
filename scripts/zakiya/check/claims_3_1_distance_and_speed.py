@@ -106,17 +106,66 @@ def parse_path(name_hint, file_text, nth):
 
 
 FIG = open(os.path.join(ROOT, F)).read()
-ptsF6 = parse_path("f6", FIG, 0)
-ptsQ6 = parse_path("q6", FIG, 1)
-# f6: t 0..6 -> x 50..300 ; x 0..80 -> y 210..30
-f6 = lambda t: (50 + t * 250 / 6, 210 - x2(t) * 180 / 80)
-b("s4-fig-curve", f"{F} figTangent path", "25 points all on x = 2t^2 (within 0.06 px)",
-  lambda: len(ptsF6) == 25 and all(abs(p[0] - f6(i * 0.25)[0]) < 0.06 and abs(p[1] - f6(i * 0.25)[1]) < 0.06 for i, p in enumerate(ptsF6)))
-v("s4-fig-pt", f"{F} figTangent", "marker at t=4 s, 32 m = (216.7, 138)", lambda: f6(4)[1], 138, dp=1)
-v("s4-fig-tan-start", f"{F} figTangent", "tangent start (2 s, 0) = (133.3, 210)", lambda: f6(2)[0], 133.3, dp=1)
-v("s4-fig-tan-end", f"{F} figTangent", "tangent end (6 s, 64 m) = (300, 66)", lambda: 210 - 64 * 180 / 80, 66, dp=0)
-v("s4-fig-64lab", f"{F} figTangent", "'64' label at y=70 (64 m at y=66)", lambda: 210 - 64 * 180 / 80, 66, dp=0,
-  note="label text sits ~4 px lower than the tick (baseline offset) - cosmetic")
+ptsQ6 = parse_path("q6", FIG, 0)
+
+
+# figTangent is now a declarative graph (components/zakiya/Graph.tsx): re-evaluate its own expr.
+def graph_block(name):
+    m = re.search(r"export const " + name + r": Figure = \{(.*?)\n\};", FIG, re.S)
+    return m.group(1)
+
+
+def expr_fn(expr, var):
+    """Same tiny language as lib/zakiya/graph-expr.ts, evaluated with no builtins."""
+    assert re.fullmatch(r"[0-9.+\-*/^() a-z]*", expr), expr
+    py = re.sub(r"(\d)\s*([a-z(])", r"\1*\2", expr).replace("^", "**")
+    names = {var: 0.0, "pi": math.pi, "sqrt": math.sqrt, "exp": math.exp, "ln": math.log,
+             "sin": lambda d: math.sin(math.radians(d)), "cos": lambda d: math.cos(math.radians(d)),
+             "tan": lambda d: math.tan(math.radians(d))}
+    code = compile(py, "<expr>", "eval")
+    assert set(code.co_names) <= set(names), code.co_names
+    return lambda v: eval(code, {"__builtins__": {}}, {**names, var: v})  # noqa: S307 (repo content, names whitelisted)
+
+
+GT = graph_block("figTangent")
+gt_expr = re.search(r'expr: "([^"]+)"', GT).group(1)
+gt_at = float(re.search(r"tangent: \{[^}]*?at: ([\d.]+)", GT, re.S).group(1))
+gt_xmin, gt_xmax = map(float, re.search(r'x: \{[^}]*min: ([\d.]+), max: ([\d.]+)', GT).groups())
+gt_ymax = float(re.search(r'y: \{[^}]*max: ([\d.]+)', GT).group(1))
+fx = expr_fn(gt_expr, "t")
+dfx = lambda t, h=1e-5: (fx(t + h) - fx(t - h)) / (2 * h)
+span = (gt_xmax - gt_xmin) / 3  # Graph.tsx: triangle runs +/- range/3 either side of the touch point
+tl = lambda t: fx(gt_at) + dfx(gt_at) * (t - gt_at)
+b("s4-g-expr", f"{F} figTangent expr", "graph expr is x = 2t^2 (same curve as the text)", lambda: all(abs(fx(t) - x2(t)) < 1e-9 for t in (0, 1.5, 4, 6)))
+v("s4-g-at", f"{F} figTangent tangent.at", "tangent starts at t = 4 s", lambda: gt_at, 4, dp=1)
+v("s4-g-x4", f"{F} figTangent", "touch point (4, 32)", lambda: fx(gt_at), 32, dp=0)
+v("s4-g-grad", f"{F} figTangent readout / caption", "gradient = 16.0 m s^-1 at t = 4.0 s", lambda: dfx(gt_at), 16.0, dp=1)
+v("s4-g-dt", f"{F} figTangent triangle / caption", "triangle run 6.0 - 2.0 = 4.0 s", lambda: min(gt_xmax, gt_at + span) - max(gt_xmin, gt_at - span), 4.0, dp=1)
+v("s4-g-x1", f"{F} figTangent triangle", "tangent at t = 2.0 s is 0 m", lambda: tl(gt_at - span), 0, dp=1)
+v("s4-g-dx", f"{F} figTangent triangle / caption", "triangle rise 64.0 m", lambda: tl(gt_at + span) - tl(gt_at - span), 64.0, dp=1)
+b("s4-g-fits", f"{F} figTangent y axis", "whole curve fits on the 0-80 m axis (x(6) = 72)", lambda: fx(gt_xmax) <= gt_ymax)
+
+# figLorryArea: speed-time polyline, area is exact (trapezia)
+GA = graph_block("figLorryArea")
+ga_pts = [tuple(map(float, p)) for p in re.findall(r"\[([\d.]+), ([\d.]+)\]", re.search(r"points: \[(.*?)\]\s*,\s*colour", GA, re.S).group(1))]
+ga_from, ga_to = map(float, re.search(r"from: ([\d.]+),\s*to: ([\d.]+)", GA).groups())
+
+
+def poly_area(pts, a, b2):
+    tot = 0.0
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        lo, hi = max(x0, a), min(x1, b2)
+        if hi <= lo or x1 == x0:
+            continue
+        yl = y0 + (y1 - y0) * (lo - x0) / (x1 - x0)
+        yh = y0 + (y1 - y0) * (hi - x0) / (x1 - x0)
+        tot += (yl + yh) / 2 * (hi - lo)
+    return tot
+
+
+b("s2-g-pts", f"{F} figLorryArea points", "25 m/s for 120 s then 16 m/s to 170 s", lambda: ga_pts == [(0, 25), (120, 25), (120, 16), (170, 16)])
+v("s2-g-area", f"{F} figLorryArea readout / caption", "area = 3800 m (25 x 120 + 16 x 50)", lambda: poly_area(ga_pts, ga_from, ga_to), 3800, dp=0)
+v("s2-g-sq", f"{F} figLorryArea squares", "one 20 s x 5 m/s square = 100 m", lambda: 20 * 5, 100, dp=0)
 
 # ============ Section 5: drips ============
 v("s5-drip", f"{S} spacing text / figDrips key", "5 m per 0.5 s = 10 m/s", lambda: sp(5, 0.5), 10, sf=2)
@@ -214,6 +263,10 @@ x7 = [0, 0.030, 0.086, 0.142, 0.198, 0.254]
 v("r7a-1", f"{Q} ds-r7(a) modelAnswer", "0.20-0.40 s: 0.056 m in 0.20 s = 0.28", lambda: sp(x7[2] - x7[1], 0.20), 0.28, sf=2)
 v("r7a-d", f"{Q} ds-r7(a)", "0.086 - 0.030 = 0.056 m", lambda: x7[2] - x7[1], 0.056, dp=3)
 v("r7a-2", f"{Q} ds-r7(a) modelAnswer", "0.80-1.00 s: 0.056/0.20 = 0.28", lambda: sp(x7[5] - x7[4], 0.20), 0.28, sf=2)
+QT = open(os.path.join(ROOT, Q)).read()
+r7_rows = re.findall(r'\["([\d.]+)", "([\d.]+)"\]', QT[QT.index('id: "ds-r7"'):QT.index('parts:', QT.index('id: "ds-r7"'))])
+b("r7-table", f"{Q} ds-r7 stem table", "table rows match t = 0..1.00 s and x = 0..0.254 m",
+  lambda: [(float(a), float(b_)) for a, b_ in r7_rows] == list(zip(t7, x7)))
 b("r7a-const", f"{Q} ds-r7 table", "equal 0.056 m each 0.2 s after 0.20 s",
   lambda: len({round(b_ - a, 6) for a, b_ in zip(x7[1:], x7[2:])}) == 1)
 v("r7b", f"{Q} ds-r7(b)", "0.254/1.00 = 0.254 -> 0.25", lambda: sp(0.254, 1.00), 0.25, sf=2)

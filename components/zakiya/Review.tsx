@@ -3,6 +3,7 @@
 import type { Question } from "@/lib/zakiya/types";
 import { type Answers, isDone, isWrong, partKey } from "./exam";
 import { Rich } from "./Rich";
+import DataTable from "./DataTable";
 import s from "./zakiya.module.css";
 
 export default function Review({
@@ -118,9 +119,11 @@ export default function Review({
                 </span>
               </div>
               <h3 className={s.h3}>{q.title}</h3>
+              {q.table && <DataTable table={q.table} />}
               <p style={{ color: "var(--ink)" }}>
                 <Rich text={p.prompt} />
               </p>
+              {p.table && <DataTable table={p.table} />}
               {p.kind === "mcq" && p.options && (
                 <ul className={s.list}>
                   {p.options.map((o, i) => (

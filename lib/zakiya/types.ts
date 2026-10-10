@@ -14,11 +14,60 @@ export type Explain = { label: string; body: Rich };
  *  wording that mark schemes credit (rendered as a soft highlighter). */
 export type Rich = string;
 
+/** One axis of a graph figure. Shown OCR style: "time t / s" (label, italic symbol, / unit). */
+export type GraphAxis = {
+  label: Rich;                 // "time"
+  symbol?: string;             // TeX, e.g. "t" or "v_x"; also the expression variable on the x axis
+  unit: string;                // "s", "m s⁻¹"
+  min: number;
+  max: number;
+  step?: number;               // grid + tick spacing (default: a nice step for the range)
+};
+
+export type GraphColour = "accent" | "vx" | "vy" | "muted";
+
+/** A line on a graph: a formula in the x-axis variable (e.g. "12*t - t^2"), or straight
+ *  segments joining points (exact, for piecewise motion and data). Give one of them. */
+export type GraphSeries = {
+  id: string;
+  label?: Rich;
+  expr?: string;               // + - * / ^ ( ) sqrt sin cos tan (degrees) exp ln pi; see lib/zakiya/graph-expr.ts
+  points?: [number, number][];
+  colour?: GraphColour;
+};
+
+export type GraphReadout = { quantity: Rich; unit: string; decimals: number };
+
+/** Tangent mode: a tangent touching `series` at x = `at`; draggable along the curve if asked. */
+export type GraphTangent = { series: string; at: number; draggable: boolean; showTriangle: boolean; readout: GraphReadout };
+
+/** Area mode: shade between `series` and the x-axis from `from` to `to`. */
+export type GraphArea = { series: string; from: number; to: number; readout: GraphReadout; squares?: boolean };
+
+export type GraphPoint = { x: number; y: number; label?: Rich };
+
 export type Figure =
   | { kind: "projectile-sim"; caption?: Rich }
   | { kind: "shadow-sim"; caption?: Rich }                           // textbook kick (15 m/s, 30°) with ground + wall shadows                       // hand-built interactive simulator
   | { kind: "hairline"; figure: "elevator" | "turntable" | "plot" | "terrain"; caption?: Rich }
-  | { kind: "svg"; svg: string; caption?: Rich; alt: string };       // static inline diagram, uses currentColor + CSS vars
+  | { kind: "svg"; svg: string; caption?: Rich; alt: string }        // static inline diagram, uses currentColor + CSS vars
+  /** Declarative graph (components/zakiya/Graph.tsx). Numbers are recomputable by the Python checks. */
+  | {
+      kind: "graph";
+      alt: string;
+      caption?: Rich;
+      x: GraphAxis;
+      y: GraphAxis;
+      series: GraphSeries[];
+      tangent?: GraphTangent;
+      area?: GraphArea;
+      points?: GraphPoint[];
+    };
+
+/** A data table. Headers read "quantity / unit" (OCR style). Cells: write measured values as
+ *  strings to keep trailing zeros ("0.030"); null = an empty box to fill in. */
+export type TableColumn = { header: Rich; unit?: string; highlight?: boolean; blank?: boolean };
+export type Table = { caption?: Rich; columns: TableColumn[]; rows: (string | number | null)[][]; note?: Rich };
 
 /** Where the numbers in a worked example / question came from.
  *  textbook = numbers from the textbook (ref = page, e.g. "p. 42"); ocr = a real OCR past-paper question;
@@ -42,7 +91,9 @@ export type Block =
   /** Real examiners' report finding. `cite` = series + paper (+ question), e.g. "June 2023 H556/01 Q17(b)". */
   | { type: "examiners"; body: Rich; cite: string }
   /** General exam technique (our advice, not examiner evidence). */
-  | { type: "tip"; body: Rich };
+  | { type: "tip"; body: Rich }
+  /** Data table: use for any data with 3+ values. */
+  | ({ type: "table" } & Table);
 
 export type Section = {
   id: string;
@@ -82,6 +133,7 @@ export type QuestionPart = {
   modelAnswer: Rich;           // full worked answer
   markScheme: Rich[];          // one entry per marking point
   commonMistakes: Rich[];      // what students typically get wrong and why
+  table?: Table;               // data for this part only, shown under the prompt
 };
 
 export type Question = {
@@ -89,6 +141,7 @@ export type Question = {
   title: string;
   stem?: Rich;
   figure?: Figure;
+  table?: Table;               // data in the stem (results, readings), shown under it
   parts: QuestionPart[];
   difficulty: 1 | 2 | 3;
   style: "Paper 1 MCQ" | "Structured" | "Extended response";

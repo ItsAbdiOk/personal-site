@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Question, QuestionPart } from "@/lib/zakiya/types";
 import { type Answers, type PartResult, checkNumeric, isDone, partKey } from "./exam";
 import Figure from "./Figure";
+import DataTable from "./DataTable";
 import OriginBadge from "./OriginBadge";
 import { Rich } from "./Rich";
 import s from "./zakiya.module.css";
@@ -97,6 +98,7 @@ function Part({
           [{part.marks} mark{part.marks === 1 ? "" : "s"}]
         </span>
       </div>
+      {part.table && <DataTable table={part.table} />}
 
       {part.kind === "mcq" && (
         <div className={s.opts} role="group" aria-label="Options">
@@ -331,6 +333,7 @@ export default function ExamPractice({
           </p>
         )}
         {q.figure && <Figure figure={q.figure} />}
+        {q.table && <DataTable table={q.table} />}
         {q.parts.map((p, k) => (
           <Part key={partKey(q, k)} part={p} result={answers[partKey(q, k)]} onChange={(r) => setAnswer(partKey(q, k), r)} />
         ))}

@@ -92,6 +92,7 @@ const sections: Section[] = [
         ],
         answer: "**3800 m** and **22 m s⁻¹**. Not (25 + 16) ÷ 2 = 20.5 m s⁻¹: the lorry spends longer at 25 m s⁻¹ than at 16 m s⁻¹.",
       },
+      { type: "figure", figure: F.figLorryArea },
       {
         type: "warning",
         body: "Average speed = **total** distance ÷ **total** time. Never average the speeds of the stages unless each stage lasts the same time.",
