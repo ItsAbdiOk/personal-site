@@ -135,7 +135,7 @@ export const figFig5: Figure = {
 
 // ---------- Tangent on a curve (ours: v = 4t − 0.25t², tangent at t = 4.0 s) ----------
 // origin (50,210); 1 s = 24 px; 1 m/s = 7 px.
-const svgTangent = `${head("ac-tg", 352)}
+const svgTangent = `${head("ac-tg", 366)}
   <line x1="50" y1="210" x2="305" y2="210" stroke-width="1.5" marker-end="url(#ac-tg-c)"/>
   <line x1="50" y1="210" x2="50" y2="30" stroke-width="1.5" marker-end="url(#ac-tg-c)"/>
   <g stroke="none" fill="currentColor" font-size="11.5">
@@ -181,9 +181,9 @@ const mini = (x: number, y: number, d: string, top: string, term: string) => `
 
 const svgShapes = `${head("ac-sh", 290)}
   ${mini(20, 10, "M0,55 L130,12", "straight, sloping up", "constant acceleration")}
-  ${mini(190, 10, "M0,30 L130,30", "flat", "zero acceleration (constant v)")}
+  ${mini(172, 10, "M0,30 L130,30", "flat", "zero acceleration (constant v)")}
   ${mini(20, 150, "M0,10 L130,55", "straight, sloping down", "constant deceleration")}
-  ${mini(190, 150, "M0,60 Q20,15 130,8", "curve getting flatter", "acceleration decreasing")}
+  ${mini(172, 150, "M0,60 Q20,15 130,8", "curve getting flatter", "acceleration decreasing")}
 </svg>`;
 
 export const figShapes: Figure = {

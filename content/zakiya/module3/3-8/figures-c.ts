@@ -84,7 +84,7 @@ const cliff = (answered: boolean) => {
   <line x1="${X0 + 2}" y1="226" x2="${(LAND_X - 2).toFixed(1)}" y2="226" stroke-width="2" style="stroke:var(--vx)" marker-start="url(#${p}-vx)" marker-end="url(#${p}-vx)"/>
   ${L3(140, 242, answered ? "x = 28.3 m" : "x = ?", "how far out it lands", "horizontal displacement x", "var(--vx)", "middle")}
   ${L3(335, 22, answered ? "t = 2.72 s" : "t = ?", "time in the air", "time of flight t", "var(--accent)", "end")}
-  ${T(LAND_X - 6, SEA_Y - 10, "lands", { anchor: "end", size: 11 })}
+  ${T(LAND_X + 8, SEA_Y - 8, "lands", { size: 11 })}
 </svg>`;
 };
 export const svgCliffBefore = cliff(false);
@@ -93,7 +93,7 @@ export const svgCliffAfter = cliff(true);
 /** Fig 4: the no-quadratic split: up to the top, then fall from rest. */
 const PEAK_X = X0 + UX * (UY / G) * PX; // ≈ 84.5
 const PEAK_Y = Y0 - 1.8349 * PX; // ≈ 57.2
-export const svgCliffSplit = `${OPEN(340, 300)}
+export const svgCliffSplit = `${OPEN(340, 312)}
   ${cliffBase("pmc-s")}
   <circle cx="${PEAK_X.toFixed(1)}" cy="${PEAK_Y.toFixed(1)}" r="3.5" fill="currentColor" stroke="none"/>
   <line x1="${PEAK_X.toFixed(1)}" y1="${(PEAK_Y + 1).toFixed(1)}" x2="${PEAK_X.toFixed(1)}" y2="${Y0 - 1}" stroke-width="2" style="stroke:var(--vy)"/>
@@ -104,10 +104,10 @@ export const svgCliffSplit = `${OPEN(340, 300)}
   ${T(232, 160, "④ 2.110 s", { fill: "var(--accent)", bold: true })}
   <g font-size="11">
     ${T(4, 236, "<tspan font-weight=\"600\" style=\"fill:var(--vy)\">① 1.83 m</tspan> · rises above your hand · max height (v<tspan baseline-shift=\"sub\" font-size=\"8\">y</tspan> = 0)")}
-    ${T(4, 251, "<tspan font-weight=\"600\" style=\"fill:var(--accent)\">② 0.612 s</tspan> · going up · time to top = 6.00 ÷ 9.81")}
-    ${T(4, 266, "<tspan font-weight=\"600\" style=\"fill:var(--vy)\">③ 21.83 m</tspan> · top to sea = 20 + 1.83 · drop from rest")}
-    ${T(4, 281, "<tspan font-weight=\"600\" style=\"fill:var(--accent)\">④ 2.110 s</tspan> · coming down · time to fall 21.83 m")}
-    ${T(4, 296, "<tspan font-weight=\"600\" style=\"fill:var(--accent)\">② + ④ = 2.72 s</tspan> · whole flight · time of flight t")}
+    ${T(4, 253, "<tspan font-weight=\"600\" style=\"fill:var(--accent)\">② 0.612 s</tspan> · going up · time to top = 6.00 ÷ 9.81")}
+    ${T(4, 270, "<tspan font-weight=\"600\" style=\"fill:var(--vy)\">③ 21.83 m</tspan> · top to sea = 20 + 1.83 · drop from rest")}
+    ${T(4, 287, "<tspan font-weight=\"600\" style=\"fill:var(--accent)\">④ 2.110 s</tspan> · coming down · time to fall 21.83 m")}
+    ${T(4, 304, "<tspan font-weight=\"600\" style=\"fill:var(--accent)\">② + ④ = 2.72 s</tspan> · whole flight · time of flight t")}
   </g>
 </svg>`;
 

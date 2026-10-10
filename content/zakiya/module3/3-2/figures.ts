@@ -176,7 +176,7 @@ export const figTangent: Figure = {
 };
 
 // ---------- Bounce: change in velocity (ours) ----------
-const svgBounce = `${head("d2-bn", 270)}
+const svgBounce = `${head("d2-bn", 282)}
   <rect x="300" y="20" width="16" height="130" style="fill:var(--muted)" fill-opacity="0.35" stroke-width="1.2"/>
   ${t(308, 166, "wall", 'text-anchor="middle" font-size="11"')}
   ${t(14, 30, "before (towards wall = +)", 'font-size="11.5"')}

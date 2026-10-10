@@ -17,7 +17,7 @@ export const svgTrajectory = `<svg viewBox="0 0 380 240" xmlns="http://www.w3.or
   <line x1="40" y1="215" x2="340" y2="215" stroke-width="1.2" marker-start="url(#pm-traj-ah)" marker-end="url(#pm-traj-ah)"/>
   <text x="190" y="232" text-anchor="middle" fill="currentColor" stroke="none">range (horizontal distance)</text>
   <text x="50" y="205" fill="currentColor" stroke="none">launch</text>
-  <text x="300" y="182" fill="currentColor" stroke="none">landing</text>
+  <text x="338" y="207" text-anchor="end" fill="currentColor" stroke="none">landing</text>
   <text x="60" y="40" fill="currentColor" stroke="none">curved path = parabola</text>
 </svg>`;
 

@@ -38,8 +38,8 @@ export const svgCannonSteps = `${head(360, 262)}
     <text x="62" y="30" ${M}>sideways speed</text>
     <text x="62" y="44" ${M}>horizontal velocity vₓ</text>
     <text x="350" y="16" text-anchor="end" ${Y}>uᵧ = 0</text>
-    <text x="350" y="30" text-anchor="end" ${M}>no downward speed at the start</text>
-    <text x="350" y="44" text-anchor="end" ${M}>initial vertical velocity</text>
+    <text x="350" y="32" text-anchor="end" ${M}>no downward speed at the start</text>
+    <text x="350" y="48" text-anchor="end" ${M}>initial vertical velocity</text>
     <text x="88" y="118" ${Y}>44.1 m</text>
     <text x="88" y="132" ${M}>height of the cliff</text>
     <text x="88" y="146" ${M}>vertical displacement s</text>
@@ -81,8 +81,8 @@ export const svgArrowSetup = `${head(360, 220)}
     <text x="352" y="70" text-anchor="end" font-weight="700" fill="currentColor">v = ? → 54.7 m/s at 26.0°</text>
     <text x="352" y="84" text-anchor="end" ${M}>speed + direction at landing</text>
     <text x="352" y="98" text-anchor="end" ${M}>impact velocity (dashed)</text>
-    <text x="292" y="190" text-anchor="end" ${Y}>vᵧ = ? → 24.0 m/s</text>
-    <text x="292" y="204" text-anchor="end" ${M}>downward speed at landing</text>
+    <text x="292" y="188" text-anchor="end" ${Y}>vᵧ = ? → 24.0 m/s</text>
+    <text x="292" y="206" text-anchor="end" ${M}>downward speed at landing</text>
   </g>
 </svg>`;
 

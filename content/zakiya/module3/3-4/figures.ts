@@ -253,7 +253,7 @@ export const figSquares = svg(
     shades: [...fullSquares, { pts: rect(10.08, 11.92, 10.08, 11.92), colour: VY, opacity: 0.55 }],
     lines: [{ pts: sample(pull, 0, 12) }],
     notes: [
-      { at: [11, 11], text: "1", colour: "currentColor" },
+      { at: [11, 10.15], text: "1", colour: "currentColor" },
       { at: [0.2, 9.4], text: "skip: mostly above", anchor: "start", bold: false, colour: MU },
     ],
     keys: [
